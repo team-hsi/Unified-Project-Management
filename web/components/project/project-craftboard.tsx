@@ -21,7 +21,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
   const [error, setError] = useState<string | null>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const coverRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null); // Ref for the overlay
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   // Drag functionality for repositioning
   const bind = useDrag(({ offset: [x, y] }) => {
@@ -35,7 +35,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
         overlayRef.current &&
         !overlayRef.current.contains(event.target as Node) &&
         coverRef.current &&
-        !coverRef.current.contains(event.target as Node) // Exclude clicks on cover image/buttons
+        !coverRef.current.contains(event.target as Node)
       ) {
         setIsTabOpen(false);
       }
@@ -98,12 +98,27 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     }
   };
 
-  // Updated to only remove cover, not close overlay
   const handleRemoveCover = () => {
     setCoverImage("/default-cover.jpg");
     setPosition({ x: 0, y: 0 });
-    // Removed setIsTabOpen(false) to keep overlay open
   };
+
+  // Unsplash SVG Icon
+  const UnsplashIcon = () => (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-4 h-4"
+    >
+      <path
+        d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z"
+        fill="currentColor"
+      />
+    </svg>
+  );
 
   return (
     <div className="relative w-full h-48 rounded-lg bg-blue-300">
@@ -159,7 +174,13 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
                 <TabsTrigger value="gallery">Gallery</TabsTrigger>
                 <TabsTrigger value="upload">Upload</TabsTrigger>
                 <TabsTrigger value="link">Link</TabsTrigger>
-                <TabsTrigger value="unsplash">Unsplash</TabsTrigger>
+                <TabsTrigger
+                  value="unsplash"
+                  className="flex items-center gap-2"
+                >
+                  <UnsplashIcon />
+                  Unsplash
+                </TabsTrigger>
               </TabsList>
               <span
                 onClick={handleRemoveCover}
@@ -170,7 +191,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
               </span>
             </div>
 
-            {/* Gallery Tab - Placeholder content */}
+            {/* Gallery Tab */}
             <TabsContent value="gallery">
               <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
                 {[1, 2, 3, 4, 5, 6].map((item) => (
