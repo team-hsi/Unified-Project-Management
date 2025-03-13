@@ -60,7 +60,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/unsplash");
+      const response = await fetch("/api/unsplash-images");
       if (!response.ok) {
         throw new Error("Failed to fetch image");
       }

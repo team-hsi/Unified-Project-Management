@@ -1,4 +1,4 @@
-// /app/api/unsplash/route.ts
+// /app/api/unsplash-images/route.ts
 import axios from "axios";
 
 const UNSPLASH_API_URL = "https://api.unsplash.com/photos/random";
