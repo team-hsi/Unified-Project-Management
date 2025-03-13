@@ -136,7 +136,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
               </TabsList>
               <span
                 onClick={handleRemoveCover}
-                className="text-sm text-destructive cursor-pointer underline px-6 sm:px-0 hover:text-destructive/80"
+                className="text-sm text-gray-500 cursor-pointer px-6 sm:px-0 hover:text-black hover:bg-gray-100 hover:border hover:border-gray-300 hover:rounded hover:px-2 transition-all"
                 aria-disabled={isLoading}
               >
                 Remove
