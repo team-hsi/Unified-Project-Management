@@ -273,13 +273,30 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
 
             {/* Upload Tab */}
             <TabsContent value="upload">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="w-full p-2 border rounded"
-                disabled={isLoading}
-              />
+              <div className="space-y-2">
+                <label htmlFor="file-upload" className="block">
+                  <Button
+                    asChild
+                    disabled={isLoading}
+                    className="w-full bg-white text-black border border-black hover:bg-gray-200 disabled:bg-white disabled:opacity-50"
+                  >
+                    <span>
+                      <input
+                        id="file-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        disabled={isLoading}
+                      />
+                      Upload File
+                    </span>
+                  </Button>
+                </label>
+                <p className="text-sm text-gray-500 text-center">
+                  Images wider than 1500 pixels work best
+                </p>
+              </div>
             </TabsContent>
 
             {/* Link Tab */}
@@ -303,7 +320,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
                   </Button>
                 </div>
                 <p className="text-sm text-gray-500 text-center">
-                  Work with any image from the web.
+                  Works with any image from the web.
                 </p>
               </form>
             </TabsContent>
