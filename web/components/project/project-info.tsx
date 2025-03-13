@@ -8,7 +8,7 @@ import {
   Search,
   KanbanSquare,
   List,
-  Clock,
+  ChartNoAxesGantt,
   Filter,
   UserPlus
 } from "lucide-react";
@@ -66,7 +66,7 @@ const ProfileInfo: React.FC = () => {
               List
             </TabsTrigger>
             <TabsTrigger value="timeline" className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
+              <ChartNoAxesGantt className="h-4 w-4" />
               Timeline
             </TabsTrigger>
           </TabsList>
