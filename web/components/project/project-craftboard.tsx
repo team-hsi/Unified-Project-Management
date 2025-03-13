@@ -321,12 +321,12 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
               </div>
 
               <Button
-                onClick={() => fetchUnsplashImages()}
+                onClick={() => fetchUnsplashImages(searchQuery || undefined)}
                 disabled={isLoading}
                 className="w-full mt-4"
                 variant="outline"
               >
-                Load More Random Photos
+                Load More Photos
               </Button>
             </TabsContent>
           </Tabs>
