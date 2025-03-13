@@ -29,6 +29,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [unsplashImages, setUnsplashImages] = useState<UnsplashImage[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [linkInput, setLinkInput] = useState("");
   const coverRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -156,6 +157,16 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     }
   };
 
+  // Handle link submission
+  const handleLinkSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (linkInput.trim()) {
+      setCoverImage(linkInput);
+      setIsTabOpen(false);
+      setLinkInput("");
+    }
+  };
+
   // Unsplash SVG Icon
   const UnsplashIcon = () => (
     <svg
@@ -273,16 +284,28 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
 
             {/* Link Tab */}
             <TabsContent value="link">
-              <input
-                type="text"
-                placeholder="Paste image URL"
-                className="w-full p-2 border rounded"
-                onChange={(e) => {
-                  setCoverImage(e.target.value);
-                  setIsTabOpen(false);
-                }}
-                disabled={isLoading}
-              />
+              <form onSubmit={handleLinkSubmit} className="space-y-2">
+                <input
+                  type="text"
+                  placeholder="Paste image URL"
+                  value={linkInput}
+                  onChange={(e) => setLinkInput(e.target.value)}
+                  className="w-full p-2 border rounded"
+                  disabled={isLoading}
+                />
+                <div className="flex justify-center">
+                  <Button
+                    type="submit"
+                    disabled={isLoading || !linkInput.trim()}
+                    className="w-48 !bg-black text-white hover:bg-gray-800 disabled:!bg-black disabled:opacity-50"
+                  >
+                    Submit
+                  </Button>
+                </div>
+                <p className="text-sm text-gray-500 text-center">
+                  Work with any image from the web.
+                </p>
+              </form>
             </TabsContent>
 
             {/* Unsplash Tab */}
