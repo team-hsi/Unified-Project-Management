@@ -217,7 +217,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
       {isTabOpen && (
         <div
           ref={overlayRef}
-          className="absolute top-12 right-2 w-96 sm:w-112 lg:w-[768px] h-96 bg-background border rounded-lg shadow-lg p-4 max-w-full overflow-y-auto"
+          className="absolute top-12 right-2 w-96 sm:w-112 lg:w-[768px] h-[448px] bg-background border rounded-lg shadow-lg p-4 max-w-full overflow-y-auto"
         >
           {error && <div className="text-red-500 mb-2 text-sm">{error}</div>}
 
@@ -301,7 +301,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
                 </div>
               </form>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                 {unsplashImages.map((image) => (
                   <div
                     key={image.id}
