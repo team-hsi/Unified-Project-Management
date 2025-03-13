@@ -5,6 +5,7 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDrag } from "@use-gesture/react";
+import { Image, Move } from "lucide-react";
 
 interface BoardCoverProps {
   initialImage?: string;
@@ -101,26 +102,28 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
           </div>
         )}
 
-        {/* Hover Buttons */}
+        {/* Hover Buttons - Top-right with icons */}
         {isHovered && !isTabOpen && (
-          <div className="absolute top-2 left-2 flex gap-2">
+          <div className="absolute top-2 right-2 flex gap-2">
             <Button
               variant="secondary"
               size="sm"
               onClick={() => setIsTabOpen(true)}
             >
+              <Image className="w-4 h-4 mr-2" />
               Change Cover
             </Button>
             <Button variant="secondary" size="sm">
+              <Move className="w-4 h-4 mr-2" />
               Reposition
             </Button>
           </div>
         )}
       </div>
 
-      {/* Change Cover Tabs */}
+      {/* Change Cover Tabs - Slightly bigger width, responsive */}
       {isTabOpen && (
-        <div className="absolute top-0 left-0 w-full p-4 bg-background border rounded-lg shadow-lg">
+        <div className="absolute top-12 right-2 w-96 sm:w-112 lg:w-[768px] h-96 bg-background border rounded-lg shadow-lg p-4 max-w-full">
           {error && <div className="text-red-500 mb-2 text-sm">{error}</div>}
 
           <Tabs defaultValue="gallery" className="w-full">
@@ -131,19 +134,18 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
                 <TabsTrigger value="link">Link</TabsTrigger>
                 <TabsTrigger value="unsplash">Unsplash</TabsTrigger>
               </TabsList>
-              <Button
-                variant="destructive"
-                size="sm"
+              <span
                 onClick={handleRemoveCover}
-                disabled={isLoading}
+                className="text-sm text-destructive cursor-pointer underline px-6 sm:px-0 hover:text-destructive/80"
+                aria-disabled={isLoading}
               >
                 Remove
-              </Button>
+              </span>
             </div>
 
             {/* Gallery Tab - Placeholder content */}
             <TabsContent value="gallery">
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
                 {[1, 2, 3, 4, 5, 6].map((item) => (
                   <div
                     key={item}
