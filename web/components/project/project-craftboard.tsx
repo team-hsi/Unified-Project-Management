@@ -5,10 +5,17 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDrag } from "@use-gesture/react";
-import { Image, Move } from "lucide-react";
+import { Image, Move, Search } from "lucide-react";
 
 interface BoardCoverProps {
   initialImage?: string;
+}
+
+interface UnsplashImage {
+  id: string;
+  url: string;
+  thumb: string;
+  description?: string;
 }
 
 export default function BoardCover({ initialImage }: BoardCoverProps) {
@@ -20,6 +27,8 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [unsplashImages, setUnsplashImages] = useState<UnsplashImage[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const coverRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -50,6 +59,13 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     };
   }, [isTabOpen]);
 
+  // Initial Unsplash images fetch
+  useEffect(() => {
+    if (isTabOpen && unsplashImages.length === 0) {
+      fetchUnsplashImages();
+    }
+  }, [isTabOpen]);
+
   // Image upload handler with error handling
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -65,7 +81,6 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
         throw new Error("Please upload an image file");
       }
       if (file.size > 5 * 1024 * 1024) {
-        // 5MB limit
         throw new Error("Image must be smaller than 5MB");
       }
 
@@ -79,20 +94,51 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     }
   };
 
-  // Unsplash API integration via proxy endpoint
-  const fetchUnsplashImage = async () => {
+  // Unsplash API integration with improved error handling
+  const fetchUnsplashImages = async (query?: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/unsplash-images");
+      const endpoint = query
+        ? `/api/unsplash-images?query=${encodeURIComponent(query)}`
+        : "/api/unsplash-images";
+      const response = await fetch(endpoint);
+
+      console.log("Fetch response status:", response.status);
+      console.log("Fetch response ok:", response.ok);
+
       if (!response.ok) {
-        throw new Error("Failed to fetch image");
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const data = await response.json();
-      setCoverImage(data.url);
-      setIsTabOpen(false);
+      console.log("Raw API response:", JSON.stringify(data, null, 2));
+
+      // Check for API-level errors in the response body
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      // Ensure data is an array
+      if (!Array.isArray(data)) {
+        console.error("Expected an array but got:", data);
+        throw new Error("Invalid response format: Expected an array");
+      }
+
+      const images = data.map((img: any) => ({
+        id: img.id,
+        url: img.url,
+        thumb: img.thumb,
+        description: img.description,
+      }));
+
+      console.log("Processed images:", JSON.stringify(images, null, 2));
+      setUnsplashImages(images);
     } catch (err) {
-      setError("Failed to fetch Unsplash image");
+      console.error("Fetch error:", err);
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch Unsplash images"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -101,6 +147,13 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
   const handleRemoveCover = () => {
     setCoverImage("/default-cover.jpg");
     setPosition({ x: 0, y: 0 });
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      fetchUnsplashImages(searchQuery);
+    }
   };
 
   // Unsplash SVG Icon
@@ -141,7 +194,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
           </div>
         )}
 
-        {/* Hover Buttons - Top-right with icons */}
+        {/* Hover Buttons */}
         {isHovered && !isTabOpen && (
           <div className="absolute top-2 right-2 flex gap-2">
             <Button
@@ -160,11 +213,11 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
         )}
       </div>
 
-      {/* Change Cover Tabs - Slightly bigger width, responsive */}
+      {/* Change Cover Tabs */}
       {isTabOpen && (
         <div
           ref={overlayRef}
-          className="absolute top-12 right-2 w-96 sm:w-112 lg:w-[768px] h-96 bg-background border rounded-lg shadow-lg p-4 max-w-full"
+          className="absolute top-12 right-2 w-96 sm:w-112 lg:w-[768px] h-96 bg-background border rounded-lg shadow-lg p-4 max-w-full overflow-y-auto"
         >
           {error && <div className="text-red-500 mb-2 text-sm">{error}</div>}
 
@@ -234,12 +287,46 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
 
             {/* Unsplash Tab */}
             <TabsContent value="unsplash">
+              <form onSubmit={handleSearch} className="mb-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search Unsplash photos..."
+                    className="w-full pl-10 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={isLoading}
+                  />
+                </div>
+              </form>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+                {unsplashImages.map((image) => (
+                  <div
+                    key={image.id}
+                    className="relative h-32 rounded cursor-pointer hover:opacity-80 overflow-hidden"
+                    onClick={() => {
+                      setCoverImage(image.url);
+                      setIsTabOpen(false);
+                    }}
+                  >
+                    <img
+                      src={image.thumb}
+                      alt={image.description || "Unsplash image"}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+
               <Button
-                onClick={fetchUnsplashImage}
+                onClick={() => fetchUnsplashImages()}
                 disabled={isLoading}
-                className="w-full"
+                className="w-full mt-4"
+                variant="outline"
               >
-                Get Random Unsplash Image
+                Load More Random Photos
               </Button>
             </TabsContent>
           </Tabs>
