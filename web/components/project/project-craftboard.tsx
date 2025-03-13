@@ -55,17 +55,17 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     }
   };
 
-  // Unsplash API integration (requires API key)
+  // Unsplash API integration via proxy endpoint
   const fetchUnsplashImage = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      // Replace with actual Unsplash API call
-      const response = await fetch(
-        "https://api.unsplash.com/photos/random?client_id=YOUR_API_KEY"
-      );
+      const response = await fetch("/api/unsplash");
+      if (!response.ok) {
+        throw new Error("Failed to fetch image");
+      }
       const data = await response.json();
-      setCoverImage(data.urls.regular);
+      setCoverImage(data.url);
       setIsTabOpen(false);
     } catch (err) {
       setError("Failed to fetch Unsplash image");
@@ -182,7 +182,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
               />
             </TabsContent>
 
-            {/* Unsplash Tab - Placeholder with basic integration */}
+            {/* Unsplash Tab */}
             <TabsContent value="unsplash">
               <Button
                 onClick={fetchUnsplashImage}
