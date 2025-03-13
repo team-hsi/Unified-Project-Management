@@ -284,7 +284,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
 
             {/* Gallery Content */}
             <TabsContent value="gallery">
-              <div className="space-y-4 p-4 bg-white rounded-lg shadow-md">
+              <div className="space-y-4 p-4 bg-white">
                 {Object.entries(galleryImages).map(([category, images]) => (
                   <div key={category}>
                     <h3 className="text-lg font-semibold mb-2">{category}</h3>
