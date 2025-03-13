@@ -18,6 +18,33 @@ interface UnsplashImage {
   description?: string;
 }
 
+const galleryImages = {
+  "Color & Gradient": [
+    "/images/gradient1.jpg",
+    "/images/gradient2.jpg",
+    "/images/gradient3.jpg",
+  ],
+  "James Webb Telescope": [
+    "/images/jwt1.jpg",
+    "/images/jwt2.jpg",
+    "/images/jwt3.jpg",
+  ],
+  "NASA Archive": [
+    "/images/nasa1.jpg",
+    "/images/nasa2.jpg",
+    "/images/nasa3.jpg",
+  ],
+  "The MET Museum - Patterns": [
+    "/images/met-pattern1.jpg",
+    "/images/met-pattern2.jpg",
+  ],
+  Rijksmuseum: ["/images/rijks1.jpg", "/images/rijks2.jpg"],
+  "The MET Museum - Japanese Print": [
+    "/images/japanese1.jpg",
+    "/images/japanese2.jpg",
+  ],
+};
+
 export default function BoardCover({ initialImage }: BoardCoverProps) {
   const [coverImage, setCoverImage] = useState(
     initialImage || "/default-cover.jpg"
@@ -255,18 +282,24 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
               </span>
             </div>
 
-            {/* Gallery Tab */}
+            {/* Gallery Content */}
             <TabsContent value="gallery">
-              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
-                {[1, 2, 3, 4, 5, 6].map((item) => (
-                  <div
-                    key={item}
-                    className="h-20 bg-gray-200 rounded cursor-pointer hover:opacity-80"
-                    onClick={() => {
-                      setCoverImage(`/gallery-image-${item}.jpg`);
-                      setIsTabOpen(false);
-                    }}
-                  />
+              <div className="space-y-4 p-4 bg-white rounded-lg shadow-md">
+                {Object.entries(galleryImages).map(([category, images]) => (
+                  <div key={category}>
+                    <h3 className="text-lg font-semibold mb-2">{category}</h3>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+                      {images.map((src, index) => (
+                        <img
+                          key={index}
+                          src={src}
+                          alt={category}
+                          className="h-20 w-full object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                          onClick={() => setCoverImage(src)}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             </TabsContent>
