@@ -1,7 +1,7 @@
 // components/BoardCover.tsx
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDrag } from "@use-gesture/react";
@@ -21,11 +21,34 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
   const [error, setError] = useState<string | null>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const coverRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null); // Ref for the overlay
 
   // Drag functionality for repositioning
   const bind = useDrag(({ offset: [x, y] }) => {
     setPosition({ x, y });
   });
+
+  // Close overlay when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        overlayRef.current &&
+        !overlayRef.current.contains(event.target as Node) &&
+        coverRef.current &&
+        !coverRef.current.contains(event.target as Node) // Exclude clicks on cover image/buttons
+      ) {
+        setIsTabOpen(false);
+      }
+    };
+
+    if (isTabOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isTabOpen]);
 
   // Image upload handler with error handling
   const handleImageUpload = async (
@@ -75,10 +98,11 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     }
   };
 
+  // Updated to only remove cover, not close overlay
   const handleRemoveCover = () => {
     setCoverImage("/default-cover.jpg");
     setPosition({ x: 0, y: 0 });
-    setIsTabOpen(false);
+    // Removed setIsTabOpen(false) to keep overlay open
   };
 
   return (
@@ -123,7 +147,10 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
 
       {/* Change Cover Tabs - Slightly bigger width, responsive */}
       {isTabOpen && (
-        <div className="absolute top-12 right-2 w-96 sm:w-112 lg:w-[768px] h-96 bg-background border rounded-lg shadow-lg p-4 max-w-full">
+        <div
+          ref={overlayRef}
+          className="absolute top-12 right-2 w-96 sm:w-112 lg:w-[768px] h-96 bg-background border rounded-lg shadow-lg p-4 max-w-full"
+        >
           {error && <div className="text-red-500 mb-2 text-sm">{error}</div>}
 
           <Tabs defaultValue="gallery" className="w-full">
