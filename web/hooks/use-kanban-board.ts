@@ -1,46 +1,35 @@
-'use client';
-
-import { useState, useCallback, useEffect } from 'react';
-import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
-import { getReorderDestinationIndex } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index';
-import { reorder } from '@atlaskit/pragmatic-drag-and-drop/reorder';
-import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
-import type { Column } from '@/components/kanban/types';
+import * as React from "react";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index";
+import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
+import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import type {
+  Column,
+  MoveCardParams,
+  ReorderTaskParams,
+} from "@/components/kanban/types";
 import {
   BaseEventPayload,
   ElementDragType,
-} from '@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types';
+} from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 
-interface MoveCardParams {
-  movedTaskIndexInSourceColumn: number;
-  sourceColumnId: string;
-  destinationColumnId: string;
-  movedTaskIndexInDestinationColumn: number;
-}
+export const useKanbanBoard = (initialData: Column[]) => {
+  const [columns, setColumns] = React.useState<Column[]>(initialData);
 
-interface ReorderTaskParams {
-  columnId: string;
-  startIndex: number;
-  finishIndex: number;
-}
-
-export function useKanbanBoard(initialData: Column[]) {
-  const [columns, setColumns] = useState<Column[]>(initialData);
-
-  const moveCard = useCallback(
+  const moveCard = React.useCallback(
     ({
       movedTaskIndexInSourceColumn,
       sourceColumnId,
       destinationColumnId,
       movedTaskIndexInDestinationColumn,
     }: MoveCardParams) => {
-      setColumns(prevColumns => {
+      setColumns((prevColumns) => {
         // Find the source and destination columns
         const sourceColumnData = prevColumns.find(
-          column => column.id === sourceColumnId,
+          (column) => column.id === sourceColumnId
         );
         const destinationColumnData = prevColumns.find(
-          column => column.id === destinationColumnId,
+          (column) => column.id === destinationColumnId
         );
 
         if (!sourceColumnData || !destinationColumnData) return prevColumns;
@@ -54,16 +43,16 @@ export function useKanbanBoard(initialData: Column[]) {
         updatedDestinationItems.splice(
           movedTaskIndexInDestinationColumn,
           0,
-          cardToMove,
+          cardToMove
         );
 
-        return prevColumns.map(col => {
+        return prevColumns.map((col) => {
           // Remove the card from the source column
           if (col.id === sourceColumnId) {
             return {
               ...col,
               tasks: sourceColumnData.tasks.filter(
-                (_, index) => index !== movedTaskIndexInSourceColumn,
+                (_, index) => index !== movedTaskIndexInSourceColumn
               ),
             };
           }
@@ -74,44 +63,44 @@ export function useKanbanBoard(initialData: Column[]) {
         });
       });
     },
-    [],
+    []
   );
 
-  const reorderTask = useCallback(
+  const reorderTask = React.useCallback(
     ({ columnId, startIndex, finishIndex }: ReorderTaskParams) => {
-      setColumns(prevColumns =>
-        prevColumns.map(col =>
+      setColumns((prevColumns) =>
+        prevColumns.map((col) =>
           col.id === columnId
             ? {
                 ...col,
                 tasks: reorder({ list: col.tasks, startIndex, finishIndex }),
               }
-            : col,
-        ),
+            : col
+        )
       );
     },
-    [],
+    []
   );
 
-  const handleDrop = useCallback(
+  const handleDrop = React.useCallback(
     (args: BaseEventPayload<ElementDragType>) => {
       const { source, location } = args;
       if (!location.current.dropTargets.length) return;
 
-      if (source.data.type === 'task') {
+      if (source.data.type === "task") {
         // Retrieve the ID of the card being dragged
         const draggedTaskId = source.data.id;
         const sourceColumnId = location.initial.dropTargets[1]?.data
           .columnId as string;
 
         const sourceColumnData = columns.find(
-          column => column.id === sourceColumnId,
+          (column) => column.id === sourceColumnId
         );
 
         if (!sourceColumnData) return;
 
         const draggedTaskIndex = sourceColumnData.tasks.findIndex(
-          task => task.id === draggedTaskId,
+          (task) => task.id === draggedTaskId
         );
 
         if (draggedTaskIndex === -1) return;
@@ -128,7 +117,7 @@ export function useKanbanBoard(initialData: Column[]) {
               startIndex: draggedTaskIndex,
               indexOfTarget: sourceColumnData.tasks.length - 1,
               closestEdgeOfTarget: null,
-              axis: 'vertical',
+              axis: "vertical",
             });
 
             reorderTask({
@@ -141,7 +130,7 @@ export function useKanbanBoard(initialData: Column[]) {
 
           // If dropping in a different column
           const movedTaskIndexInDestinationColumn =
-            columns.find(column => column.id === destinationColumnId)?.tasks
+            columns.find((column) => column.id === destinationColumnId)?.tasks
               .length ?? 0;
 
           moveCard({
@@ -160,19 +149,19 @@ export function useKanbanBoard(initialData: Column[]) {
           const destinationColumnId = destinationColumnRecord.data
             .columnId as string;
           const destinationColumnData = columns.find(
-            column => column.id === destinationColumnId,
+            (column) => column.id === destinationColumnId
           );
 
           if (!destinationColumnData) return;
 
           const indexOfTarget = destinationColumnData.tasks.findIndex(
-            task => task.id === destinationTaskRecord.data.id,
+            (task) => task.id === destinationTaskRecord.data.id
           );
 
           if (indexOfTarget === -1) return;
 
           const closestEdgeOfTarget = extractClosestEdge(
-            destinationTaskRecord.data,
+            destinationTaskRecord.data
           );
 
           // If reordering within the same column
@@ -181,7 +170,7 @@ export function useKanbanBoard(initialData: Column[]) {
               startIndex: draggedTaskIndex,
               indexOfTarget,
               closestEdgeOfTarget,
-              axis: 'vertical',
+              axis: "vertical",
             });
 
             reorderTask({
@@ -194,7 +183,7 @@ export function useKanbanBoard(initialData: Column[]) {
 
           // If moving to a different column
           const destinationIndex =
-            closestEdgeOfTarget === 'bottom'
+            closestEdgeOfTarget === "bottom"
               ? indexOfTarget + 1
               : indexOfTarget;
 
@@ -207,14 +196,14 @@ export function useKanbanBoard(initialData: Column[]) {
         }
       }
     },
-    [columns, moveCard, reorderTask],
+    [columns, moveCard, reorderTask]
   );
 
-  useEffect(() => {
+  React.useEffect(() => {
     return monitorForElements({
       onDrop: handleDrop,
     });
   }, [handleDrop]);
 
   return { columns, moveCard, reorderTask };
-}
+};

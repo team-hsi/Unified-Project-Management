@@ -4,7 +4,7 @@ import { data } from "@/components/kanban/kanban-data";
 import { useKanbanBoard } from "@/hooks/use-kanban-board";
 import type { Column } from "./types";
 
-export default function KanbanBoard() {
+export const KanbanBoard = () => {
   const { columns } = useKanbanBoard(data);
 
   return (
@@ -16,4 +16,4 @@ export default function KanbanBoard() {
       </div>
     </div>
   );
-}
+};

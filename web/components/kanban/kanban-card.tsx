@@ -1,6 +1,6 @@
 import { MessageSquare, CircleCheck } from "lucide-react";
 import type { Task } from "./types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   draggable,
   dropTargetForElements,
@@ -16,14 +16,23 @@ import { cn } from "@/lib/utils";
 import { TaskAssignees } from "./task/task-assignees";
 import { TaskPriorityBadge } from "./task/task-priority-badge";
 
-interface TaskCardProps {
+interface KanbanCardProps {
   task: Task;
 }
 
-export function TaskCard({ task }: TaskCardProps) {
+export const KanbanCard = ({ task }: KanbanCardProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null); // NEW
   const ref = useRef<HTMLDivElement | null>(null);
+
+  // Calculate completed subtasks
+  const { completedSubtasks, totalSubtasks } = useMemo(() => {
+    const completed = task.subtasks.filter((sub) => sub.completed).length;
+    return {
+      completedSubtasks: completed,
+      totalSubtasks: task.subtasks.length,
+    };
+  }, [task.subtasks]);
 
   useEffect(() => {
     const element = ref.current;
@@ -72,12 +81,6 @@ export function TaskCard({ task }: TaskCardProps) {
     );
   }, [task]);
 
-  // Calculate completed subtasks
-  const completedSubtasks = task.subtasks.filter(
-    (subtask) => subtask.completed
-  ).length;
-  const totalSubtasks = task.subtasks.length;
-
   return (
     <div
       className={cn(
@@ -113,4 +116,4 @@ export function TaskCard({ task }: TaskCardProps) {
       {closestEdge && <DropIndicator edge={closestEdge} />}
     </div>
   );
-}
+};

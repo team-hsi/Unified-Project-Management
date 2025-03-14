@@ -1,21 +1,22 @@
 import { PlusIcon } from "lucide-react";
-import { TaskCard } from "@/components/kanban/kanban-card";
+import { KanbanCard } from "@/components/kanban/kanban-card";
 import type { Column } from "./types";
 import { useEffect, useRef, useState } from "react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { cn } from "@/lib/utils";
-import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { getStatusColor } from "./utils";
+import { useAutoScroll } from "@/hooks/use-auto-scroll";
 
 interface KanbanColumnProps {
   column: Column;
 }
 
-export function KanbanColumn({ column }: KanbanColumnProps) {
+export const KanbanColumn = ({ column }: KanbanColumnProps) => {
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  useAutoScroll(scrollRef);
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
@@ -34,14 +35,6 @@ export function KanbanColumn({ column }: KanbanColumnProps) {
       })
     );
   }, [column]);
-  useEffect(() => {
-    const element = scrollRef.current;
-    if (!element) return;
-
-    return autoScrollForElements({
-      element,
-    });
-  }, []);
 
   return (
     <div
@@ -62,11 +55,11 @@ export function KanbanColumn({ column }: KanbanColumnProps) {
           <PlusIcon className="h-4 w-4" />
         </button>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-3" ref={scrollRef}>
         {column.tasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
+          <KanbanCard key={task.id} task={task} />
         ))}
       </div>
     </div>
   );
-}
+};

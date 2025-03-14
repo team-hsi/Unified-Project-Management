@@ -35,3 +35,16 @@ export interface Column {
   type: string;
   tasks: Task[];
 }
+
+export interface MoveCardParams {
+  movedTaskIndexInSourceColumn: number;
+  sourceColumnId: string;
+  destinationColumnId: string;
+  movedTaskIndexInDestinationColumn: number;
+}
+
+export interface ReorderTaskParams {
+  columnId: string;
+  startIndex: number;
+  finishIndex: number;
+}
