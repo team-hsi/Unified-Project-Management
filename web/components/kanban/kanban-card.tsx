@@ -1,7 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageSquare, CircleCheck } from "lucide-react";
-import type { Task, Priority } from "./types";
+import type { Task } from "./types";
 import { useEffect, useRef, useState } from "react";
 import {
   draggable,
@@ -15,6 +13,8 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { DropIndicator } from "./drop-indicator";
 import { cn } from "@/lib/utils";
+import { TaskAssignees } from "./task/task-assignees";
+import { TaskPriorityBadge } from "./task/task-priority-badge";
 
 interface TaskCardProps {
   task: Task;
@@ -28,7 +28,7 @@ export function TaskCard({ task }: TaskCardProps) {
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
-    const cleanup = combine(
+    return combine(
       draggable({
         element,
         getInitialData: () => {
@@ -70,21 +70,7 @@ export function TaskCard({ task }: TaskCardProps) {
         },
       })
     );
-
-    return cleanup;
   }, [task]);
-  const getPriorityColor = (priority: Priority) => {
-    switch (priority) {
-      case "Low":
-        return "bg-cyan-500";
-      case "Medium":
-        return "bg-amber-500";
-      case "High":
-        return "bg-rose-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
 
   // Calculate completed subtasks
   const completedSubtasks = task.subtasks.filter(
@@ -100,21 +86,7 @@ export function TaskCard({ task }: TaskCardProps) {
       )}
       ref={ref}
     >
-      <div className="mb-2 flex items-center">
-        <Badge
-          variant="outline"
-          className={`rounded-full px-2 py-0.5 text-xs ${getPriorityColor(
-            task.priority
-          )} border-0 bg-opacity-10`}
-        >
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${getPriorityColor(
-              task.priority
-            )} mr-1`}
-          ></span>
-          {task.priority}
-        </Badge>
-      </div>
+      <TaskPriorityBadge priority={task.priority} />
       <h4 className="mb-1 font-medium text-gray-800">{task.title}</h4>
       {task.description && (
         <p className="mb-3 truncate text-sm text-gray-500">
@@ -123,18 +95,7 @@ export function TaskCard({ task }: TaskCardProps) {
       )}
 
       <div className="mt-2 flex items-center justify-between">
-        <div className="flex -space-x-2">
-          {task.assignees.map((assignee) => (
-            <Avatar key={assignee.id} className="h-6 w-6 border-2 border-white">
-              {assignee.avatar ? (
-                <AvatarImage src={assignee.avatar} alt={assignee.name} />
-              ) : null}
-              <AvatarFallback className="bg-gray-100 text-[10px] text-gray-600">
-                {assignee.initials}
-              </AvatarFallback>
-            </Avatar>
-          ))}
-        </div>
+        <TaskAssignees assignees={task.assignees} />
         <div className="flex items-center gap-3 text-xs text-gray-500">
           <div className="flex items-center gap-1">
             <MessageSquare className="h-3.5 w-3.5" />

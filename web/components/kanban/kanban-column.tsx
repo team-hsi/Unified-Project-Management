@@ -6,6 +6,7 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { cn } from "@/lib/utils";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { getStatusColor } from "./utils";
 
 interface KanbanColumnProps {
   column: Column;
@@ -41,21 +42,6 @@ export function KanbanColumn({ column }: KanbanColumnProps) {
       element,
     });
   }, []);
-
-  const getStatusColor = (columnId: string) => {
-    switch (columnId) {
-      case "todo":
-        return "border-2 border-gray-400";
-      case "progress":
-        return "border-2 border-blue-400";
-      case "review":
-        return "border-2 border-amber-400";
-      case "completed":
-        return "border-2 border-green-400";
-      default:
-        return "border-2 border-gray-400";
-    }
-  };
 
   return (
     <div
