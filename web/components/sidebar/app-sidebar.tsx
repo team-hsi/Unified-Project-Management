@@ -21,7 +21,7 @@ export const AppSidebar = ({
 }: React.ComponentProps<typeof Sidebar>) => {
   return (
     <Sidebar variant="inset" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="flex items-center justify-between h-16">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>

@@ -1,5 +1,7 @@
+import { KanbanBoard } from "@/components/kanban/kanban-board";
+
 const Page = () => {
-  return <div className="bg-muted/50 flex-1 rounded-xl" />;
+  return <KanbanBoard />;
 };
 
 export default Page;
