@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
-import { getPriorityColor } from "../utils";
+import { getPriorityColor } from "../kanban/utils";
 import { memo } from "react";
-import { Task } from "../types";
+import { Task } from "../kanban/types";
 
 interface TaskPriorityBadgeProps {
   priority: Task["priority"];
@@ -10,16 +10,16 @@ interface TaskPriorityBadgeProps {
 export const TaskPriorityBadge = memo(function TaskPriorityBadge({
   priority,
 }: TaskPriorityBadgeProps) {
-  const colorClass = getPriorityColor(priority);
+  const { bg, bgSpan } = getPriorityColor(priority);
 
   return (
     <div className="mb-2 flex items-center">
       <Badge
         variant="outline"
-        className={`rounded-full px-2 py-0.5 text-xs ${colorClass} border-0 bg-opacity-10`}
+        className={`rounded-sm px-2 py-0.5 text-xs ${bg}`}
       >
         <span
-          className={`h-1.5 w-1.5 rounded-full ${colorClass} mr-1`}
+          className={`h-1.5 w-1.5 rounded-full mr-1 ${bgSpan}`}
           aria-hidden="true"
         />
         {priority}

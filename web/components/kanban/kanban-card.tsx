@@ -13,8 +13,10 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { DropIndicator } from "./drop-indicator";
 import { cn } from "@/lib/utils";
-import { TaskAssignees } from "./task/task-assignees";
-import { TaskPriorityBadge } from "./task/task-priority-badge";
+import { TaskAssignees } from "@/components/task/task-assignees";
+import { TaskPriorityBadge } from "@/components/task/task-priority-badge";
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import { TaskSheet } from "../sheets/task-sheet";
 
 interface KanbanCardProps {
   task: Task;
@@ -82,38 +84,41 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
   }, [task]);
 
   return (
-    <div
-      className={cn(
-        "relative rounded-lg border border-gray-100 bg-white p-3 shadow-sm hover:cursor-grab",
-        { "opacity-50": isDragging }
-      )}
-      ref={ref}
-    >
-      <TaskPriorityBadge priority={task.priority} />
-      <h4 className="mb-1 font-medium text-gray-800">{task.title}</h4>
-      {task.description && (
-        <p className="mb-3 truncate text-sm text-gray-500">
-          {task.description}
-        </p>
-      )}
-
-      <div className="mt-2 flex items-center justify-between">
-        <TaskAssignees assignees={task.assignees} />
-        <div className="flex items-center gap-3 text-xs text-gray-500">
-          <div className="flex items-center gap-1">
-            <MessageSquare className="h-3.5 w-3.5" />
-          </div>
-          {totalSubtasks > 0 && (
-            <div className="flex items-center gap-1">
-              <CircleCheck className="h-3.5 w-3.5" />
-              <span>
-                {completedSubtasks}/{totalSubtasks}
-              </span>
-            </div>
+    <TaskSheet task={task}>
+      <Card
+        className={cn(
+          "relative rounded-sm border border-gray-100 bg-white p-3 shadow-sm hover:cursor-grab gap-0",
+          { "opacity-50": isDragging }
+        )}
+        ref={ref}
+      >
+        <CardHeader className="p-0 m-0">
+          <TaskPriorityBadge priority={task.priority} />
+        </CardHeader>
+        <CardContent className="p-0 border-b">
+          <h4 className="mb-1 font-medium text-gray-800">{task.title}</h4>
+          {task.description && (
+            <p className="mb-3 truncate text-sm text-gray-500">
+              {task.description}
+            </p>
           )}
-        </div>
-      </div>
-      {closestEdge && <DropIndicator edge={closestEdge} />}
-    </div>
+        </CardContent>
+        <CardFooter className="px-0 pt-2 flex items-center justify-between">
+          <TaskAssignees assignees={task.assignees} />
+          <div className="flex items-center gap-3 text-xs text-gray-500">
+            <MessageSquare className="h-3.5 w-3.5" />
+            {totalSubtasks > 0 && (
+              <div className="flex items-center gap-1">
+                <CircleCheck className="h-3.5 w-3.5" />
+                <span>
+                  {completedSubtasks}/{totalSubtasks}
+                </span>
+              </div>
+            )}
+          </div>
+        </CardFooter>
+        {closestEdge && <DropIndicator edge={closestEdge} />}
+      </Card>
+    </TaskSheet>
   );
 };

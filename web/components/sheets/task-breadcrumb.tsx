@@ -12,7 +12,7 @@ import { Button } from "../ui/button";
 
 export const TaskBreadcrumb = ({ segments }: { segments: string[] }) => {
   return (
-    <div className="flex h-16 shrink-0 items-center px-4 w-full gap-2 border-b">
+    <div className="flex h-12 shrink-0 items-center px-4 w-full gap-2 border-b">
       <Button size="icon" variant="ghost">
         <Maximize2 className=" text-muted-foreground rotate-90" size={15} />
       </Button>
@@ -31,7 +31,7 @@ export const TaskBreadcrumb = ({ segments }: { segments: string[] }) => {
                     {segment}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
-                {!isLast && <BreadcrumbSeparator className="hidden md:block" />}
+                {!isLast && <BreadcrumbSeparator> / </BreadcrumbSeparator>}
               </Fragment>
             );
           })}

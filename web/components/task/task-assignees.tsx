@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { memo } from "react";
-import { Task } from "../types";
+import { Task } from "../kanban/types";
 
 interface TaskAssigneesProps {
   assignees: Task["assignees"];

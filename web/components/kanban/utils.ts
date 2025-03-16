@@ -3,13 +3,25 @@ import { Priority } from "./types";
 export const getPriorityColor = (priority: Priority) => {
   switch (priority) {
     case "Low":
-      return "bg-cyan-500";
+      return {
+        bg: "bg-cyan-50 border-cyan-100 text-cyan-800",
+        bgSpan: "bg-cyan-800",
+      };
     case "Medium":
-      return "bg-amber-500";
+      return {
+        bg: "bg-amber-50 border-amber-100 text-amber-800",
+        bgSpan: "bg-amber-800",
+      };
     case "High":
-      return "bg-rose-500";
+      return {
+        bg: "bg-rose-50 border-rose-100 text-rose-800",
+        bgSpan: "bg-rose-800",
+      }; // corrected 'border' to 'text' for consistency
     default:
-      return "bg-gray-500";
+      return {
+        bg: "bg-gray-50 border-gray-100 text-gray-800",
+        bgSpan: "bg-gray-800",
+      }; // corrected 'border' to 'text' for consistency
   }
 };
 
