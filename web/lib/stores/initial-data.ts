@@ -1,6 +1,6 @@
-import { Column } from "./types";
+import { Column } from "../../components/kanban/types";
 
-export const data: Column[] = [
+export const boardData: Column[] = [
   {
     id: "todo",
     title: "To-do",
