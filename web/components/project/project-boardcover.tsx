@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Move, Search } from "lucide-react";
+import { Move, Edit, Search } from "lucide-react";
 import { useImageDrag } from "@/hooks/use-image-drag";
 import { useImageUpload } from "@/hooks/use-image-upload";
 import { useUnsplash } from "@/hooks/use-unsplash";
@@ -131,7 +131,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
               size="sm"
               onClick={() => setIsTabOpen(true)}
             >
-              <span className="w-4 h-4 mr-2">🖼</span>
+              <Edit className="w-4 h-4 mr-2" />
               Change Cover
             </Button>
             <Button variant="secondary" size="sm">
