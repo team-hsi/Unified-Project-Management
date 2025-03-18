@@ -46,8 +46,9 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
   const [activeTab, setActiveTab] = useState("gallery");
   const [linkInput, setLinkInput] = useState("");
   const [isRepositioning, setIsRepositioning] = useState(false);
+  const [savedPosition, setSavedPosition] = useState({ x: 0, y: 0 }); // Persist position
 
-  const { position, bind, resetPosition, setPosition } = useImageDrag();
+  const { position, bind, resetPosition } = useImageDrag(); // Removed setPosition
   const {
     coverImage,
     setCoverImage,
@@ -55,7 +56,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     error: uploadError,
     handleImageUpload,
   } = useImageUpload(initialImage);
-  const coverRef = useRef<HTMLDivElement>(null); // Replaced useOverlay with useRef
+  const coverRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const repositionButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -69,11 +70,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
         overlayRef.current &&
         !overlayRef.current.contains(event.target as Node)
       ) {
-        // Optional: Uncomment for debugging
-        // console.log("Clicked outside, closing modal");
         setIsTabOpen(false);
-      } else {
-        // console.log("Clicked inside modal, keeping open");
       }
     };
 
@@ -89,6 +86,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     e.stopPropagation();
     setCoverImage("/default-cover.jpg");
     resetPosition();
+    setSavedPosition({ x: 0, y: 0 });
   };
 
   const handleLinkSubmit = (e: React.FormEvent) => {
@@ -98,6 +96,8 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
       setCoverImage(linkInput);
       setIsTabOpen(false);
       setLinkInput("");
+      resetPosition();
+      setSavedPosition({ x: 0, y: 0 });
     }
   };
 
@@ -124,12 +124,13 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
 
   const handleSavePosition = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setSavedPosition({ x: position.x, y: position.y }); // Save the dragged position
     setIsRepositioning(false);
   };
 
   const handleCancelReposition = (e: React.MouseEvent) => {
     e.stopPropagation();
-    resetPosition();
+    resetPosition(); // Reset drag state to 0,0, but UI will use savedPosition
     setIsRepositioning(false);
   };
 
@@ -138,15 +139,18 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     setIsTabOpen(true);
   };
 
+  // Use savedPosition when not repositioning, position when dragging
+  const displayPosition = isRepositioning ? position : savedPosition;
+
   return (
     <div className="relative w-full h-48 rounded-lg bg-blue-300">
       <div
         ref={coverRef}
-        {...bind()}
+        {...(isRepositioning ? bind() : {})} // Only bind drag handlers when repositioning
         className="w-full h-full bg-cover bg-center rounded-lg relative overflow-hidden"
         style={{
           backgroundImage: `url(${coverImage})`,
-          backgroundPosition: `${position.x}px ${position.y}px`,
+          backgroundPosition: `${displayPosition.x}px ${displayPosition.y}px`,
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -257,6 +261,8 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
                             e.stopPropagation();
                             setCoverImage(src);
                             setIsTabOpen(false);
+                            resetPosition();
+                            setSavedPosition({ x: 0, y: 0 });
                           }}
                         />
                       ))}
@@ -309,7 +315,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
                     type="submit"
                     disabled={isLoading || !linkInput.trim()}
                     className="w-48 !bg-black text-white hover:bg-gray-800 disabled:!bg-black disabled:opacity-50"
-                    onClick={(e) => e.stopPropagation()} // Extra precaution
+                    onClick={(e) => e.stopPropagation()}
                   >
                     Submit
                   </Button>
@@ -325,6 +331,8 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
                 onSelectImage={(url) => {
                   setCoverImage(url);
                   setIsTabOpen(false);
+                  resetPosition();
+                  setSavedPosition({ x: 0, y: 0 });
                 }}
               />
             </TabsContent>
