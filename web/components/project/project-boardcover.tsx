@@ -1,21 +1,17 @@
-// components/BoardCover.tsx
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useDrag } from "@use-gesture/react";
-import { Image, Move, Search } from "lucide-react";
+import { Move, Search } from "lucide-react";
+import { useImageDrag } from "@/hooks/use-image-drag";
+import { useImageUpload } from "@/hooks/use-image-upload";
+import { useUnsplash } from "@/hooks/use-unsplash";
+import { useOverlay } from "@/hooks/use-overlay";
+import Image from "next/image";
 
 interface BoardCoverProps {
   initialImage?: string;
-}
-
-interface UnsplashImage {
-  id: string;
-  url: string;
-  thumb: string;
-  description?: string;
 }
 
 const galleryImages = {
@@ -46,135 +42,35 @@ const galleryImages = {
 };
 
 export default function BoardCover({ initialImage }: BoardCoverProps) {
-  const [coverImage, setCoverImage] = useState(
-    initialImage || "/default-cover.jpg"
-  );
   const [isHovered, setIsHovered] = useState(false);
   const [isTabOpen, setIsTabOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [unsplashImages, setUnsplashImages] = useState<UnsplashImage[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [linkInput, setLinkInput] = useState("");
-  const coverRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
 
-  // Drag functionality for repositioning
-  const bind = useDrag(({ offset: [x, y] }) => {
-    setPosition({ x, y });
-  });
+  const { position, bind, resetPosition } = useImageDrag();
+  const {
+    coverImage,
+    setCoverImage,
+    isLoading: uploadLoading,
+    error: uploadError,
+    handleImageUpload,
+  } = useImageUpload(initialImage);
+  const {
+    unsplashImages,
+    isLoading: unsplashLoading,
+    error: unsplashError,
+    searchQuery,
+    setSearchQuery,
+    fetchUnsplashImages,
+  } = useUnsplash();
+  const coverRef = useOverlay(isTabOpen, () => setIsTabOpen(false));
+  const overlayRef = useOverlay(isTabOpen, () => setIsTabOpen(false));
 
-  // Close overlay when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        overlayRef.current &&
-        !overlayRef.current.contains(event.target as Node) &&
-        coverRef.current &&
-        !coverRef.current.contains(event.target as Node)
-      ) {
-        setIsTabOpen(false);
-      }
-    };
-
-    if (isTabOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isTabOpen]);
-
-  // Initial Unsplash images fetch
-  useEffect(() => {
-    if (isTabOpen && unsplashImages.length === 0) {
-      fetchUnsplashImages();
-    }
-  }, [isTabOpen]);
-
-  // Image upload handler with error handling
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      if (!file.type.startsWith("image/")) {
-        throw new Error("Please upload an image file");
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        throw new Error("Image must be smaller than 5MB");
-      }
-
-      const imageUrl = URL.createObjectURL(file);
-      setCoverImage(imageUrl);
-      setIsTabOpen(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error uploading image");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Unsplash API integration with improved error handling
-  const fetchUnsplashImages = async (query?: string) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const endpoint = query
-        ? `/api/unsplash-images?query=${encodeURIComponent(query)}`
-        : "/api/unsplash-images";
-      const response = await fetch(endpoint);
-
-      console.log("Fetch response status:", response.status);
-      console.log("Fetch response ok:", response.ok);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("Raw API response:", JSON.stringify(data, null, 2));
-
-      // Check for API-level errors in the response body
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      // Ensure data is an array
-      if (!Array.isArray(data)) {
-        console.error("Expected an array but got:", data);
-        throw new Error("Invalid response format: Expected an array");
-      }
-
-      const images = data.map((img: any) => ({
-        id: img.id,
-        url: img.url,
-        thumb: img.thumb,
-        description: img.description,
-      }));
-
-      console.log("Processed images:", JSON.stringify(images, null, 2));
-      setUnsplashImages(images);
-    } catch (err) {
-      console.error("Fetch error:", err);
-      setError(
-        err instanceof Error ? err.message : "Failed to fetch Unsplash images"
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const isLoading = uploadLoading || unsplashLoading;
+  const error = uploadError || unsplashError;
 
   const handleRemoveCover = () => {
     setCoverImage("/default-cover.jpg");
-    setPosition({ x: 0, y: 0 });
+    resetPosition();
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -184,7 +80,6 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     }
   };
 
-  // Handle link submission
   const handleLinkSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (linkInput.trim()) {
@@ -194,7 +89,6 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     }
   };
 
-  // Unsplash SVG Icon
   const UnsplashIcon = () => (
     <svg
       width="16"
@@ -213,7 +107,6 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
 
   return (
     <div className="relative w-full h-48 rounded-lg bg-blue-300">
-      {/* Cover Image with drag functionality */}
       <div
         ref={coverRef}
         {...bind()}
@@ -225,14 +118,12 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Loading Overlay */}
         {isLoading && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
           </div>
         )}
 
-        {/* Hover Buttons */}
         {isHovered && !isTabOpen && (
           <div className="absolute top-2 right-2 flex gap-2">
             <Button
@@ -240,7 +131,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
               size="sm"
               onClick={() => setIsTabOpen(true)}
             >
-              <Image className="w-4 h-4 mr-2" />
+              <span className="w-4 h-4 mr-2">🖼</span>
               Change Cover
             </Button>
             <Button variant="secondary" size="sm">
@@ -251,7 +142,6 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
         )}
       </div>
 
-      {/* Change Cover Tabs */}
       {isTabOpen && (
         <div
           ref={overlayRef}
@@ -282,7 +172,6 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
               </span>
             </div>
 
-            {/* Gallery Content */}
             <TabsContent value="gallery">
               <div className="space-y-4 p-4 bg-white">
                 {Object.entries(galleryImages).map(([category, images]) => (
@@ -290,9 +179,11 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
                     <h3 className="text-lg font-semibold mb-2">{category}</h3>
                     <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
                       {images.map((src, index) => (
-                        <img
+                        <Image
                           key={index}
                           src={src}
+                          width={150}
+                          height={150}
                           alt={category}
                           className="h-20 w-full object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
                           onClick={() => setCoverImage(src)}
@@ -304,7 +195,6 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
               </div>
             </TabsContent>
 
-            {/* Upload Tab */}
             <TabsContent value="upload">
               <div className="space-y-2">
                 <label htmlFor="file-upload" className="block">
@@ -332,7 +222,6 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
               </div>
             </TabsContent>
 
-            {/* Link Tab */}
             <TabsContent value="link">
               <form onSubmit={handleLinkSubmit} className="space-y-2">
                 <input
@@ -358,7 +247,6 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
               </form>
             </TabsContent>
 
-            {/* Unsplash Tab */}
             <TabsContent value="unsplash">
               <form onSubmit={handleSearch} className="mb-4">
                 <div className="relative">
@@ -375,7 +263,8 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
               </form>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                {unsplashImages.map((image) => (
+                {/* eslint-disable-next-line */}
+                {unsplashImages.map((image: any) => (
                   <div
                     key={image.id}
                     className="relative h-32 rounded cursor-pointer hover:opacity-80 overflow-hidden"
@@ -384,10 +273,12 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
                       setIsTabOpen(false);
                     }}
                   >
-                    <img
+                    <Image
                       src={image.thumb}
                       alt={image.description || "Unsplash image"}
                       className="w-full h-full object-cover"
+                      width={150}
+                      height={150}
                     />
                   </div>
                 ))}

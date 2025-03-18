@@ -1,4 +1,4 @@
-import BoardCover from "@/components/project/project-craftboard";
+import BoardCover from "@/components/project/project-boardcover";
 
 const Page = () => {
   return (

@@ -37,6 +37,7 @@ export const useUnsplash = () => {
         throw new Error("Invalid response format: Expected an array");
       }
 
+      //eslint-disable-next-line
       const images = data.map((img: any) => ({
         id: img.id,
         url: img.url,
