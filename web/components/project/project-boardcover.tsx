@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Move, Edit, Search } from "lucide-react";
+import { Move, Edit } from "lucide-react";
 import { useImageDrag } from "@/hooks/use-image-drag";
 import { useImageUpload } from "@/hooks/use-image-upload";
-import { useUnsplash } from "@/hooks/use-unsplash";
-import { useOverlay } from "@/hooks/use-overlay";
 import Image from "next/image";
+import UnsplashTabContent from "./UnsplashTabContent";
 
 interface BoardCoverProps {
   initialImage?: string;
@@ -44,9 +43,11 @@ const galleryImages = {
 export default function BoardCover({ initialImage }: BoardCoverProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isTabOpen, setIsTabOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("gallery");
   const [linkInput, setLinkInput] = useState("");
+  const [isRepositioning, setIsRepositioning] = useState(false);
 
-  const { position, bind, resetPosition } = useImageDrag();
+  const { position, bind, resetPosition, setPosition } = useImageDrag();
   const {
     coverImage,
     setCoverImage,
@@ -54,34 +55,45 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     error: uploadError,
     handleImageUpload,
   } = useImageUpload(initialImage);
-  const {
-    unsplashImages,
-    isLoading: unsplashLoading,
-    error: unsplashError,
-    searchQuery,
-    setSearchQuery,
-    fetchUnsplashImages,
-  } = useUnsplash();
-  const coverRef = useOverlay(isTabOpen, () => setIsTabOpen(false));
-  const overlayRef = useOverlay(isTabOpen, () => setIsTabOpen(false));
+  const coverRef = useRef<HTMLDivElement>(null); // Replaced useOverlay with useRef
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const repositionButtonRef = useRef<HTMLButtonElement>(null);
 
-  const isLoading = uploadLoading || unsplashLoading;
-  const error = uploadError || unsplashError;
+  const isLoading = uploadLoading;
+  const error = uploadError;
 
-  const handleRemoveCover = () => {
+  // Manual click-outside handler
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        overlayRef.current &&
+        !overlayRef.current.contains(event.target as Node)
+      ) {
+        // Optional: Uncomment for debugging
+        // console.log("Clicked outside, closing modal");
+        setIsTabOpen(false);
+      } else {
+        // console.log("Clicked inside modal, keeping open");
+      }
+    };
+
+    if (isTabOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isTabOpen]);
+
+  const handleRemoveCover = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setCoverImage("/default-cover.jpg");
     resetPosition();
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      fetchUnsplashImages(searchQuery);
-    }
-  };
-
   const handleLinkSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (linkInput.trim()) {
       setCoverImage(linkInput);
       setIsTabOpen(false);
@@ -105,6 +117,27 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
     </svg>
   );
 
+  const handleReposition = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsRepositioning(true);
+  };
+
+  const handleSavePosition = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsRepositioning(false);
+  };
+
+  const handleCancelReposition = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    resetPosition();
+    setIsRepositioning(false);
+  };
+
+  const handleChangeCover = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsTabOpen(true);
+  };
+
   return (
     <div className="relative w-full h-48 rounded-lg bg-blue-300">
       <div
@@ -124,19 +157,35 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
           </div>
         )}
 
-        {isHovered && !isTabOpen && (
+        {isHovered && !isTabOpen && !isRepositioning && (
           <div className="absolute top-2 right-2 flex gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setIsTabOpen(true)}
-            >
+            <Button variant="secondary" size="sm" onClick={handleChangeCover}>
               <Edit className="w-4 h-4 mr-2" />
               Change Cover
             </Button>
-            <Button variant="secondary" size="sm">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleReposition}
+              ref={repositionButtonRef}
+            >
               <Move className="w-4 h-4 mr-2" />
               Reposition
+            </Button>
+          </div>
+        )}
+
+        {isRepositioning && (
+          <div className="absolute top-2 right-2 flex gap-2">
+            <Button variant="secondary" size="sm" onClick={handleSavePosition}>
+              Save Position
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleCancelReposition}
+            >
+              Cancel
             </Button>
           </div>
         )}
@@ -146,17 +195,35 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
         <div
           ref={overlayRef}
           className="absolute top-12 right-2 w-96 sm:w-112 lg:w-[768px] h-[448px] bg-background border rounded-lg shadow-lg p-4 max-w-full overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
         >
           {error && <div className="text-red-500 mb-2 text-sm">{error}</div>}
 
-          <Tabs defaultValue="gallery" className="w-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <div className="flex justify-between items-center mb-4">
               <TabsList>
-                <TabsTrigger value="gallery">Gallery</TabsTrigger>
-                <TabsTrigger value="upload">Upload</TabsTrigger>
-                <TabsTrigger value="link">Link</TabsTrigger>
+                <TabsTrigger
+                  value="gallery"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Gallery
+                </TabsTrigger>
+                <TabsTrigger
+                  value="upload"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Upload
+                </TabsTrigger>
+                <TabsTrigger value="link" onClick={(e) => e.stopPropagation()}>
+                  Link
+                </TabsTrigger>
                 <TabsTrigger
                   value="unsplash"
+                  onClick={(e) => e.stopPropagation()}
                   className="flex items-center gap-2"
                 >
                   <UnsplashIcon />
@@ -186,7 +253,11 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
                           height={150}
                           alt={category}
                           className="h-20 w-full object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
-                          onClick={() => setCoverImage(src)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCoverImage(src);
+                            setIsTabOpen(false);
+                          }}
                         />
                       ))}
                     </div>
@@ -229,6 +300,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
                   placeholder="Paste image URL"
                   value={linkInput}
                   onChange={(e) => setLinkInput(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
                   className="w-full p-2 border rounded"
                   disabled={isLoading}
                 />
@@ -237,6 +309,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
                     type="submit"
                     disabled={isLoading || !linkInput.trim()}
                     className="w-48 !bg-black text-white hover:bg-gray-800 disabled:!bg-black disabled:opacity-50"
+                    onClick={(e) => e.stopPropagation()} // Extra precaution
                   >
                     Submit
                   </Button>
@@ -248,50 +321,12 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
             </TabsContent>
 
             <TabsContent value="unsplash">
-              <form onSubmit={handleSearch} className="mb-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search Unsplash photos..."
-                    className="w-full pl-10 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    disabled={isLoading}
-                  />
-                </div>
-              </form>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                {/* eslint-disable-next-line */}
-                {unsplashImages.map((image: any) => (
-                  <div
-                    key={image.id}
-                    className="relative h-32 rounded cursor-pointer hover:opacity-80 overflow-hidden"
-                    onClick={() => {
-                      setCoverImage(image.url);
-                      setIsTabOpen(false);
-                    }}
-                  >
-                    <Image
-                      src={image.thumb}
-                      alt={image.description || "Unsplash image"}
-                      className="w-full h-full object-cover"
-                      width={150}
-                      height={150}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              <Button
-                onClick={() => fetchUnsplashImages(searchQuery || undefined)}
-                disabled={isLoading}
-                className="w-full mt-4"
-                variant="outline"
-              >
-                Load More Photos
-              </Button>
+              <UnsplashTabContent
+                onSelectImage={(url) => {
+                  setCoverImage(url);
+                  setIsTabOpen(false);
+                }}
+              />
             </TabsContent>
           </Tabs>
         </div>
