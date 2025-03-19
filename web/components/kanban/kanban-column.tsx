@@ -38,7 +38,10 @@ export const KanbanColumn = ({ column }: KanbanColumnProps) => {
 
   return (
     <div
-      className={cn("rounded-lg p-4", { "bg-blue-50": isDraggedOver })}
+      className={cn("rounded-lg p-4 h-[70vh] flex flex-col max-w-92", {
+        // [getStatusColor(column.id)]: true,
+        "bg-blue-50": isDraggedOver,
+      })}
       ref={ref}
     >
       <div className="bg-muted mb-4 flex items-center justify-between rounded-md p-2">
@@ -55,7 +58,7 @@ export const KanbanColumn = ({ column }: KanbanColumnProps) => {
           <PlusIcon className="h-4 w-4" />
         </button>
       </div>
-      <div className="space-y-3" ref={scrollRef}>
+      <div className="space-y-3 flex-1 overflow-y-auto" ref={scrollRef}>
         {column.tasks.map((task) => (
           <KanbanCard key={task.id} task={task} />
         ))}

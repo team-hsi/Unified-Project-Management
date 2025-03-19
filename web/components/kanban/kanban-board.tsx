@@ -1,16 +1,14 @@
 "use client";
 import { KanbanColumn } from "@/components/kanban/kanban-column";
-import { data } from "@/components/kanban/kanban-data";
 import { useKanbanBoard } from "@/hooks/use-kanban-board";
 import type { Column } from "./types";
 
 export const KanbanBoard = () => {
-  const { columns } = useKanbanBoard(data);
-
+  const { board } = useKanbanBoard();
   return (
-    <div className="min-h-screen p-4">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {columns.map((column: Column) => (
+    <div className=" w-full p-4">
+      <div className="grid w-fit mx-auto grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {board.map((column: Column) => (
           <KanbanColumn key={column.id} column={column} />
         ))}
       </div>
