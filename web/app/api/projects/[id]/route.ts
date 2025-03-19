@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server";
+
 import type { Column } from "@/components/kanban/types";
 import type { Task } from "@/components/task/types";
 
@@ -47,7 +49,7 @@ const todo: Task[] = [
   },
 ];
 
-export const inProgress: Task[] = [
+const inProgress: Task[] = [
   {
     id: "task2",
     title: "Dark Mode Implementation",
@@ -62,7 +64,6 @@ export const inProgress: Task[] = [
     childTasksCount: 3,
     childTasksCompleted: 1,
   },
-
   {
     id: "task4",
     title: "Settings Page Redesign",
@@ -82,6 +83,7 @@ export const inProgress: Task[] = [
     childTasksCompleted: 2,
   },
 ];
+
 const completed: Task[] = [
   {
     id: "task7",
@@ -97,7 +99,6 @@ const completed: Task[] = [
     childTasksCount: 4,
     childTasksCompleted: 3,
   },
-
   {
     id: "task9",
     title: "Design System & Style Guide",
@@ -114,26 +115,41 @@ const completed: Task[] = [
   },
 ];
 
-export const boardData: Column[] = [
+const boardData: Column[] = [
   {
     id: "to-do",
     title: "To-do",
-    count: 3,
+    count: todo.length,
     type: "column",
     tasks: todo,
   },
   {
     id: "in-progress",
     title: "In Progress",
-    count: 2,
+    count: inProgress.length,
     type: "column",
     tasks: inProgress,
   },
   {
     id: "completed",
     title: "Completed",
-    count: 4,
+    count: completed.length,
     type: "column",
     tasks: completed,
   },
 ];
+
+export async function GET() {
+  try {
+    // Simulate a slight delay to mimic a real API
+    // await new Promise((resolve) => setTimeout(resolve, 500));
+
+    return NextResponse.json(boardData, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching board data:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch board data" },
+      { status: 500 }
+    );
+  }
+}

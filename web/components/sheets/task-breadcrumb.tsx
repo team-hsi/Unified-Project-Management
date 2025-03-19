@@ -6,16 +6,23 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
-import { Edit, Maximize2, MoreHorizontal } from "lucide-react";
+import { ChevronsRight, Edit, Maximize2, MoreHorizontal } from "lucide-react";
 import { Fragment } from "react";
 import { Button } from "../ui/button";
+import { SheetClose } from "../ui/sheet";
+import Link from "next/link";
 
 export const TaskBreadcrumb = ({ segments }: { segments: string[] }) => {
   return (
     <div className="flex h-12 shrink-0 items-center px-4 w-full gap-2 border-b">
-      <Button size="icon" variant="ghost">
-        <Maximize2 className=" text-muted-foreground rotate-90" size={15} />
-      </Button>
+      <SheetClose className=" h-7 w-7 grid rounded-md justify-center items-center hover:bg-accent hover:text-accent-foreground">
+        <ChevronsRight size={17} className=" text-muted-foreground" />
+      </SheetClose>
+      <Link href={`/projects/${segments[0]}/tasks`}>
+        <Button size="icon" variant="ghost">
+          <Maximize2 className=" text-muted-foreground rotate-90" size={15} />
+        </Button>
+      </Link>
       <Separator
         orientation="vertical"
         className="mr-2 data-[orientation=vertical]:h-4"

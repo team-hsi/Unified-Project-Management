@@ -10,12 +10,14 @@ export interface Task {
   tags: string[];
   type: string;
   priority: Priority;
-  status: Status;
+  status: string;
   assignees: User[];
   comments: number;
-  subtasks: Subtask[];
+  parentTaskId: string | null;
+  childTasksCount?: number;
+  childTasksCompleted?: number;
+  completed?: boolean;
 }
-
 export interface Subtask {
   id: string;
   title: string;

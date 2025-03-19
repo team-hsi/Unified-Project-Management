@@ -1,4 +1,4 @@
-import { Folder, MoreHorizontal, Share, Trash2 } from "lucide-react";
+import { Folder, MoreHorizontal, Plus, Share, Trash2 } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -18,9 +18,12 @@ import {
 } from "@/components/ui/sidebar";
 import { Project } from "./types";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export const NavProjects = ({ projects }: { projects: Project[] }) => {
   const { isMobile } = useSidebar();
+  const pathname = usePathname();
+  const segments = pathname.split("/").filter(Boolean);
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -28,8 +31,14 @@ export const NavProjects = ({ projects }: { projects: Project[] }) => {
       <SidebarMenu>
         {projects.map((project: Project) => (
           <SidebarMenuItem key={project.name}>
-            <SidebarMenuButton asChild>
-              <Link href={`/projects/${encodeURIComponent(project.name)}`}>
+            <SidebarMenuButton
+              asChild
+              isActive={segments.includes(encodeURIComponent(project.name))}
+            >
+              <Link
+                href={`/projects/${encodeURIComponent(project.name)}`}
+                className=" text-primary"
+              >
                 {project.name}
               </Link>
             </SidebarMenuButton>
@@ -62,6 +71,12 @@ export const NavProjects = ({ projects }: { projects: Project[] }) => {
             </DropdownMenu>
           </SidebarMenuItem>
         ))}
+        <SidebarMenuItem>
+          <SidebarMenuButton>
+            <Plus />
+            <span>Create New</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
   );

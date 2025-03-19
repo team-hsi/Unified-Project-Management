@@ -13,7 +13,7 @@ export const TaskPriorityBadge = memo(function TaskPriorityBadge({
   const { badgeBg, pingBg } = getPriorityColor(priority);
 
   return (
-    <div className="mb-2 flex items-center">
+    <div className="flex items-center">
       <Badge
         variant="outline"
         className={`rounded-sm px-2 py-0.5 text-xs ${badgeBg}`}

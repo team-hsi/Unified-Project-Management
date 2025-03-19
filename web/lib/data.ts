@@ -1,11 +1,13 @@
 import {
   AudioWaveform,
+  Bell,
   Command,
   Frame,
   GalleryVerticalEnd,
   Map,
   PieChart,
-  SquareTerminal,
+  Search,
+  Settings,
 } from "lucide-react";
 export const data = {
   user: {
@@ -32,22 +34,23 @@ export const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Menus",
       url: "#",
-      icon: SquareTerminal,
-      isActive: true,
       items: [
         {
-          title: "History",
+          title: "Search",
           url: "#",
+          icon: Search,
         },
         {
-          title: "Starred",
+          title: "Notifications",
           url: "#",
+          icon: Bell,
         },
         {
           title: "Settings",
           url: "#",
+          icon: Settings,
         },
       ],
     },

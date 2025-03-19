@@ -1,17 +1,14 @@
 "use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "../ui/checkbox";
-import { Label } from "../ui/label";
-import { Card } from "../ui/card";
-import { Task } from "../kanban/types";
-export const TaskWorkflow = ({ subtasks }: { subtasks: Task["subtasks"] }) => {
+export const TaskWorkflow = () => {
+  //TODO: Implement the  Subtasks, Comments and Activities tabs
   return (
-    <div className="px-6">
+    <div className=" w-4/5 mx-auto">
       <Tabs defaultValue="subtasks">
-        <TabsList className="h-auto rounded-none border-b border-border bg-transparent p-0">
+        <TabsList className="h-auto rounded-none border-b border-border bg-transparent w-full pb-0">
           <TabsTrigger
             value="subtasks"
-            className="underline-tab data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:bg-primary"
+            className="underline-tab data-[state=active]:bg-transparent flex-1 data-[state=active]:shadow-none data-[state=active]:after:bg-primary"
           >
             Subtasks
           </TabsTrigger>
@@ -29,32 +26,9 @@ export const TaskWorkflow = ({ subtasks }: { subtasks: Task["subtasks"] }) => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="subtasks" className="flex flex-col gap-3">
-          <div className="flex justify-between items-center mb-4">
-            <p>Completed</p>
-            <p>
-              {subtasks.filter((subtask) => subtask.completed).length} /{" "}
-              {subtasks.length}
-            </p>
-          </div>
-          {subtasks.map((subtask) => (
-            <Card
-              key={subtask.id}
-              className="border-input has-data-[state=checked]:border-ring flex w-full items-start rounded-md border p-4 shadow-xs"
-            >
-              <div className="colored-checkbox">
-                <Checkbox
-                  id={`test-${subtask.id}`}
-                  defaultChecked={subtask.completed}
-                />
-                <Label
-                  htmlFor={`test-${subtask.id}`}
-                  className="checked-line-through "
-                >
-                  {subtask.title}
-                </Label>
-              </div>
-            </Card>
-          ))}
+          <p className="p-4 text-center text-xs text-muted-foreground">
+            Content for Tab 1
+          </p>
         </TabsContent>
         <TabsContent value="comments">
           <p className="p-4 text-center text-xs text-muted-foreground">

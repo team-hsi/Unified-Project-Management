@@ -16,11 +16,8 @@ import {
 import { TeamSwitcher } from "../user/team-switcher";
 import { data } from "@/lib/data";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { fetchProjects } from "@/actions/project-actions";
 
-const fetchProjects = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects`);
-  return res.json();
-};
 export const AppSidebar = ({
   ...props
 }: React.ComponentProps<typeof Sidebar>) => {
@@ -28,6 +25,7 @@ export const AppSidebar = ({
     queryKey: ["projects"],
     queryFn: fetchProjects,
   });
+  console.log("projects", projects);
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader className="flex items-center justify-between h-16">

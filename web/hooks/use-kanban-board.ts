@@ -12,9 +12,16 @@ import {
   BaseEventPayload,
   ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { fetchTasks } from "@/actions/task-actions";
 
-export const useKanbanBoard = (initialData: Column[]) => {
-  const [board, setBoard] = React.useState<Column[]>(initialData);
+export const useKanbanBoard = () => {
+  const { data } = useSuspenseQuery({
+    queryKey: ["board"],
+    queryFn: fetchTasks,
+  });
+
+  const [board, setBoard] = React.useState<Column[]>(data || []);
 
   const moveCard = React.useCallback(
     ({
