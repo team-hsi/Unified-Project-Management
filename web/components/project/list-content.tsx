@@ -43,10 +43,96 @@ interface TaskSection {
 }
 
 const initialTasks: TaskSection[] = [
-  // ... (keeping your initialTasks data the same)
+  {
+    title: "To-do",
+    tasks: [
+      {
+        id: "1",
+        name: "Employee Details",
+        description: "Create a page where there is information about employees",
+        estimation: "Feb 14, 2024 - Feb 1, 2024",
+        type: "Dashboard",
+        people: ["AI", "BT"],
+        priority: "Medium",
+      },
+      {
+        id: "2",
+        name: "Darkmode version",
+        description: "Darkmode version for all screens",
+        estimation: "Feb 14, 2024 - Feb 1, 2024",
+        type: "Mobile App",
+        people: ["AI", "BT"],
+        priority: "Low",
+      },
+      {
+        id: "3",
+        name: "Super Admin Role",
+        description: "-",
+        estimation: "Feb 14, 2024 - Feb 1, 2024",
+        type: "Dashboard",
+        people: ["AI", "BT"],
+        priority: "Medium",
+      },
+    ],
+  },
+  {
+    title: "In Progress",
+    tasks: [
+      {
+        id: "4",
+        name: "Super Admin Role",
+        description: "-",
+        estimation: "Feb 14, 2024 - Feb 1, 2024",
+        type: "Dashboard",
+        people: ["DT"],
+        priority: "High",
+      },
+      {
+        id: "5",
+        name: "Settings Page",
+        description: "-",
+        estimation: "Feb 14, 2024 - Feb 1, 2024",
+        type: "Mobile App",
+        people: ["DT"],
+        priority: "Medium",
+      },
+      {
+        id: "6",
+        name: "KPI and Employee Statistics",
+        description:
+          "Create a design that displays KPIs and employee statistics",
+        estimation: "Feb 14, 2024 - Feb 1, 2024",
+        type: "Dashboard",
+        people: ["DT"],
+        priority: "Low",
+      },
+    ],
+  },
+  {
+    title: "In Review",
+    tasks: [
+      {
+        id: "7",
+        name: "Customer Role",
+        description: "-",
+        estimation: "Feb 14, 2024 - Feb 1, 2024",
+        type: "Dashboard",
+        people: ["AI", "DT"],
+        priority: "Medium",
+      },
+      {
+        id: "8",
+        name: "Admin Role",
+        description:
+          "Set up with relevant information such as profile picture, phone number etc",
+        estimation: "Feb 14, 2024 - Feb 1, 2024",
+        type: "Mobile App",
+        people: ["AI", "DT"],
+        priority: "High",
+      },
+    ],
+  },
 ];
-
-// ... (keeping your interfaces the same)
 
 const TaskList = () => {
   const [tasks, setTasks] = useState<TaskSection[]>(initialTasks);
@@ -57,6 +143,7 @@ const TaskList = () => {
   });
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
 
+  //eslint-disable-next-line
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
 
@@ -125,7 +212,8 @@ const TaskList = () => {
           </CollapsibleTrigger>
           <CollapsibleContent>
             <Droppable droppableId={section.title}>
-              {(provided) => (
+              {/*eslint-disable-next-line */}
+              {(provided: any) => (
                 <table
                   ref={provided.innerRef}
                   {...provided.droppableProps}
@@ -139,7 +227,6 @@ const TaskList = () => {
                             selectedTasks.length === section.tasks.length &&
                             section.tasks.length > 0
                           }
-                          className="border border-gray-400"
                           onCheckedChange={() => handleSelectAll(section)}
                         />
                       </th>
@@ -179,7 +266,8 @@ const TaskList = () => {
                         draggableId={task.id}
                         index={index}
                       >
-                        {(provided) => (
+                        {/*eslint-disable-next-line */}
+                        {(provided: any) => (
                           <tr
                             ref={provided.innerRef}
                             {...provided.draggableProps}
