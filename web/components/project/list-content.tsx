@@ -118,7 +118,7 @@ const TaskList = () => {
           className="mb-4"
         >
           <CollapsibleTrigger asChild>
-            <Button variant="ghost" className="w-full justify-between">
+            <Button variant="ghost" className="w-full justify-between text-lg">
               {section.title} ({section.tasks.length})
               {isOpen[section.title] ? <ChevronUp /> : <ChevronDown />}
             </Button>
