@@ -1,5 +1,5 @@
 import { MessageSquare, CircleCheck } from "lucide-react";
-import type { Task } from "./types";
+import type { Task } from "@/components/task/types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   draggable,

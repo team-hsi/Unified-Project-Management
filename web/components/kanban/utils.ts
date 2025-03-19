@@ -1,26 +1,30 @@
-import { Priority } from "./types";
+import { Priority } from "@/components/task/types";
 
 export const getPriorityColor = (priority: Priority) => {
   switch (priority) {
     case "Low":
       return {
-        bg: "bg-cyan-50 border-cyan-100 text-cyan-800",
-        bgSpan: "bg-cyan-800",
+        badgeBg: "bg-cyan-50  text-cyan-800",
+        pingBg: "bg-cyan-800",
+        parentTask: " text-cyan-600",
       };
     case "Medium":
       return {
-        bg: "bg-amber-50 border-amber-100 text-amber-800",
-        bgSpan: "bg-amber-800",
+        badgeBg: "bg-amber-50  text-amber-800",
+        pingBg: "bg-amber-800", // corrected 'ping' to 'pingBg' for consistency
+        parentTask: " text-white",
       };
     case "High":
       return {
-        bg: "bg-rose-50 border-rose-100 text-rose-800",
-        bgSpan: "bg-rose-800",
+        badgeBg: "bg-rose-50  text-rose-800",
+        pingBg: "bg-rose-800",
+        parentTask: " text-red-800",
       }; // corrected 'border' to 'text' for consistency
     default:
       return {
-        bg: "bg-gray-50 border-gray-100 text-gray-800",
-        bgSpan: "bg-gray-800",
+        badgeBg: "bg-gray-50 text-gray-800",
+        pingBg: "bg-gray-800",
+        parentTask: " text-gray-600",
       }; // corrected 'border' to 'text' for consistency
   }
 };

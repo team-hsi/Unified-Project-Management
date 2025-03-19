@@ -42,7 +42,7 @@ export const ProjectNavigation = () => {
                   <BreadcrumbItem className="hidden md:block">
                     {isLast ? (
                       <BreadcrumbPage className=" capitalize">
-                        {segment}
+                        {decodeURIComponent(segment)}
                       </BreadcrumbPage>
                     ) : (
                       <BreadcrumbLink href={href} className=" capitalize">
