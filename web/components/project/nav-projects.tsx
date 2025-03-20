@@ -1,12 +1,4 @@
-"use client";
-
-import {
-  Folder,
-  MoreHorizontal,
-  Share,
-  Trash2,
-  type LucideIcon,
-} from "lucide-react";
+import { Folder, MoreHorizontal, Plus, Share, Trash2 } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -24,29 +16,31 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Project } from "./types";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-export const NavProjects = ({
-  projects,
-}: {
-  projects: {
-    name: string;
-    url: string;
-    icon: LucideIcon;
-  }[];
-}) => {
+export const NavProjects = ({ projects }: { projects: Project[] }) => {
   const { isMobile } = useSidebar();
+  const pathname = usePathname();
+  const segments = pathname.split("/").filter(Boolean);
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
-        {projects.map((item) => (
-          <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
-                <span>{item.name}</span>
-              </a>
+        {projects.map((project: Project) => (
+          <SidebarMenuItem key={project.name}>
+            <SidebarMenuButton
+              asChild
+              isActive={segments.includes(encodeURIComponent(project.name))}
+            >
+              <Link
+                href={`/projects/${encodeURIComponent(project.name)}`}
+                className=" text-primary"
+              >
+                {project.name}
+              </Link>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -79,8 +73,8 @@ export const NavProjects = ({
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton>
-            <MoreHorizontal />
-            <span>More</span>
+            <Plus />
+            <span>Create New</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
