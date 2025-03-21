@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import Image from "next/image";
 
 interface UnsplashImage {
   id: string;
@@ -12,11 +13,11 @@ interface UnsplashImage {
 }
 
 interface UnsplashTabContentProps {
-  onSelectImage: (url: string) => void;
+  onSelectImageAction: (url: string) => void;
 }
 
 export default function UnsplashTabContent({
-  onSelectImage,
+  onSelectImageAction,
 }: UnsplashTabContentProps) {
   const [unsplashImages, setUnsplashImages] = useState<UnsplashImage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -103,9 +104,9 @@ export default function UnsplashTabContent({
           <div
             key={image.id}
             className="relative h-32 rounded cursor-pointer hover:opacity-80 overflow-hidden"
-            onClick={() => onSelectImage(image.url)}
+            onClick={() => onSelectImageAction(image.url)}
           >
-            <img
+            <Image
               src={image.thumb}
               alt={image.description || "Unsplash image"}
               className="w-full h-full object-cover"
