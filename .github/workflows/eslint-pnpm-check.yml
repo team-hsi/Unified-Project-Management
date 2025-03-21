@@ -22,10 +22,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.14.0"
-          cache: "pnpm"
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
 
       - name: Enable Corepack (Ensures PNPM is Used)
         run: corepack enable
+
+      - name: Verify pnpm version
+        run: pnpm --version
 
       - name: Check for package-lock.json in web directory
         run: |
@@ -41,18 +48,10 @@ jobs:
             exit 1
           fi
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: latest
-
       - name: Install Dependencies in web Directory
         run: |
           cd web
           pnpm install --frozen-lockfile
-
-      - name: Verify pnpm version
-        run: pnpm --version
 
       - name: Check for outdated dependencies (informational only)
         if: always()
