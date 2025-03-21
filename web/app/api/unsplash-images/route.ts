@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 
 const UNSPLASH_API_URL = "https://api.unsplash.com";
