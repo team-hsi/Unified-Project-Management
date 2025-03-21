@@ -1,4 +1,4 @@
-name: Lint check for Web Directory
+name: Pnpm Check for Web Directory
 
 on:
   pull_request:
