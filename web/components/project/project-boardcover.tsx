@@ -328,7 +328,7 @@ export default function BoardCover({ initialImage }: BoardCoverProps) {
 
             <TabsContent value="unsplash">
               <UnsplashTabContent
-                onSelectImage={(url) => {
+                onSelectImageAction={(url) => {
                   setCoverImage(url);
                   setIsTabOpen(false);
                   resetPosition();

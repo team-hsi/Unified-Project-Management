@@ -1,4 +1,4 @@
-name: Pnpm Check for Web Directory
+name: Check pnpm Lockfile
 
 on:
   pull_request:

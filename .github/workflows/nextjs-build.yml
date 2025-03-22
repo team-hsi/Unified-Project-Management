@@ -1,0 +1,50 @@
+name: Next.js Lint & Build
+
+on:
+  push:
+    paths:
+      - "web/**"
+  pull_request:
+    paths:
+      - "web/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    env:
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.6.5
+
+      - name: Check if pnpm-lock.yaml exists
+        run: |
+          if [ ! -f pnpm-lock.yaml ]; then
+            echo "Error: pnpm-lock.yaml not found!"
+            exit 1
+          fi
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          working-directory: web
+          cache-dependency-path: "web/pnpm-lock.yaml"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run ESLint
+        run: pnpm lint
+
+      # - name: Build Next.js app
+      #   run: pnpm build
