@@ -3,7 +3,6 @@
 import * as React from "react";
 import { NavMain } from "@/components/sidebar/nav-menu";
 import { NavProjects } from "@/components/project/nav-projects";
-import { NavUser } from "@/components/user/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -15,17 +14,11 @@ import {
 } from "@/components/ui/sidebar";
 import { TeamSwitcher } from "../user/team-switcher";
 import { data } from "@/lib/data";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { fetchProjects } from "@/actions/project-actions";
+import { ProjectsSkeleton } from "../project/skeletons";
 
 export const AppSidebar = ({
   ...props
 }: React.ComponentProps<typeof Sidebar>) => {
-  const { data: projects } = useSuspenseQuery({
-    queryKey: ["projects"],
-    queryFn: fetchProjects,
-  });
-  console.log("projects", projects);
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader className="flex items-center justify-between h-16">
@@ -39,11 +32,11 @@ export const AppSidebar = ({
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={projects} />
+        <React.Suspense fallback={<ProjectsSkeleton />}>
+          <NavProjects />
+        </React.Suspense>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
+      <SidebarFooter></SidebarFooter>
     </Sidebar>
   );
 };

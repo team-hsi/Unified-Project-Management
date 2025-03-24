@@ -1,7 +1,7 @@
 import { User } from "@/components/user/types";
 
 export type Priority = "Low" | "Medium" | "High";
-export type Status = "todo" | "progress" | "review" | "completed";
+export type Status = "not-started" | "in-progress" | "review" | "completed";
 
 export interface Task {
   id: string;
@@ -23,3 +23,11 @@ export interface Subtask {
   title: string;
   completed: boolean;
 }
+
+export type StatusOption = {
+  value: string;
+  label: string;
+  color: string;
+  dotColor: string;
+  group?: string;
+};
