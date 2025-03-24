@@ -4,7 +4,6 @@ import {
   ArrowUpRight,
   CalendarRange,
   ChevronsUp,
-  CircleSmall,
   Loader,
   Newspaper,
   Plus,
@@ -19,6 +18,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import { StatusSelect } from "./status-select";
 
 export const TaskDetails = ({ task }: { task: Task }) => {
   //TODO: refactor this component
@@ -36,11 +36,7 @@ export const TaskDetails = ({ task }: { task: Task }) => {
                 <Loader size={15} className=" text-muted-foreground" />
                 <p className="w-24 text-sm text-muted-foreground">Status</p>
               </div>
-              <div className="flex items-center ">
-                <CircleSmall size={20} className="text-blue-400" />
-                <span className="text-sm font-medium">{task.status}</span>{" "}
-                {/* Updated to reflect task status */}
-              </div>
+              <StatusSelect value={task.status} size="sm" />
             </div>
 
             <div className="flex  items-center  gap-2">

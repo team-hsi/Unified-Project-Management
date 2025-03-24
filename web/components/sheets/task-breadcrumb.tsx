@@ -14,7 +14,7 @@ import Link from "next/link";
 
 export const TaskBreadcrumb = ({ segments }: { segments: string[] }) => {
   return (
-    <div className="flex h-12 shrink-0 items-center px-4 w-full gap-2 border-b">
+    <div className="flex h-12 shrink-0 items-center px-4 w-full gap-2 border-b bg-muted rounded-t-xl">
       <SheetClose className=" h-7 w-7 grid rounded-md justify-center items-center hover:bg-accent hover:text-accent-foreground">
         <ChevronsRight size={17} className=" text-muted-foreground" />
       </SheetClose>

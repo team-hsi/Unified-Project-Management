@@ -1,4 +1,3 @@
-// import { MessageSquare, CircleCheck, CornerLeftUp } from "lucide-react";
 import type { Task } from "@/components/task/types";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -17,8 +16,8 @@ import { TaskAssignees } from "@/components/task/task-assignees";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { TaskSheet } from "../sheets/task-sheet";
 import { CircleCheck, CornerLeftUp, MessageSquare } from "lucide-react";
-import { getPriorityColor } from "./utils";
 import { TaskPriorityBadge } from "../task/task-priority-badge";
+import { getStatusStyles } from "./utils";
 
 interface KanbanCardProps {
   task: Task;
@@ -80,7 +79,8 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
     <TaskSheet task={task}>
       <Card
         className={cn(
-          "relative rounded-sm bg-white p-3 shadow-sm  hover:cursor-grab gap-0 active:cursor-grabbing",
+          "relative rounded-sm bg-background p-3 shadow-sm  hover:cursor-grab gap-0 active:cursor-grabbing",
+          getStatusStyles(task.status).bg,
           { "opacity-50": isDragging }
         )}
         ref={ref}
@@ -89,8 +89,7 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
           {task.parentTaskId ? (
             <div
               className={cn(
-                "flex items-center text-xs gap-2",
-                getPriorityColor(task.priority).parentTask
+                "flex items-center text-xs gap-2 text-muted-foreground"
               )}
             >
               <CornerLeftUp size={10} />
@@ -101,16 +100,16 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
           )}
         </CardHeader>
         <CardContent className="p-0 border-b">
-          <h4 className="mb-1 font-medium text-gray-800">{task.title}</h4>
+          <h4 className="mb-1 font-medium text-foreground">{task.title}</h4>
           {task.description && (
-            <p className="mb-3 truncate text-sm text-gray-500">
+            <p className="mb-3 truncate text-sm text-muted-foreground">
               {task.description}
             </p>
           )}
         </CardContent>
         <CardFooter className="px-0 pt-2 flex items-center justify-between">
           <TaskAssignees assignees={task.assignees} />
-          <div className="flex items-center gap-3 text-xs text-gray-500">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <MessageSquare className="h-3.5 w-3.5" />
             {task.childTasksCount && (
               <div className="flex items-center gap-1">
