@@ -12,7 +12,7 @@ const ProjectLayout = async ({ children }: { children: React.ReactNode }) => {
     <HydrationBoundary state={dehydrate(queryClient)}>
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset className=" overflow-hidden">
+        <SidebarInset>
           <ProjectNavigation />
           {children}
         </SidebarInset>

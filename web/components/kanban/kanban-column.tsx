@@ -39,7 +39,7 @@ export const KanbanColumn = ({ column }: KanbanColumnProps) => {
   return (
     <div
       className={cn(
-        "rounded-lg p-4 h-[70vh] flex flex-col max-w-92 bg-muted",
+        "rounded-lg p-4 h-fit flex flex-col max-w-92 bg-muted",
         getStatusStyles(column.id).bg,
         {
           "bg-sidebar ": isDraggedOver,
@@ -49,7 +49,8 @@ export const KanbanColumn = ({ column }: KanbanColumnProps) => {
     >
       <div
         className={cn(
-          "bg-muted mb-4 flex items-center justify-between rounded-md p-2"
+          "bg-muted mb-4 flex items-center justify-between rounded-md p-2",
+          getStatusStyles(column.id).bg
         )}
       >
         <div className="flex items-center justify-center gap-2">
