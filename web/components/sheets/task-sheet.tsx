@@ -1,4 +1,9 @@
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { TaskBreadcrumb } from "./task-breadcrumb";
 import { TaskDetails } from "@/components/task/task-details";
 // import { TaskWorkflow } from "../task/task-workflow";
@@ -20,6 +25,7 @@ export function TaskSheet({
         className="rounded-xl max-w-lg  md:max-w-xl lg:max-w-2xl"
         hideClose
       >
+        <SheetTitle className="sr-only"> task detail side sheet</SheetTitle>
         <TaskBreadcrumb segments={segments} />
         <TaskDetails task={task} />
         <TaskWorkflow />

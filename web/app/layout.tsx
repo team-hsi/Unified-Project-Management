@@ -33,7 +33,7 @@ const RootLayout = ({
         <NextTopLoader
           showSpinner={false}
           color={"var(--toploader)"}
-          height={5}
+          height={3}
         />
         <QueryProvider>
           <ThemeProvider

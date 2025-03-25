@@ -4,7 +4,14 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import ProjectFilters from "@/components/project-header/ProjectFilters";
-import { Search, UserPlus, Menu, KanbanSquare, List, ChartNoAxesGantt } from "lucide-react";
+import {
+  Search,
+  UserPlus,
+  Menu,
+  KanbanSquare,
+  List,
+  ChartNoAxesGantt,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -64,11 +71,16 @@ const ProjectNav = ({ isMobile }: { isMobile: boolean }) => (
   </nav>
 );
 
-const ProjectHeader: React.FC<ProjectHeaderProps> = ({ projectName, users, onInvite }) => {
-  const { isMobile, searchTerm, setSearchTerm, handleSearch, filteredUsers } = useProjectHeaderUtils(users);
+const ProjectHeader: React.FC<ProjectHeaderProps> = ({
+  projectName,
+  users,
+  onInvite,
+}) => {
+  const { isMobile, searchTerm, setSearchTerm, handleSearch, filteredUsers } =
+    useProjectHeaderUtils(users);
 
   return (
-    <div className="w-full bg-white shadow-sm rounded-lg">
+    <div className="w-full bg-muted shadow-sm rounded-lg">
       {/* First Row: Project Name, Avatars, and Invite Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 mb-2 sm:mb-4 gap-2">
         <div className="flex items-center gap-2 sm:gap-3">
@@ -88,7 +100,12 @@ const ProjectHeader: React.FC<ProjectHeaderProps> = ({ projectName, users, onInv
             ))}
           </div>
 
-          <Button variant="outline" onClick={onInvite} size="sm" className="h-8 sm:h-10 text-xs sm:text-sm">
+          <Button
+            variant="outline"
+            onClick={onInvite}
+            size="sm"
+            className="h-8 sm:h-10 text-xs sm:text-sm"
+          >
             <UserPlus className="mr-2 h-3 sm:h-4 w-3 sm:w-4" />
             Invite
           </Button>
@@ -157,7 +174,10 @@ const ProjectHeader: React.FC<ProjectHeaderProps> = ({ projectName, users, onInv
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <ProjectFilters />
-            <Button size="sm" className="h-10 bg-black hover:bg-blue-600 text-white">
+            <Button
+              size="sm"
+              className="h-10 bg-black hover:bg-blue-600 text-white"
+            >
               + New Task
             </Button>
           </div>
