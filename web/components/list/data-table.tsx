@@ -7,14 +7,16 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTaskLabels } from "@/hooks/use-task-labels";
 import { useTableFilter } from "@/hooks/use-table-filter";
 import { useTableActions } from "@/hooks/use-table-actions";
 import { Task } from "@/components/list/columns";
 
-// Import the new DataTablePagination component
+// Import the DataTablePagination component
 import { DataTablePagination } from "./data-table-pagination";
+// Import the ListViewSkeleton component
+import { ListViewSkeleton } from "@/components/list/skeletons";
 
 // Import icons for the buttons
 import { Plus, Download, ChevronUpDown, FineTune } from "@mynaui/icons-react";
@@ -54,6 +56,7 @@ export function DataTable<TData extends Task, TValue>({
   });
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   const { setLabel, getLabel } = useTaskLabels();
   const { filteredData, searchQuery, handleSearchChange } =
@@ -101,6 +104,19 @@ export function DataTable<TData extends Task, TValue>({
     enableRowSelection: true,
     manualPagination: false,
   });
+
+  // Simulate loading delay (replace with actual data fetching logic)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Simulate 2-second loading delay
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Conditionally render the skeleton or the table
+  if (loading) {
+    return <ListViewSkeleton />;
+  }
 
   return (
     <div className="space-y-4">
