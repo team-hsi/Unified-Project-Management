@@ -1,6 +1,10 @@
 import { Suspense } from "react";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
 import { KanbanBoardSkeleton } from "@/components/kanban/skeletons";
+import { DataTable } from "@/components/list/data-table";
+import { Task, columns } from "@/components/list/columns";
+import { ListViewSkeleton } from "@/components/list/skeletons";
+import { getData } from "@/lib/data";
 
 //TODO: Implement dynamic imports for code splitting
 /*
@@ -25,14 +29,23 @@ import { KanbanBoardSkeleton } from "@/components/kanban/skeletons";
 // import { ListViewSkeleton } from "@/components/list/skeletons";
 // import { TimelineViewSkeleton } from "@/components/timeline/skeletons";
 
+const ListView = async () => {
+  const data = await getData();
+  return (
+    <div className="container mx-auto py-10">
+      <DataTable columns={columns} data={data} />
+    </div>
+  );
+};
+
 const VIEWS = {
   kanban: {
     component: KanbanBoard,
     skeleton: KanbanBoardSkeleton,
   },
   list: {
-    component: () => <div>List View Component</div>,
-    skeleton: () => <div>ListViewSkeleton Component</div>,
+    component: ListView,
+    skeleton: ListViewSkeleton,
   },
   timeline: {
     component: () => <div>Timeline View Component</div>,
