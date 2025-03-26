@@ -9,7 +9,17 @@ import {
   ArrowRight,
   ArrowUp,
   ArrowDown,
+  Dots,
 } from "@mynaui/icons-react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from "@/components/ui/dropdown-menu"; // Adjust path based on your setup
 
 // Define the Task type
 export type Task = {
@@ -46,7 +56,14 @@ export const columns: ColumnDef<Task>[] = [
   },
   {
     accessorKey: "status",
-    header: () => <div className="text-center font-semibold">Status</div>,
+    header: () => (
+      <div className="flex items-center space-x-2">
+        <div className="w-6 flex justify-center" />
+        <div className="min-w-[96px] flex justify-start">
+          <span className="font-semibold">Status</span>
+        </div>
+      </div>
+    ),
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
       const statusIcons = {
@@ -73,7 +90,14 @@ export const columns: ColumnDef<Task>[] = [
   },
   {
     accessorKey: "priority",
-    header: () => <div className="text-center font-semibold">Priority</div>,
+    header: () => (
+      <div className="flex items-center space-x-2">
+        <div className="w-6 flex justify-center" />
+        <div className="min-w-[64px] flex justify-start">
+          <span className="font-semibold">Priority</span>
+        </div>
+      </div>
+    ),
     cell: ({ row }) => {
       const priority = row.getValue("priority") as string;
       const priorityIcons = {
@@ -105,7 +129,9 @@ export const columns: ColumnDef<Task>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: () => <div className="text-right font-semibold">Created At</div>,
+    header: () => (
+      <div className="text-right font-semibold pr-4">Created At</div>
+    ),
     cell: ({ row }) => {
       const date = new Date(row.getValue("createdAt"));
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -116,6 +142,64 @@ export const columns: ColumnDef<Task>[] = [
         minute: "2-digit",
       }).format(date);
       return <div className="text-right font-medium">{formatted}</div>;
+    },
+  },
+  {
+    id: "actions",
+    header: () => <div className="text-center font-semibold">Actions</div>,
+    cell: ({ row }) => {
+      const taskId = row.getValue("id") as string;
+      return (
+        <div className="flex justify-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-1 rounded-full hover:bg-gray-200 focus:outline-none">
+                <Dots className="h-5 w-5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => alert(`Editing task ${taskId}`)}>
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem
+                    onClick={() => alert(`Labeling task ${taskId} as Bug`)}
+                  >
+                    Bug
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => alert(`Labeling task ${taskId} as Feature`)}
+                  >
+                    Feature
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      alert(`Labeling task ${taskId} as Enhancement`)
+                    }
+                  >
+                    Enhancement
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      alert(`Labeling task ${taskId} as Documentation`)
+                    }
+                  >
+                    Documentation
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => alert(`Deleting task ${taskId}`)}
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      );
     },
   },
 ];
