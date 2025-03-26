@@ -27,7 +27,7 @@ export const getStatusStyles = (statusId: string) => {
     case "not-started":
       return {
         border: "border-gray-400",
-        bg: "bg-[#FFFFFF08]",
+        bg: "dark:bg-[#FFFFFF08] bg-[#F8F8F7]",
         text: "text-gray-700",
         dot: "bg-gray-400",
       };

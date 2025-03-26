@@ -81,6 +81,7 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
         className={cn(
           "relative rounded-sm bg-background p-3 shadow-sm  hover:cursor-grab gap-0 active:cursor-grabbing",
           getStatusStyles(task.status).bg,
+          "bg-card hover:bg-muted",
           { "opacity-50": isDragging }
         )}
         ref={ref}
@@ -100,7 +101,7 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
           )}
         </CardHeader>
         <CardContent className="p-0 border-b">
-          <h4 className="mb-1 font-medium text-foreground">{task.title}</h4>
+          <h4 className="mb-1 font-medium">{task.title}</h4>
           {task.description && (
             <p className="mb-3 truncate text-sm text-muted-foreground">
               {task.description}
