@@ -19,8 +19,8 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
-} from "@/components/ui/dropdown-menu"; // Adjust path based on your setup
-import { Checkbox } from "@/components/ui/checkbox"; // Adjust path based on your setup
+} from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Define the Task type
 export type Task = {
@@ -62,7 +62,7 @@ export const getColumns = ({
     cell: ({ row }) => (
       <div className="text-left font-mono text-sm">{row.getValue("id")}</div>
     ),
-    enableHiding: true, // Allow hiding this column
+    enableHiding: true,
   },
   {
     id: "select",
@@ -123,7 +123,7 @@ export const getColumns = ({
     accessorKey: "status",
     header: () => (
       <div className="flex items-center space-x-2">
-        <div className="w-6 flex justifying-center" />
+        <div className="w-6 flex justify-center" />
         <div className="min-w-[96px] flex justify-start">
           <span className="font-semibold">Status</span>
         </div>
@@ -137,8 +137,7 @@ export const getColumns = ({
         Done: CheckCircle,
         Canceled: XCircle,
       };
-
-      const Icon = statusIcons[status] || QuestionCircle; // Default to question mark if status is unknown
+      const Icon = statusIcons[status] || QuestionCircle;
       return (
         <div className="flex items-center space-x-2">
           <div className="w-6 flex justify-center">
@@ -171,7 +170,7 @@ export const getColumns = ({
         High: ArrowUp,
         Low: ArrowDown,
       };
-      const Icon = priorityIcons[priority] || ArrowRight; // Default to right arrow if priority is unknown
+      const Icon = priorityIcons[priority] || ArrowRight;
       return (
         <div className="flex items-center space-x-2">
           <div className="w-6 flex justify-center">
@@ -220,7 +219,7 @@ export const getColumns = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="p-1 rounded-md border border-transparent hover:bg-gray-800 hover:border-2 hover:border-gray-400 focus:outline-none">
-                <Dots className="h-6 w-6 scale-110 text-gray-600 hover:text-white" />
+                <Dots className="h-6 w-6 scale-125 drop-shadow-sm text-white hover:text-white" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
