@@ -33,7 +33,29 @@ export type Task = {
   createdAt: string;
 };
 
-export const columns: ColumnDef<Task>[] = [
+// Define label colors for styling
+const labelColors: Record<string, string> = {
+  Bug: "bg-red-100 text-red-800",
+  Feature: "bg-blue-100 text-blue-800",
+  Enhancement: "bg-green-100 text-green-800",
+  Documentation: "bg-yellow-100 text-yellow-800",
+};
+
+// Define the type for the parameters passed to getColumns
+interface ColumnsProps {
+  setLabel: (
+    taskId: string,
+    label: "Bug" | "Feature" | "Enhancement" | "Documentation" | null
+  ) => void;
+  getLabel: (
+    taskId: string
+  ) => "Bug" | "Feature" | "Enhancement" | "Documentation" | null;
+}
+
+export const getColumns = ({
+  setLabel,
+  getLabel,
+}: ColumnsProps): ColumnDef<Task>[] => [
   {
     accessorKey: "id",
     header: () => <div className="text-left font-semibold">ID</div>,
@@ -78,15 +100,30 @@ export const columns: ColumnDef<Task>[] = [
   {
     accessorKey: "title",
     header: () => <div className="text-left font-semibold">Title</div>,
-    cell: ({ row }) => (
-      <div className="text-left font-medium">{row.getValue("title")}</div>
-    ),
+    cell: ({ row }) => {
+      const taskId = row.getValue("id") as string;
+      const label = getLabel(taskId);
+      return (
+        <div className="text-left font-medium flex items-center space-x-2">
+          {label && (
+            <span
+              className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${
+                labelColors[label] || "bg-gray-100 text-gray-800"
+              }`}
+            >
+              {label}
+            </span>
+          )}
+          <span>{row.getValue("title")}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "status",
     header: () => (
       <div className="flex items-center space-x-2">
-        <div className="w-6 flex justify-center" />
+        <div className="w-6 flex justifying-center" />
         <div className="min-w-[96px] flex justify-start">
           <span className="font-semibold">Status</span>
         </div>
@@ -158,7 +195,7 @@ export const columns: ColumnDef<Task>[] = [
   {
     accessorKey: "createdAt",
     header: () => (
-      <div className="text-right font-semibold pr-2">Created At</div>
+      <div className="text-right font-semibold pr-4">Created At</div>
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue("createdAt"));
@@ -182,7 +219,7 @@ export const columns: ColumnDef<Task>[] = [
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="p-1 rounded-md border border-transparent hover:bg-gray-800 hover:border-2 hover:border-gray-400 focus:outline-none">
-                <Dots className="h-6 w-6 stroke-[2.5]" />
+                <Dots className="h-6 w-6 scale-110 text-gray-600 hover:text-white" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -192,27 +229,19 @@ export const columns: ColumnDef<Task>[] = [
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
-                  <DropdownMenuItem
-                    onClick={() => alert(`Labeling task ${taskId} as Bug`)}
-                  >
+                  <DropdownMenuItem onClick={() => setLabel(taskId, "Bug")}>
                     Bug
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => alert(`Labeling task ${taskId} as Feature`)}
-                  >
+                  <DropdownMenuItem onClick={() => setLabel(taskId, "Feature")}>
                     Feature
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() =>
-                      alert(`Labeling task ${taskId} as Enhancement`)
-                    }
+                    onClick={() => setLabel(taskId, "Enhancement")}
                   >
                     Enhancement
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() =>
-                      alert(`Labeling task ${taskId} as Documentation`)
-                    }
+                    onClick={() => setLabel(taskId, "Documentation")}
                   >
                     Documentation
                   </DropdownMenuItem>

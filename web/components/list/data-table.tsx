@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
+import { useTaskLabels } from "@/hooks/use-task-labels"; // Import the custom hook
 
 import {
   Table,
@@ -17,19 +18,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+// Import the columns factory function (we'll update this next)
+import { getColumns } from "@/components/list/columns";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
 export function DataTable<TData, TValue>({
-  columns,
   data,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({
     id: false, // Hide the 'id' column by default
   });
+
+  // Use the useTaskLabels hook here
+  const { setLabel, getLabel } = useTaskLabels();
+
+  // Get the columns with setLabel and getLabel passed as parameters
+  const columns = getColumns({ setLabel, getLabel });
 
   const table = useReactTable({
     data,
