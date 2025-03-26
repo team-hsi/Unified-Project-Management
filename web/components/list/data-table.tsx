@@ -4,13 +4,20 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
 import { useTaskLabels } from "@/hooks/use-task-labels";
 import { useTableFilter } from "@/hooks/use-table-filter";
-import { useTableActions } from "@/hooks/use-table-actions"; // New hook
+import { useTableActions } from "@/hooks/use-table-actions";
 import { Task } from "@/components/list/columns";
+
+// Import the new DataTablePagination component
+import { DataTablePagination } from "./data-table-pagination";
+
+// Import icons for the buttons
+import { Plus, Download, ChevronUpDown, FineTune } from "@mynaui/icons-react";
 
 import {
   Table,
@@ -21,7 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button"; // Adjust path based on your setup
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -29,7 +36,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuCheckboxItem,
-} from "@/components/ui/dropdown-menu"; // Adjust path based on your setup
+} from "@/components/ui/dropdown-menu";
 
 import { getColumns } from "@/components/list/columns";
 
@@ -45,6 +52,8 @@ export function DataTable<TData extends Task, TValue>({
   const [columnVisibility, setColumnVisibility] = useState({
     id: false, // Hide the 'id' column by default
   });
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
 
   const { setLabel, getLabel } = useTaskLabels();
   const { filteredData, searchQuery, handleSearchChange } =
@@ -52,7 +61,6 @@ export function DataTable<TData extends Task, TValue>({
 
   const columns = getColumns({ setLabel, getLabel });
 
-  // Use the useTableActions hook
   const {
     handleAddTask,
     handleExport,
@@ -71,13 +79,27 @@ export function DataTable<TData extends Task, TValue>({
     data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     state: {
       rowSelection,
       columnVisibility,
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
     },
     onRowSelectionChange: setRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: (updater) => {
+      const newPagination =
+        typeof updater === "function"
+          ? updater({ pageIndex, pageSize })
+          : updater;
+      setPageIndex(newPagination.pageIndex);
+      setPageSize(newPagination.pageSize);
+    },
     enableRowSelection: true,
+    manualPagination: false,
   });
 
   return (
@@ -97,11 +119,21 @@ export function DataTable<TData extends Task, TValue>({
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-2">
-          <Button onClick={handleAddTask}>Add Task</Button>
-          <Button onClick={handleExport}>Export</Button>
+          <Button onClick={handleAddTask}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Task
+          </Button>
+          <Button onClick={handleExport}>
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">View</Button>
+              <Button variant="outline">
+                <FineTune className="h-4 w-4 mr-1" />
+                View
+                <ChevronUpDown className="h-4 w-4 ml-1" />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
               <DropdownMenuLabel>Column Visibility</DropdownMenuLabel>
@@ -188,6 +220,9 @@ export function DataTable<TData extends Task, TValue>({
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination Controls */}
+      <DataTablePagination table={table} />
     </div>
   );
 }
