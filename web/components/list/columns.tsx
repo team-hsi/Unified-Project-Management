@@ -2,22 +2,22 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import {
-  ClockIcon,
-  QuestionMarkCircleIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  ArrowRightIcon,
-  ArrowUpIcon,
-  ArrowDownIcon,
-} from "@heroicons/react/24/outline";
+  ClockOne,
+  CheckCircle,
+  XCircle,
+  QuestionCircle,
+  ArrowRight,
+  ArrowUp,
+  ArrowDown,
+} from "@mynaui/icons-react";
 
 // Define the Task type
 export type Task = {
   id: string;
   task: string;
   title: string;
-  status: "pending" | "in-progress" | "completed" | "canceled";
-  priority: "low" | "medium" | "high";
+  status: "Todo" | "In-Progress" | "Done" | "Canceled";
+  priority: "Low" | "Medium" | "High";
   assignedTo: string;
   createdAt: string;
 };
@@ -50,23 +50,16 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
       const statusIcons = {
-        "in-progress": ClockIcon,
-        pending: QuestionMarkCircleIcon,
-        completed: CheckCircleIcon,
-        canceled: XCircleIcon,
+        "In-Progress": ClockOne,
+        Todo: QuestionCircle,
+        Done: CheckCircle,
+        canceled: XCircle,
       };
-      const statusStyles =
-        {
-          "in-progress": "text-blue-600",
-          pending: "text-gray-600",
-          completed: "text-green-600",
-          canceled: "text-red-600",
-        }[status] || "text-gray-600";
-      const Icon = statusIcons[status] || QuestionMarkCircleIcon; // Default to question mark if status is unknown
+      const Icon = statusIcons[status] || QuestionCircle; // Default to question mark if status is unknown
       return (
         <div className="text-center flex items-center justify-center space-x-2">
-          <Icon className={`h-5 w-5 ${statusStyles}`} />
-          <span className={`font-medium ${statusStyles}`}>
+          <Icon className="h-5 w-5" />
+          <span className="font-medium">
             {status.charAt(0).toUpperCase() + status.slice(1).replace("-", " ")}
           </span>
         </div>
@@ -79,23 +72,17 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const priority = row.getValue("priority") as string;
       const priorityIcons = {
-        medium: ArrowRightIcon,
-        high: ArrowUpIcon,
-        low: ArrowDownIcon,
+        Medium: ArrowRight,
+        High: ArrowUp,
+        Low: ArrowDown,
       };
-      const priorityStyles =
-        {
-          medium: "text-gray-600",
-          high: "text-red-600",
-          low: "text-gray-600",
-        }[priority] || "text-gray-600";
-      const Icon = priorityIcons[priority] || ArrowRightIcon; // Default to right arrow if priority is unknown
+      const Icon = priorityIcons[priority] || ArrowRight; // Default to right arrow if priority is unknown
       return (
         <div className="text-center flex items-center justify-center space-x-2">
-          <span className={`font-medium ${priorityStyles}`}>
+          <Icon className="h-5 w-5" />
+          <span className="font-medium">
             {priority.charAt(0).toUpperCase() + priority.slice(1)}
           </span>
-          <Icon className={`h-5 w-5 ${priorityStyles}`} />
         </div>
       );
     },

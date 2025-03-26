@@ -21,8 +21,8 @@ export type Task = {
   id: string;
   task: string;
   title: string;
-  status: "pending" | "in-progress" | "completed" | "canceled";
-  priority: "low" | "medium" | "high";
+  status: "Todo" | "In-Progress" | "Done" | "Canceled";
+  priority: "Low" | "Medium" | "High";
   assignedTo: string;
   createdAt: string;
 };
