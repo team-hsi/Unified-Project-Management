@@ -137,6 +137,7 @@ export const getColumns = ({
         Done: CheckCircle,
         Canceled: XCircle,
       };
+
       const Icon = statusIcons[status] || QuestionCircle; // Default to question mark if status is unknown
       return (
         <div className="flex items-center space-x-2">
