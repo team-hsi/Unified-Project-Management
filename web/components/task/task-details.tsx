@@ -1,10 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { SheetTitle } from "../ui/sheet";
+// import { SheetTitle } from "../ui/sheet";
 import {
   ArrowUpRight,
   CalendarRange,
   ChevronsUp,
-  CircleSmall,
   Loader,
   Newspaper,
   Plus,
@@ -19,15 +18,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import { StatusSelect } from "./status-select";
 
 export const TaskDetails = ({ task }: { task: Task }) => {
   //TODO: refactor this component
   return (
     <div className="w-4/5 mx-auto">
       <div className="flex flex-col gap-6 lg:px-6">
-        <SheetTitle className="font-bold text-xl md:text-2xl xl:text-3xl mt-4">
+        <div className="font-bold text-xl md:text-2xl xl:text-3xl mt-4">
           {task.title}
-        </SheetTitle>
+        </div>
         <div className="space-y-4">
           {/* TaskMetadata */}
           <section className=" flex flex-col flex-wrap gap-4">
@@ -36,11 +36,7 @@ export const TaskDetails = ({ task }: { task: Task }) => {
                 <Loader size={15} className=" text-muted-foreground" />
                 <p className="w-24 text-sm text-muted-foreground">Status</p>
               </div>
-              <div className="flex items-center ">
-                <CircleSmall size={20} className="text-blue-400" />
-                <span className="text-sm font-medium">{task.status}</span>{" "}
-                {/* Updated to reflect task status */}
-              </div>
+              <StatusSelect value={task.status} size="sm" />
             </div>
 
             <div className="flex  items-center  gap-2">
