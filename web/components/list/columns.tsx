@@ -153,8 +153,8 @@ export const columns: ColumnDef<Task>[] = [
         <div className="flex justify-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1 rounded-full hover:bg-gray-200 focus:outline-none">
-                <Dots className="h-5 w-5" />
+              <button className="p-1 rounded-md border border-transparent hover:bg-gray-300 hover:border-2 hover:border-white focus:outline-none">
+                <Dots className="h-6 w-6 stroke-[2.5]" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
