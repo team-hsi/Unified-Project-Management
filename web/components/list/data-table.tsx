@@ -16,17 +16,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// Define the Task type
-export type Task = {
-  id: string;
-  task: string;
-  title: string;
-  status: "Todo" | "In-Progress" | "Done" | "Canceled";
-  priority: "Low" | "Medium" | "High";
-  assignedTo: string;
-  createdAt: string;
-};
-
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -49,7 +38,7 @@ export function DataTable<TData, TValue>({
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
+                <TableHead key={header.id} className="px-4 py-2">
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -69,7 +58,7 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell key={cell.id} className="px-4 py-2">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

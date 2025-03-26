@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
 import { KanbanBoardSkeleton } from "@/components/kanban/skeletons";
 import { DataTable } from "@/components/list/data-table";
-import { Task, columns } from "@/components/list/columns";
+import { columns } from "@/components/list/columns";
 import { ListViewSkeleton } from "@/components/list/skeletons";
 import { getData } from "@/lib/data";
 

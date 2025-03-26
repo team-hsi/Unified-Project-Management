@@ -53,15 +53,20 @@ export const columns: ColumnDef<Task>[] = [
         "In-Progress": ClockOne,
         Todo: QuestionCircle,
         Done: CheckCircle,
-        canceled: XCircle,
+        Canceled: XCircle,
       };
       const Icon = statusIcons[status] || QuestionCircle; // Default to question mark if status is unknown
       return (
-        <div className="text-center flex items-center justify-center space-x-2">
-          <Icon className="h-5 w-5" />
-          <span className="font-medium">
-            {status.charAt(0).toUpperCase() + status.slice(1).replace("-", " ")}
-          </span>
+        <div className="flex items-center space-x-2">
+          <div className="w-6 flex justify-center">
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="min-w-[96px] flex justify-start">
+            <span className="font-medium">
+              {status.charAt(0).toUpperCase() +
+                status.slice(1).replace("-", " ")}
+            </span>
+          </div>
         </div>
       );
     },
@@ -78,11 +83,15 @@ export const columns: ColumnDef<Task>[] = [
       };
       const Icon = priorityIcons[priority] || ArrowRight; // Default to right arrow if priority is unknown
       return (
-        <div className="text-center flex items-center justify-center space-x-2">
-          <Icon className="h-5 w-5" />
-          <span className="font-medium">
-            {priority.charAt(0).toUpperCase() + priority.slice(1)}
-          </span>
+        <div className="flex items-center space-x-2">
+          <div className="w-6 flex justify-center">
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="min-w-[64px] flex justify-start">
+            <span className="font-medium">
+              {priority.charAt(0).toUpperCase() + priority.slice(1)}
+            </span>
+          </div>
         </div>
       );
     },
