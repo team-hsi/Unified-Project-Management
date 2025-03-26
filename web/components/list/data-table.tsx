@@ -7,9 +7,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import { useTaskLabels } from "@/hooks/use-task-labels"; // Existing hook for labels
-import { useTableFilter } from "@/hooks/use-table-filter"; // New hook for filtering
-import { Task } from "@/components/list/columns"; // Adjust path based on your setup
+import { useTaskLabels } from "@/hooks/use-task-labels";
+import { useTableFilter } from "@/hooks/use-table-filter";
+import { useTableActions } from "@/hooks/use-table-actions"; // New hook
+import { Task } from "@/components/list/columns";
 
 import {
   Table,
@@ -19,9 +20,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input"; // Adjust path based on your setup
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button"; // Adjust path based on your setup
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuCheckboxItem,
+} from "@/components/ui/dropdown-menu"; // Adjust path based on your setup
 
-// Import the columns factory function
 import { getColumns } from "@/components/list/columns";
 
 interface DataTableProps<TData, TValue> {
@@ -37,18 +46,29 @@ export function DataTable<TData extends Task, TValue>({
     id: false, // Hide the 'id' column by default
   });
 
-  // Use the useTaskLabels hook for label functionality
   const { setLabel, getLabel } = useTaskLabels();
-
-  // Use the useTableFilter hook for filtering
   const { filteredData, searchQuery, handleSearchChange } =
     useTableFilter(data);
 
-  // Get the columns with setLabel and getLabel passed as parameters
   const columns = getColumns({ setLabel, getLabel });
 
+  // Use the useTableActions hook
+  const {
+    handleAddTask,
+    handleExport,
+    columnSearchQuery,
+    handleColumnSearchChange,
+    filteredColumns,
+    toggleColumnVisibility,
+  } = useTableActions({
+    columns,
+    data: filteredData,
+    columnVisibility,
+    setColumnVisibility,
+  });
+
   const table = useReactTable({
-    data: filteredData, // Use filtered data instead of raw data
+    data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     state: {
@@ -62,15 +82,61 @@ export function DataTable<TData extends Task, TValue>({
 
   return (
     <div className="space-y-4">
-      {/* Search Input in the Top Left Corner */}
-      <div className="flex justify-start">
-        <Input
-          type="text"
-          placeholder="Filter titles..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-          className="max-w-xs"
-        />
+      {/* Header with Search, Add Task, Export, and View Buttons */}
+      <div className="flex items-center justify-between">
+        {/* Search by Title */}
+        <div className="flex items-center space-x-2">
+          <Input
+            type="text"
+            placeholder="Search by title..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="max-w-xs"
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center space-x-2">
+          <Button onClick={handleAddTask}>Add Task</Button>
+          <Button onClick={handleExport}>Export</Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">View</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>Column Visibility</DropdownMenuLabel>
+              <div className="px-2 py-1">
+                <Input
+                  type="text"
+                  placeholder="Search columns..."
+                  value={columnSearchQuery}
+                  onChange={handleColumnSearchChange}
+                  className="w-full"
+                />
+              </div>
+              <DropdownMenuSeparator />
+              {filteredColumns.map((column) => {
+                const columnId = column.id || column.accessorKey;
+                if (
+                  !columnId ||
+                  columnId === "select" ||
+                  columnId === "actions"
+                ) {
+                  return null; // Skip 'select' and 'actions' columns
+                }
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={columnId}
+                    checked={columnVisibility[columnId] !== false}
+                    onCheckedChange={() => toggleColumnVisibility(columnId)}
+                  >
+                    {columnId.charAt(0).toUpperCase() + columnId.slice(1)}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Table */}
