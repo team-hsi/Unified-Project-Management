@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeSwitcher } from "../ui/theme-switch";
+import Link from "next/link";
 
 export function NavUser({
   user,
@@ -68,10 +69,12 @@ export function NavUser({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <LogOut />
-            Log out
-          </DropdownMenuItem>
+          <Link href="/sign-in">
+            <DropdownMenuItem>
+              <LogOut />
+              Log out
+            </DropdownMenuItem>
+          </Link>
           {/* <Separator /> */}
           <div className="w-full p-1 mt-2">
             <ThemeSwitcher className=" w-fit m-auto" />
