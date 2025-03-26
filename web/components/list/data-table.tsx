@@ -13,12 +13,9 @@ import { useTableFilter } from "@/hooks/use-table-filter";
 import { useTableActions } from "@/hooks/use-table-actions";
 import { Task } from "@/components/list/columns";
 
-// Import the DataTablePagination component
 import { DataTablePagination } from "./data-table-pagination";
-// Import the ListViewSkeleton component
 import { ListViewSkeleton } from "@/components/list/skeletons";
 
-// Import icons for the buttons
 import { Plus, Download, ChevronUpDown, FineTune } from "@mynaui/icons-react";
 
 import {
