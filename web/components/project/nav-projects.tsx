@@ -1,5 +1,4 @@
 import { Folder, MoreHorizontal, Plus, Share, Trash2 } from "lucide-react";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,10 +17,17 @@ import {
 } from "@/components/ui/sidebar";
 import { Project } from "./types";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { fetchProjects } from "@/actions/project-actions";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
-export const NavProjects = ({ projects }: { projects: Project[] }) => {
+export const NavProjects = () => {
+  const { data: projects } = useSuspenseQuery({
+    queryKey: ["projects"],
+    queryFn: fetchProjects,
+  });
   const { isMobile } = useSidebar();
+  const router = useRouter();
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
@@ -35,10 +41,7 @@ export const NavProjects = ({ projects }: { projects: Project[] }) => {
               asChild
               isActive={segments.includes(encodeURIComponent(project.name))}
             >
-              <Link
-                href={`/projects/${encodeURIComponent(project.name)}`}
-                className=" text-primary"
-              >
+              <Link href={`/projects/${encodeURIComponent(project.name)}`}>
                 {project.name}
               </Link>
             </SidebarMenuButton>
@@ -72,7 +75,9 @@ export const NavProjects = ({ projects }: { projects: Project[] }) => {
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton>
+          <SidebarMenuButton
+            onClick={() => router.push("/projects/Internal%20Tools")}
+          >
             <Plus />
             <span>Create New</span>
           </SidebarMenuButton>

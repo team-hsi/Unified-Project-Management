@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { cn } from "@/lib/utils";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { getStatusColor } from "./utils";
+import { getStatusStyles } from "./utils";
 import { useAutoScroll } from "@/hooks/use-auto-scroll";
 
 interface KanbanColumnProps {
@@ -38,19 +38,30 @@ export const KanbanColumn = ({ column }: KanbanColumnProps) => {
 
   return (
     <div
-      className={cn("rounded-lg p-4 h-[70vh] flex flex-col max-w-92", {
-        // [getStatusColor(column.id)]: true,
-        "bg-blue-50": isDraggedOver,
-      })}
+      className={cn(
+        "rounded-lg p-4 h-fit flex flex-col max-w-92 bg-muted",
+        getStatusStyles(column.id).bg,
+        {
+          "bg-sidebar ": isDraggedOver,
+        }
+      )}
       ref={ref}
     >
-      <div className="bg-muted mb-4 flex items-center justify-between rounded-md p-2">
+      <div
+        className={cn(
+          "bg-muted mb-4 flex items-center justify-between rounded-md p-2",
+          getStatusStyles(column.id).bg
+        )}
+      >
         <div className="flex items-center justify-center gap-2">
           <div
-            className={`h-4 w-4 rounded-full ${getStatusColor(column.id)}`}
+            className={cn(
+              "h-4 w-4 rounded-full border-2",
+              getStatusStyles(column.id).border
+            )}
           />
-          <h3 className="font-medium text-gray-700">{column.title}</h3>
-          <span className="flex size-4 items-center justify-center rounded-sm bg-violet-100 text-[10px] text-violet-900">
+          <h3 className="font-medium">{column.title}</h3>
+          <span className={cn(" ml-2 text-muted-foreground")}>
             {column.count}
           </span>
         </div>

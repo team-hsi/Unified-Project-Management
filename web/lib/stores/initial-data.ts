@@ -1,7 +1,7 @@
 import type { Column } from "@/components/kanban/types";
 import type { Task } from "@/components/task/types";
 
-const todo: Task[] = [
+export const todo: Task[] = [
   {
     id: "task1",
     title: "Employee Details Page",
@@ -9,7 +9,7 @@ const todo: Task[] = [
     tags: ["Dashboard", "UI/UX"],
     type: "task",
     priority: "Medium",
-    status: "to-do",
+    status: "not-started",
     assignees: [
       { id: "user1", name: "Alex Smith", initials: "AS" },
       { id: "user2", name: "Dana Thompson", initials: "DT" },
@@ -26,7 +26,7 @@ const todo: Task[] = [
     tags: ["Design"],
     type: "task",
     priority: "Medium",
-    status: "to-do",
+    status: "not-started",
     assignees: [{ id: "user1", name: "Alex Smith", initials: "AS" }],
     comments: 2,
     parentTaskId: "task1",
@@ -39,7 +39,7 @@ const todo: Task[] = [
     tags: ["Development"],
     type: "task",
     priority: "Medium",
-    status: "to-do",
+    status: "not-started",
     assignees: [{ id: "user2", name: "Dana Thompson", initials: "DT" }],
     comments: 0,
     parentTaskId: "task1",
@@ -62,7 +62,6 @@ export const inProgress: Task[] = [
     childTasksCount: 3,
     childTasksCompleted: 1,
   },
-
   {
     id: "task4",
     title: "Settings Page Redesign",
@@ -82,6 +81,7 @@ export const inProgress: Task[] = [
     childTasksCompleted: 2,
   },
 ];
+
 const completed: Task[] = [
   {
     id: "task7",
@@ -90,14 +90,13 @@ const completed: Task[] = [
     tags: ["Dashboard", "Security"],
     type: "task",
     priority: "High",
-    status: "completed",
+    status: "done",
     assignees: [{ id: "user11", name: "Sam Washington", initials: "SW" }],
     comments: 11,
     parentTaskId: null,
     childTasksCount: 4,
     childTasksCompleted: 3,
   },
-
   {
     id: "task9",
     title: "Design System & Style Guide",
@@ -105,7 +104,7 @@ const completed: Task[] = [
     tags: ["Design", "Documentation"],
     type: "task",
     priority: "Medium",
-    status: "completed",
+    status: "done",
     assignees: [{ id: "user14", name: "Drew Evans", initials: "DE" }],
     comments: 14,
     parentTaskId: null,
@@ -114,25 +113,27 @@ const completed: Task[] = [
   },
 ];
 
+export const tasks: Task[] = [...todo, ...inProgress, ...completed];
+
 export const boardData: Column[] = [
   {
     id: "to-do",
     title: "To-do",
-    count: 3,
+    count: todo.length,
     type: "column",
     tasks: todo,
   },
   {
     id: "in-progress",
     title: "In Progress",
-    count: 2,
+    count: inProgress.length,
     type: "column",
     tasks: inProgress,
   },
   {
     id: "completed",
     title: "Completed",
-    count: 4,
+    count: completed.length,
     type: "column",
     tasks: completed,
   },

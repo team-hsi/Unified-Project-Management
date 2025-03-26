@@ -12,15 +12,11 @@ export const TaskAssignees = memo(function TaskAssignees({
   return (
     <div className="flex -space-x-2" role="group" aria-label="Task assignees">
       {assignees.map((assignee) => (
-        <Avatar
-          key={assignee.id}
-          className="h-6 w-6 border-2 border-white"
-          title={assignee.name}
-        >
+        <Avatar key={assignee.id} className="h-6 w-6" title={assignee.name}>
           {assignee.avatar ? (
             <AvatarImage src={assignee.avatar} alt={assignee.name} />
           ) : null}
-          <AvatarFallback className="bg-gray-100 text-[10px] text-gray-600">
+          <AvatarFallback className=" text-[10px] text-muted-foreground">
             {assignee.initials}
           </AvatarFallback>
         </Avatar>

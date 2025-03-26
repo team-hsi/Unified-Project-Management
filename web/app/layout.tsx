@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { QueryProvider } from "@/lib/query-client/query-provider";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
+import { ThemeProvider } from "@/lib/theme/next-theme";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +30,21 @@ const RootLayout = ({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>{children}</QueryProvider>
+        <NextTopLoader
+          showSpinner={false}
+          color={"var(--toploader)"}
+          height={3}
+        />
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
