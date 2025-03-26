@@ -66,7 +66,7 @@ export function DataTable<TData extends Task, TValue>({
       <div className="flex justify-start">
         <Input
           type="text"
-          placeholder="Search by title..."
+          placeholder="Filter titles..."
           value={searchQuery}
           onChange={handleSearchChange}
           className="max-w-xs"
