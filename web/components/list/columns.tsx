@@ -20,6 +20,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu"; // Adjust path based on your setup
+import { Checkbox } from "@/components/ui/checkbox"; // Adjust path based on your setup
 
 // Define the Task type
 export type Task = {
@@ -39,6 +40,33 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => (
       <div className="text-left font-mono text-sm">{row.getValue("id")}</div>
     ),
+    enableHiding: true, // Allow hiding this column
+  },
+  {
+    id: "select",
+    header: ({ table }) => (
+      <div className="flex justify-center pr-6">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="flex justify-center pr-6">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: "task",
@@ -130,7 +158,7 @@ export const columns: ColumnDef<Task>[] = [
   {
     accessorKey: "createdAt",
     header: () => (
-      <div className="text-right font-semibold pr-4">Created At</div>
+      <div className="text-right font-semibold pr-2">Created At</div>
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue("createdAt"));
