@@ -20,7 +20,6 @@ export const useKanbanBoard = () => {
     queryKey: ["board"],
     queryFn: fetchTasks,
   });
-
   const [board, setBoard] = React.useState<Column[]>(data || []);
 
   const moveCard = React.useCallback(
