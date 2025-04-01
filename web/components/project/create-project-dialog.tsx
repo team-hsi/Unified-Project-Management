@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { FolderPlus, Loader2 } from "lucide-react";
+import { FolderPlus, Loader } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -23,12 +23,13 @@ import {
   FormMessage,
 } from "../ui/form";
 import { useForm } from "react-hook-form";
-import { ProjectSchema, projectSchema } from "./schema";
+import { projectSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { createProject } from "@/actions/project-actions";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
+import { z } from "zod";
 
 export function CreateProjectDialog({
   children,
@@ -37,14 +38,13 @@ export function CreateProjectDialog({
 }) {
   const [open, setOpen] = React.useState(false);
   const queryClient = getQueryClient();
-  const form = useForm<ProjectSchema>({
+  const form = useForm<z.infer<typeof projectSchema>>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
       name: "",
       description: "",
     },
   });
-
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createProject,
     onSuccess: () => {
@@ -54,7 +54,7 @@ export function CreateProjectDialog({
       setOpen(false);
     },
   });
-  const onSubmit = (values: ProjectSchema) => {
+  const onSubmit = (values: z.infer<typeof projectSchema>) => {
     mutateAsync(values);
   };
 
@@ -126,7 +126,7 @@ export function CreateProjectDialog({
               <Button type="submit" className="flex-1" disabled={isPending}>
                 {isPending ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
                     <span>Creating Project...</span>
                   </>
                 ) : (

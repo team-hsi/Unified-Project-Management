@@ -16,48 +16,41 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "@/components/ui/input";
-import { CircleAlert, Loader2 } from "lucide-react";
-import type { ProjectDialogProps } from "./types";
-import { getQueryClient } from "@/lib/query-client/get-query-client";
+import { Loader, Pencil } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { projectSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { deleteProject } from "@/actions/project-actions";
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
+import { updateProject } from "@/actions/project-actions";
+import { getQueryClient } from "@/lib/query-client/get-query-client";
+import { Textarea } from "../ui/textarea";
+import type { ProjectDialogProps } from "./types";
+import { z } from "zod";
 
-export const DeleteProjectDialog = ({
+export const UpdateProjectDialog = ({
   project,
   onOpenChange,
 }: ProjectDialogProps) => {
   const queryClient = getQueryClient();
-  const projectDeleteSchema = z.object({
-    name: z
-      .string()
-      .min(1, "Project name is required")
-      .refine((value) => value === project.name, {
-        message: "Project name does not match",
-      }),
-  });
-
-  const form = useForm<z.infer<typeof projectDeleteSchema>>({
-    resolver: zodResolver(projectDeleteSchema),
+  const form = useForm<z.infer<typeof projectSchema>>({
+    resolver: zodResolver(projectSchema),
     defaultValues: {
-      name: "",
+      name: project.name,
+      description: project.description || "",
     },
   });
-
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: deleteProject,
+    mutationFn: updateProject,
     onSuccess: () => {
-      toast.success("Project deleted successfully!");
+      toast.success("Project updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       form.reset();
       onOpenChange?.(false);
     },
   });
-  const onSubmit = () => {
-    mutateAsync({ id: project.id });
+  const onSubmit = (values: z.infer<typeof projectSchema>) => {
+    mutateAsync({ ...values, id: project.id });
   };
 
   return (
@@ -67,18 +60,12 @@ export const DeleteProjectDialog = ({
           className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border"
           aria-hidden="true"
         >
-          <CircleAlert className="opacity-80" size={16} strokeWidth={2} />
+          <Pencil className="opacity-80" size={16} strokeWidth={2} />
         </div>
         <DialogHeader>
-          <DialogTitle className="sm:text-center">
-            Final confirmation
-          </DialogTitle>
+          <DialogTitle className="sm:text-center">Edit Project</DialogTitle>
           <DialogDescription className="sm:text-center">
-            This action cannot be undone. To confirm, please enter
-            <span className="text-foreground italic font-medium">
-              &quot;{project.name}&quot;
-            </span>
-            .
+            Make changes to your project here.
           </DialogDescription>
         </DialogHeader>
       </div>
@@ -103,26 +90,39 @@ export const DeleteProjectDialog = ({
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="px-2">description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="project description..."
+                      className="h-9 min-h-[36px] resize-y"
+                      disabled={isPending}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-          <DialogFooter>
+          <DialogFooter className="flex flex-row gap-2 mt-5">
             <DialogClose asChild>
               <Button type="button" variant="outline" className="flex-1">
                 Cancel
               </Button>
             </DialogClose>
-            <Button
-              type="submit"
-              variant="destructive"
-              className="flex-1"
-              disabled={isPending}
-            >
+            <Button type="submit" className="flex-1" disabled={isPending}>
               {isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <span>Deleting Project...</span>
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                  <span>Creating Project...</span>
                 </>
               ) : (
-                "Delete"
+                "Create"
               )}
             </Button>
           </DialogFooter>

@@ -22,17 +22,17 @@ import {
 import type { Project } from "./types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { fetchProjects } from "@/actions/project-actions";
+import { getProjects } from "@/actions/project-actions";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { CreateProjectDialog } from "./create-project-dialog";
 import { CustomDialogItem } from "./custom-dialog-item.tsx";
 import { DeleteProjectDialog } from "./delete-project-dialog";
-import { EditProjectDialog } from "./edit-project-dialog";
+import { UpdateProjectDialog } from "./update-project-dialog";
 
 export const NavProjects = () => {
   const { data: projects } = useSuspenseQuery({
     queryKey: ["projects"],
-    queryFn: fetchProjects,
+    queryFn: getProjects,
   });
   const { isMobile } = useSidebar();
   const pathname = usePathname();
@@ -123,7 +123,12 @@ export const NavProjects = () => {
                     handleDialogItemOpenChange(project.id, open)
                   }
                 >
-                  <EditProjectDialog projectName={project.name} />
+                  <UpdateProjectDialog
+                    project={project}
+                    onOpenChange={(open) =>
+                      handleDialogItemOpenChange(project.id, open)
+                    }
+                  />
                 </CustomDialogItem>
 
                 <DropdownMenuItem>
@@ -145,7 +150,12 @@ export const NavProjects = () => {
                     handleDialogItemOpenChange(project.id, open)
                   }
                 >
-                  <DeleteProjectDialog projectName={project.name} />
+                  <DeleteProjectDialog
+                    project={project}
+                    onOpenChange={(open) =>
+                      handleDialogItemOpenChange(project.id, open)
+                    }
+                  />
                 </CustomDialogItem>
               </DropdownMenuContent>
             </DropdownMenu>
