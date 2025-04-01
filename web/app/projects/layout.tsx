@@ -1,4 +1,4 @@
-import { fetchProjects } from "@/actions/project-actions";
+import { getProjects } from "@/actions/project-actions";
 import { ProjectNavigation } from "@/components/project/project-navigation";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -7,7 +7,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 const ProjectLayout = async ({ children }: { children: React.ReactNode }) => {
   const queryClient = getQueryClient();
-  queryClient.prefetchQuery({ queryKey: ["projects"], queryFn: fetchProjects });
+  queryClient.prefetchQuery({ queryKey: ["projects"], queryFn: getProjects });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <SidebarProvider>
