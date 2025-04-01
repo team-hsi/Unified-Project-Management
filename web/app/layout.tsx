@@ -4,6 +4,7 @@ import { QueryProvider } from "@/lib/query-client/query-provider";
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme/next-theme";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ const RootLayout = ({
           color={"var(--toploader)"}
           height={3}
         />
+        <Toaster />
         <QueryProvider>
           <ThemeProvider
             attribute="class"

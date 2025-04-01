@@ -1,4 +1,8 @@
-import { Folder, MoreHorizontal, Plus, Share, Trash2 } from "lucide-react";
+"use client";
+
+import React from "react";
+
+import { Edit, MoreHorizontal, Plus, Share, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,11 +19,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Project } from "./types";
+import type { Project } from "./types";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { fetchProjects } from "@/actions/project-actions";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { CreateProjectDialog } from "./create-project-dialog";
+import { CustomDialogItem } from "./custom-dialog-item.tsx";
+import { DeleteProjectDialog } from "./delete-project-dialog";
+import { EditProjectDialog } from "./edit-project-dialog";
 
 export const NavProjects = () => {
   const { data: projects } = useSuspenseQuery({
@@ -27,16 +35,43 @@ export const NavProjects = () => {
     queryFn: fetchProjects,
   });
   const { isMobile } = useSidebar();
-  const router = useRouter();
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
+
+  // State for managing dropdown and dialog focus
+  const [openDropdowns, setOpenDropdowns] = React.useState<
+    Record<string, boolean>
+  >({});
+  const [hasOpenDialog, setHasOpenDialog] = React.useState<
+    Record<string, boolean>
+  >({});
+  const dropdownTriggerRefs = React.useRef<
+    Map<string, HTMLButtonElement | null>
+  >(new Map());
+  const focusRefs = React.useRef<Map<string, HTMLButtonElement | null>>(
+    new Map()
+  );
+
+  const handleDialogItemSelect = (projectId: string) => {
+    focusRefs.current.set(
+      projectId,
+      dropdownTriggerRefs.current.get(projectId) || null
+    );
+  };
+
+  const handleDialogItemOpenChange = (projectId: string, open: boolean) => {
+    setHasOpenDialog((prev) => ({ ...prev, [projectId]: open }));
+    if (open === false) {
+      setOpenDropdowns((prev) => ({ ...prev, [projectId]: false }));
+    }
+  };
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((project: Project) => (
-          <SidebarMenuItem key={project.name}>
+          <SidebarMenuItem key={project.id || project.name}>
             <SidebarMenuButton
               asChild
               isActive={segments.includes(encodeURIComponent(project.name))}
@@ -45,9 +80,19 @@ export const NavProjects = () => {
                 {project.name}
               </Link>
             </SidebarMenuButton>
-            <DropdownMenu>
+            <DropdownMenu
+              open={openDropdowns[project.id]}
+              onOpenChange={(open) =>
+                setOpenDropdowns((prev) => ({ ...prev, [project.id]: open }))
+              }
+            >
               <DropdownMenuTrigger asChild>
-                <SidebarMenuAction showOnHover>
+                <SidebarMenuAction
+                  showOnHover
+                  ref={(el) => {
+                    dropdownTriggerRefs.current.set(project.id, el);
+                  }}
+                >
                   <MoreHorizontal />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
@@ -56,31 +101,63 @@ export const NavProjects = () => {
                 className="w-48"
                 side={isMobile ? "bottom" : "right"}
                 align={isMobile ? "end" : "start"}
+                hidden={hasOpenDialog[project.id]}
+                onCloseAutoFocus={(event) => {
+                  const focusRef = focusRefs.current.get(project.id);
+                  if (focusRef) {
+                    focusRef.focus();
+                    focusRefs.current.delete(project.id);
+                    event.preventDefault();
+                  }
+                }}
               >
+                <CustomDialogItem
+                  triggerChildren={
+                    <>
+                      <Edit className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <span>Edit Project</span>
+                    </>
+                  }
+                  onSelect={() => handleDialogItemSelect(project.id)}
+                  onOpenChange={(open) =>
+                    handleDialogItemOpenChange(project.id, open)
+                  }
+                >
+                  <EditProjectDialog projectName={project.name} />
+                </CustomDialogItem>
+
                 <DropdownMenuItem>
-                  <Folder className="text-muted-foreground" />
-                  <span>View Project</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Share className="text-muted-foreground" />
+                  <Share className="mr-2 h-4 w-4 text-muted-foreground" />
                   <span>Share Project</span>
                 </DropdownMenuItem>
+
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Trash2 className="text-muted-foreground" />
-                  <span>Delete Project</span>
-                </DropdownMenuItem>
+
+                <CustomDialogItem
+                  triggerChildren={
+                    <>
+                      <Trash2 className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <span>Delete Project</span>
+                    </>
+                  }
+                  onSelect={() => handleDialogItemSelect(project.id)}
+                  onOpenChange={(open) =>
+                    handleDialogItemOpenChange(project.id, open)
+                  }
+                >
+                  <DeleteProjectDialog projectName={project.name} />
+                </CustomDialogItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton
-            onClick={() => router.push("/projects/Internal%20Tools")}
-          >
-            <Plus />
-            <span>Create New</span>
-          </SidebarMenuButton>
+          <CreateProjectDialog>
+            <SidebarMenuButton>
+              <Plus />
+              <span>Create New</span>
+            </SidebarMenuButton>
+          </CreateProjectDialog>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>

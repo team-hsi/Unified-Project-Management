@@ -1,7 +1,8 @@
+// "use server";
 export const fetchTasks = async () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL_DEV;
   try {
-    const res = await fetch(`${apiUrl}/projects/tasks`);
+    const res = await fetch(`${apiUrl}/api/projects/tasks`);
     if (!res.ok) {
       throw new Error(`Error fetching tasks: ${res.statusText}`);
     }
@@ -12,9 +13,9 @@ export const fetchTasks = async () => {
   }
 };
 export const fetchTaskByID = async (id: string) => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL_DEV;
   try {
-    const res = await fetch(`${apiUrl}/task/${id}`);
+    const res = await fetch(`${apiUrl}/api/task/${id}`);
     if (!res.ok) {
       throw new Error(`Error fetching task: ${res.statusText}`);
     }

@@ -32,5 +32,7 @@ const mockProjects: Project[] = [
 export async function GET() {
   // Mocking fetch projects from an API
   const projects = mockProjects;
+  console.log("from server url", process.env.NEXT_PUBLIC_API_URL);
+  console.log("from server local", process.env.NEXT_PUBLIC_API_URL_LOCAL);
   return NextResponse.json(projects);
 }
