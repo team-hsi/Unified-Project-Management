@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   ClockOne,
@@ -21,6 +22,7 @@ import {
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
+import { EditTaskModal } from "./edit-task-modal";
 
 // Define the Task type
 export type Task = {
@@ -31,6 +33,7 @@ export type Task = {
   priority: "Low" | "Medium" | "High";
   assignedTo: string;
   createdAt: string;
+  label?: "Bug" | "Feature" | "Enhancement" | "Documentation" | null; // Added label to Task type
 };
 
 // Define label colors for styling
@@ -50,11 +53,13 @@ interface ColumnsProps {
   getLabel: (
     taskId: string
   ) => "Bug" | "Feature" | "Enhancement" | "Documentation" | null;
+  onUpdateTask?: (updatedTask: Task) => void; // Added callback for updating tasks
 }
 
 export const getColumns = ({
   setLabel,
   getLabel,
+  onUpdateTask,
 }: ColumnsProps): ColumnDef<Task>[] => [
   {
     accessorKey: "id",
@@ -201,9 +206,17 @@ export const getColumns = ({
   },
   {
     id: "actions",
-    header: () => <div className="text-center font-semibold">Actions</div>,
+    header: () => <div className="text-center pr-2 font-semibold">Actions</div>,
     cell: ({ row }) => {
-      const taskId = row.getValue("id") as string;
+      const task = row.original;
+      const [isModalOpen, setIsModalOpen] = useState(false);
+
+      const handleSave = (updatedTask: Task) => {
+        if (onUpdateTask) {
+          onUpdateTask(updatedTask);
+        }
+      };
+
       return (
         <div className="flex justify-center">
           <DropdownMenu>
@@ -213,25 +226,27 @@ export const getColumns = ({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => alert(`Editing task ${taskId}`)}>
+              <DropdownMenuItem onClick={() => setIsModalOpen(true)}>
                 Edit
               </DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
-                  <DropdownMenuItem onClick={() => setLabel(taskId, "Bug")}>
+                  <DropdownMenuItem onClick={() => setLabel(task.id, "Bug")}>
                     Bug
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setLabel(taskId, "Feature")}>
+                  <DropdownMenuItem
+                    onClick={() => setLabel(task.id, "Feature")}
+                  >
                     Feature
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => setLabel(taskId, "Enhancement")}
+                    onClick={() => setLabel(task.id, "Enhancement")}
                   >
                     Enhancement
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => setLabel(taskId, "Documentation")}
+                    onClick={() => setLabel(task.id, "Documentation")}
                   >
                     Documentation
                   </DropdownMenuItem>
@@ -239,12 +254,18 @@ export const getColumns = ({
               </DropdownMenuSub>
               <DropdownMenuItem
                 variant="destructive"
-                onClick={() => alert(`Deleting task ${taskId}`)}
+                onClick={() => alert(`Deleting task ${task.id}`)}
               >
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <EditTaskModal
+            task={task}
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onSave={handleSave}
+          />
         </div>
       );
     },
