@@ -42,7 +42,6 @@ export function EditTaskModal({
   const [priority, setPriority] = useState<"Low" | "Medium" | "High">(
     task.priority
   );
-  const [estimatedHours, setEstimatedHours] = useState<string>("");
 
   const handleSave = () => {
     const updatedTask: Task = {
@@ -173,20 +172,6 @@ export function EditTaskModal({
               disabled
               className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
               placeholder="Assigned To"
-            />
-          </div>
-          {/* Estimated Hours */}
-          <div className="grid gap-2">
-            <label htmlFor="estimatedHours" className="text-sm font-medium">
-              Estimated Hours
-            </label>
-            <Input
-              id="estimatedHours"
-              type="number"
-              value={estimatedHours}
-              onChange={(e) => setEstimatedHours(e.target.value)}
-              className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
-              placeholder="Enter estimated hours"
             />
           </div>
         </div>
