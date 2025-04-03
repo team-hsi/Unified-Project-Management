@@ -35,7 +35,7 @@ export function EditTaskModal({
   const [title, setTitle] = useState(task.title);
   const [label, setLabel] = useState<
     "Bug" | "Feature" | "Enhancement" | "Documentation" | null
-  >(task.label || null);
+  >(null); // Default to null since task.label isn't defined
   const [status, setStatus] = useState<
     "Todo" | "In-Progress" | "Done" | "Canceled"
   >(task.status);
@@ -50,7 +50,7 @@ export function EditTaskModal({
       title,
       status,
       priority,
-      label,
+      // Note: label isn't part of Task type; we'll add it in columns.tsx
     };
     onSave(updatedTask);
     onClose();
@@ -162,19 +162,46 @@ export function EditTaskModal({
               </SelectContent>
             </Select>
           </div>
+          {/* Assigned To */}
+          <div className="grid gap-2">
+            <label htmlFor="assignedTo" className="text-sm font-medium">
+              Assigned To
+            </label>
+            <Input
+              id="assignedTo"
+              value={task.assignedTo}
+              disabled
+              className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
+              placeholder="Assigned To"
+            />
+          </div>
+          {/* Estimated Hours */}
+          <div className="grid gap-2">
+            <label htmlFor="estimatedHours" className="text-sm font-medium">
+              Estimated Hours
+            </label>
+            <Input
+              id="estimatedHours"
+              type="number"
+              value={estimatedHours}
+              onChange={(e) => setEstimatedHours(e.target.value)}
+              className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
+              placeholder="Enter estimated hours"
+            />
+          </div>
         </div>
         {/* Buttons */}
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-col  gap-2">
           <Button
             variant="outline"
             onClick={onClose}
-            className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+            className="bg-gray-800 w-full  border-gray-700 text-white hover:bg-gray-700"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
-            className="bg-white text-black hover:bg-gray-200"
+            className="bg-white w-full text-black hover:bg-gray-200"
           >
             Save
           </Button>
