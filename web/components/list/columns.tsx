@@ -121,14 +121,7 @@ export const getColumns = ({
   },
   {
     accessorKey: "status",
-    header: () => (
-      <div className="flex items-center space-x-2">
-        <div className="w-6 flex justify-center" />
-        <div className="min-w-[96px] flex justify-start">
-          <span className="font-semibold">Status</span>
-        </div>
-      </div>
-    ),
+    header: () => <div className="text-left font-semibold">Status</div>,
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
       const statusIcons = {
@@ -140,7 +133,7 @@ export const getColumns = ({
       const Icon = statusIcons[status] || QuestionCircle;
       return (
         <div
-          className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg "
+          className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg"
           role="presentation"
         >
           <div className="w-6 flex justify-center">
@@ -158,14 +151,7 @@ export const getColumns = ({
   },
   {
     accessorKey: "priority",
-    header: () => (
-      <div className="flex items-center space-x-2">
-        <div className="w-6 flex justify-center" />
-        <div className="min-w-[64px] flex justify-start">
-          <span className="font-semibold">Priority</span>
-        </div>
-      </div>
-    ),
+    header: () => <div className="text-left font-semibold">Priority</div>,
     cell: ({ row }) => {
       const priority = row.getValue("priority") as string;
       const priorityIcons = {
@@ -200,9 +186,7 @@ export const getColumns = ({
   },
   {
     accessorKey: "createdAt",
-    header: () => (
-      <div className="text-right font-semibold pr-4">Created At</div>
-    ),
+    header: () => <div className="text-left font-semibold">Created At</div>,
     cell: ({ row }) => {
       const date = new Date(row.getValue("createdAt"));
       const formatted = new Intl.DateTimeFormat("en-US", {
