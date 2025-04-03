@@ -140,7 +140,7 @@ export const getColumns = ({
       const Icon = statusIcons[status] || QuestionCircle;
       return (
         <div
-          className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-800 rounded-lg "
+          className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg "
           role="presentation"
         >
           <div className="w-6 flex justify-center">
@@ -176,7 +176,7 @@ export const getColumns = ({
       const Icon = priorityIcons[priority] || ArrowRight;
       return (
         <div
-          className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-800 rounded-lg"
+          className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg"
           role="presentation"
         >
           <div className="w-6 flex justify-center">
