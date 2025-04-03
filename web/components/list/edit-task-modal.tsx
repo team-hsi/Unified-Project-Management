@@ -35,7 +35,7 @@ export function EditTaskModal({
   const [title, setTitle] = useState(task.title);
   const [label, setLabel] = useState<
     "Bug" | "Feature" | "Enhancement" | "Documentation" | null
-  >(null); // Default to null since task.label isn't defined
+  >(task.label || null);
   const [status, setStatus] = useState<
     "Todo" | "In-Progress" | "Done" | "Canceled"
   >(task.status);
@@ -43,16 +43,36 @@ export function EditTaskModal({
     task.priority
   );
 
-  const handleSave = () => {
-    const updatedTask: Task = {
-      ...task,
-      title,
-      status,
-      priority,
-      // Note: label isn't part of Task type; we'll add it in columns.tsx
-    };
-    onSave(updatedTask);
-    onClose();
+  const handleSave = async () => {
+    try {
+      const updatedTask = {
+        title,
+        status,
+        priority,
+        label,
+        assignedTo: task.assignedTo,
+      };
+
+      // Make the fetch PUT request
+      const response = await fetch(`/v1/items/{id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedTask),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      onSave(result);
+      onClose();
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      alert("Failed to update task. Please try again.");
+    }
   };
 
   return (
@@ -176,17 +196,17 @@ export function EditTaskModal({
           </div>
         </div>
         {/* Buttons */}
-        <div className="flex flex-col  gap-2">
+        <div className="flex flex-col gap-2">
           <Button
             variant="outline"
             onClick={onClose}
-            className="bg-gray-800 w-full  border-gray-700 text-white hover:bg-gray-700"
+            className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
-            className="bg-white w-full text-black hover:bg-gray-200"
+            className="bg-white text-black hover:bg-gray-200"
           >
             Save
           </Button>

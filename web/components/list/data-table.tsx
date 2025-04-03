@@ -45,7 +45,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData extends Task, TValue>({
-  data,
+  data: initialData = [],
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({
@@ -54,15 +54,32 @@ export function DataTable<TData extends Task, TValue>({
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(true); // Add loading state
+  const [data, setData] = useState<Task[]>(initialData); // Local state for data
 
   const { setLabel, getLabel } = useTaskLabels();
   const { filteredData, searchQuery, handleSearchChange } =
     useTableFilter(data);
 
-  const columns = getColumns({ setLabel, getLabel });
+  // Define handleUpdateTask before using it in getColumns
+  const handleUpdateTask = (updatedTask: Task) => {
+    setData(
+      (prevData) =>
+        updatedTask.id
+          ? prevData.map((task) =>
+              task.id === updatedTask.id ? updatedTask : task
+            )
+          : prevData.filter((task) => task.id !== updatedTask.id) // For deletion
+    );
+  };
+
+  // Now that handleUpdateTask is defined, we can use it in getColumns
+  const columns = getColumns({
+    setLabel,
+    getLabel,
+    onUpdateTask: handleUpdateTask,
+  });
 
   const {
-    handleAddTask,
     handleExport,
     columnSearchQuery,
     handleColumnSearchChange,
@@ -102,15 +119,30 @@ export function DataTable<TData extends Task, TValue>({
     manualPagination: false,
   });
 
-  // Simulate loading delay (replace with actual data fetching logic)
+  // Fetch tasks from the API
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000); // Simulate 2-second loading delay
-    return () => clearTimeout(timer);
+    const fetchTasks = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("/v1/items/getall");
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error("Failed to fetch tasks:", error);
+        alert("Failed to fetch tasks. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
   }, []);
 
-  // Conditionally render the skeleton or the table
   if (loading) {
     return <ListViewSkeleton />;
   }

@@ -33,7 +33,7 @@ export type Task = {
   priority: "Low" | "Medium" | "High";
   assignedTo: string;
   createdAt: string;
-  label?: "Bug" | "Feature" | "Enhancement" | "Documentation" | null; // Added label to Task type
+  label?: "Bug" | "Feature" | "Enhancement" | "Documentation" | null;
 };
 
 // Define label colors for styling
@@ -53,7 +53,7 @@ interface ColumnsProps {
   getLabel: (
     taskId: string
   ) => "Bug" | "Feature" | "Enhancement" | "Documentation" | null;
-  onUpdateTask?: (updatedTask: Task) => void; // Added callback for updating tasks
+  onUpdateTask?: (updatedTask: Task) => void;
 }
 
 export const getColumns = ({
@@ -201,19 +201,66 @@ export const getColumns = ({
         hour: "2-digit",
         minute: "2-digit",
       }).format(date);
-      return <div className="text-left font-medium">{formatted}</div>;
+      return <div className="text-right font-medium">{formatted}</div>;
     },
   },
   {
     id: "actions",
-    header: () => <div className="text-center pr-2 font-semibold">Actions</div>,
+    header: () => <div className="text-center font-semibold">Actions</div>,
     cell: ({ row }) => {
       const task = row.original;
+      const taskWithLabel = {
+        ...task,
+        label: getLabel(task.id),
+      };
       const [isModalOpen, setIsModalOpen] = useState(false);
 
       const handleSave = (updatedTask: Task) => {
         if (onUpdateTask) {
           onUpdateTask(updatedTask);
+        }
+      };
+
+      const handleDelete = async () => {
+        try {
+          const response = await fetch(`/v1/items/{id}`, {
+            method: "DELETE",
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          if (onUpdateTask) {
+            onUpdateTask({ ...task, id: "" }); // Hack to trigger a refresh
+          }
+        } catch (error) {
+          console.error("Failed to delete task:", error);
+          alert("Failed to delete task. Please try again.");
+        }
+      };
+
+      const handleSetLabel = async (
+        label: "Bug" | "Feature" | "Enhancement" | "Documentation" | null
+      ) => {
+        try {
+          const response = await fetch(`/v1/items/{id}/label`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ label }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const result = await response.json();
+          setLabel(task.id, label);
+        } catch (error) {
+          console.error("Failed to set label:", error);
+          alert("Failed to set label. Please try again.");
         }
       };
 
@@ -232,36 +279,31 @@ export const getColumns = ({
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
-                  <DropdownMenuItem onClick={() => setLabel(task.id, "Bug")}>
+                  <DropdownMenuItem onClick={() => handleSetLabel("Bug")}>
                     Bug
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setLabel(task.id, "Feature")}
-                  >
+                  <DropdownMenuItem onClick={() => handleSetLabel("Feature")}>
                     Feature
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => setLabel(task.id, "Enhancement")}
+                    onClick={() => handleSetLabel("Enhancement")}
                   >
                     Enhancement
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => setLabel(task.id, "Documentation")}
+                    onClick={() => handleSetLabel("Documentation")}
                   >
                     Documentation
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={() => alert(`Deleting task ${task.id}`)}
-              >
+              <DropdownMenuItem variant="destructive" onClick={handleDelete}>
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <EditTaskModal
-            task={task}
+            task={taskWithLabel}
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onSave={handleSave}
