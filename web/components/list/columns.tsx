@@ -196,7 +196,7 @@ export const getColumns = ({
         hour: "2-digit",
         minute: "2-digit",
       }).format(date);
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="text-left font-medium">{formatted}</div>;
     },
   },
   {
