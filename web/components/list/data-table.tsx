@@ -117,7 +117,7 @@ export function DataTable<TData extends Task, TValue>({
 
   return (
     <div className="space-y-4">
-      {/* Header with Search, Add Task, Export, and View Buttons */}
+      {/* Header with Search, Export, and View Buttons */}
       <div className="flex items-center justify-between">
         {/* Search by Title */}
         <div className="flex items-center space-x-2">
@@ -132,10 +132,6 @@ export function DataTable<TData extends Task, TValue>({
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-2">
-          <Button onClick={handleAddTask}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Task
-          </Button>
           <Button onClick={handleExport}>
             <Download className="h-4 w-4 mr-2" />
             Export

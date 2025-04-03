@@ -19,12 +19,6 @@ export const useTableActions = <TData extends Task>({
 }: UseTableActionsProps<TData>) => {
   const [columnSearchQuery, setColumnSearchQuery] = useState("");
 
-  // Handle adding a new task (placeholder action)
-  const handleAddTask = () => {
-    alert("Add Task functionality to be implemented!");
-    // In a real app, this could open a modal or form to add a new task
-  };
-
   // Handle exporting the table data (placeholder action)
   const handleExport = () => {
     const csvContent = [
@@ -75,7 +69,6 @@ export const useTableActions = <TData extends Task>({
   };
 
   return {
-    handleAddTask,
     handleExport,
     columnSearchQuery,
     handleColumnSearchChange,
