@@ -1,4 +1,6 @@
+// Page.tsx
 import { fetchTasks } from "@/actions/task-actions";
+import { fetchBuckets } from "@/actions/bucket-actions";
 import { ProjectHeader } from "@/components/project/project-header";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { ViewContainer } from "@/components/project/view-container";
@@ -10,15 +12,23 @@ type Props = {
 
 const Page = async (props: Props) => {
   const queryClient = getQueryClient();
-  queryClient.prefetchQuery({ queryKey: ["board"], queryFn: fetchTasks });
   const params = await props.params;
   const searchParams = await props.searchParams;
   const view = (searchParams.view as string) || "kanban";
 
+  // Prefetch tasks
+  await queryClient.prefetchQuery({ queryKey: ["board"], queryFn: fetchTasks });
+
+  // Prefetch columns
+  await queryClient.prefetchQuery({
+    queryKey: ["columns", params.id],
+    queryFn: () => fetchBuckets(params.id),
+  });
+
   return (
     <div className="p-4 flex flex-col gap-4">
-      <ProjectHeader name={decodeURIComponent(params.id)} />
-      <ViewContainer view={view} />
+      <ProjectHeader id={params.id} />
+      <ViewContainer view={view} id={params.id} />
     </div>
   );
 };

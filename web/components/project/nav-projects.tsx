@@ -74,9 +74,9 @@ export const NavProjects = () => {
           <SidebarMenuItem key={project.id || project.name}>
             <SidebarMenuButton
               asChild
-              isActive={segments.includes(encodeURIComponent(project.name))}
+              isActive={segments.includes(project.id)}
             >
-              <Link href={`/projects/${encodeURIComponent(project.name)}`}>
+              <Link href={`/projects/${project.id}`}>
                 {project.name}
               </Link>
             </SidebarMenuButton>

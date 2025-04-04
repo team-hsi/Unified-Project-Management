@@ -1,16 +1,19 @@
 import { Button } from "@/components/ui/button";
 import ProjectTabs from "./project-tabs";
+import { CreateBucketDialog } from "./create-bucket-dialog";
 import { Filter } from "lucide-react";
+import { Plus } from "lucide-react";
 
-export const ProjectHeader = ({ name }: { name: string }) => {
+
+export const ProjectHeader = ({ id }: { id: string }) => {
   return (
     <div className="flex flex-col rounded-lg">
       <div className="flex items-center justify-between w-full p-4 pb-3  mx-auto">
         <div className="flex items-center gap-3">
           <div className="border-2 w-10 h-10 rounded-lg flex items-center justify-center text-xl font-semibold">
-            {name[0]}
+            {id[0]}
           </div>
-          <h1 className="text-2xl font-semibold">{name}</h1>
+          <h1 className="text-2xl font-semibold">{id}</h1>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" className="text-sm font-medium">
@@ -26,7 +29,9 @@ export const ProjectHeader = ({ name }: { name: string }) => {
           <Button size="sm">
             <Filter /> Filter
           </Button>
-          <Button size="sm">New Task</Button>
+          <CreateBucketDialog projectId={id}>
+            <Button size="sm"> <Plus /> New Bucket</Button>
+          </CreateBucketDialog>
         </div>
       </div>
     </div>

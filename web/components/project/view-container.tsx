@@ -44,18 +44,17 @@ type ViewKey = keyof typeof VIEWS;
 
 interface ViewContainerProps {
   view: string;
+  id: string;
 }
 
-export function ViewContainer({ view }: ViewContainerProps) {
-  // Ensure we have a valid view key, defaulting to kanban
-  const viewKey = (VIEWS[view as ViewKey] ? view : "kanban") as ViewKey;
-
-  const { component: ViewComponent, skeleton: SkeletonComponent } =
-    VIEWS[viewKey];
-
-  return (
-    <Suspense fallback={<SkeletonComponent />}>
-      <ViewComponent />
-    </Suspense>
-  );
-}
+  export function ViewContainer({ view, id }: ViewContainerProps) {
+     // Ensure we have a valid view key, defaulting to kanban
+    const viewKey = (VIEWS[view as ViewKey] ? view : "kanban") as ViewKey;
+    const { component: ViewComponent, skeleton: SkeletonComponent } = VIEWS[viewKey];
+  
+    return (
+      <Suspense fallback={<SkeletonComponent />}>
+        <ViewComponent id={id} />
+      </Suspense>
+    );
+  }
