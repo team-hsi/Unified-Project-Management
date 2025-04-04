@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import {
   Dialog,
   DialogContent,
@@ -9,11 +8,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { FolderPlus } from "lucide-react";
-import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
-import { createProject } from "@/actions/project-actions";
-import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { NameDescriptionForm } from "../form/name-description-form";
+import { useProjectMutation } from "@/hooks/useProjectMutation";
 
 export function CreateProjectDialog({
   children,
@@ -22,14 +18,8 @@ export function CreateProjectDialog({
 }) {
   const [open, setOpen] = React.useState(false);
 
-  const queryClient = getQueryClient();
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: createProject,
-    onSuccess: () => {
-      toast.success("Project created successfully!");
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-      setOpen(false);
-    },
+  const { createProject } = useProjectMutation({
+    successAction: () => setOpen(false),
   });
 
   return (
@@ -52,7 +42,11 @@ export function CreateProjectDialog({
             </DialogDescription>
           </DialogHeader>
         </div>
-        <NameDescriptionForm onSubmit={mutateAsync} isPending={isPending} />
+        <NameDescriptionForm
+          onSubmit={createProject.mutateAsync}
+          isPending={createProject.isPending}
+          label="Create"
+        />
       </DialogContent>
     </Dialog>
   );

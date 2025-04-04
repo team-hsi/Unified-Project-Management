@@ -18,19 +18,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { CircleAlert, Loader2 } from "lucide-react";
 import type { ProjectDialogProps } from "./types";
-import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { deleteProject } from "@/actions/project-actions";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useProjectMutation } from "@/hooks/useProjectMutation";
 
 export const DeleteProjectDialog = ({
   project,
   onOpenChange,
 }: ProjectDialogProps) => {
-  const queryClient = getQueryClient();
   const projectDeleteSchema = z.object({
     name: z
       .string()
@@ -47,17 +43,15 @@ export const DeleteProjectDialog = ({
     },
   });
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: deleteProject,
-    onSuccess: () => {
-      toast.success("Project deleted successfully!");
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
+  const { deleteProject } = useProjectMutation({
+    successAction: () => {
       form.reset();
       onOpenChange?.(false);
     },
   });
-  const onSubmit = () => {
-    mutateAsync({ id: project.id });
+
+  const onSubmit = async () => {
+    await deleteProject.mutateAsync({ id: project.id });
   };
 
   return (
@@ -95,7 +89,7 @@ export const DeleteProjectDialog = ({
                   <FormControl>
                     <Input
                       placeholder=" project name..."
-                      disabled={isPending}
+                      disabled={deleteProject.isPending}
                       {...field}
                     />
                   </FormControl>
@@ -114,12 +108,11 @@ export const DeleteProjectDialog = ({
               type="submit"
               variant="destructive"
               className="flex-1"
-              disabled={isPending}
+              disabled={deleteProject.isPending}
             >
-              {isPending ? (
+              {deleteProject.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <span>Deleting Project...</span>
                 </>
               ) : (
                 "Delete"

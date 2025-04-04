@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { cn } from "@/lib/utils"
-import { useCopyToClipboard } from "@/components/hooks/use-copy-to-clipboard"
-import { CheckIcon, CopyIcon } from "@radix-ui/react-icons"
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
 
 interface ColorInputProps {
-  onChange?: (color: string) => void // Callback for final color
-  defaultValue?: string // Default color
-  swatches?: string[] // Swatches for quick selection
-  showOpacity?: boolean // Whether to show the opacity slider
-  label?: string // Label for the input
+  onChange?: (color: string) => void; // Callback for final color
+  defaultValue?: string; // Default color
+  swatches?: string[]; // Swatches for quick selection
+  showOpacity?: boolean; // Whether to show the opacity slider
+  label?: string; // Label for the input
 }
 
 const defaultSwatches = [
@@ -26,16 +26,16 @@ const defaultSwatches = [
   "#d946ef",
   "#ec4899",
   "#f43f5e",
-]
+];
 
 // Helper to calculate final color with opacity
 const generateFinalColor = (color: string, opacity: number): string => {
-  if (opacity === 100) return color // No need to calculate if opacity is 100%
+  if (opacity === 100) return color; // No need to calculate if opacity is 100%
   const alpha = Math.round(opacity * 2.55) // Convert opacity (0-100) to 0-255
     .toString(16) // Convert to hexadecimal
-    .padStart(2, "0") // Ensure 2 digits (e.g., "0F")
-  return `${color}${alpha}`
-}
+    .padStart(2, "0"); // Ensure 2 digits (e.g., "0F")
+  return `${color}${alpha}`;
+};
 
 function ColorInput({
   onChange,
@@ -44,27 +44,27 @@ function ColorInput({
   showOpacity = true,
   label = "Color",
 }: ColorInputProps) {
-  const [color, setColor] = useState(defaultValue) // Base color without opacity
-  const [opacity, setOpacity] = useState(100) // Opacity (0-100)
-  const [copiedText, copy] = useCopyToClipboard()
+  const [color, setColor] = useState(defaultValue); // Base color without opacity
+  const [opacity, setOpacity] = useState(100); // Opacity (0-100)
+  const [copiedText, copy] = useCopyToClipboard();
 
-  const finalColor = generateFinalColor(color, opacity) // Calculate the final color
+  const finalColor = generateFinalColor(color, opacity); // Calculate the final color
 
   // Trigger the onChange callback whenever color or opacity changes
   const updateFinalColor = (newColor: string, newOpacity = opacity) => {
-    const updatedColor = generateFinalColor(newColor, newOpacity)
-    setColor(newColor)
-    onChange?.(updatedColor) // Pass final color to parent
-  }
+    const updatedColor = generateFinalColor(newColor, newOpacity);
+    setColor(newColor);
+    onChange?.(updatedColor); // Pass final color to parent
+  };
 
   const updateOpacity = (newOpacity: number) => {
-    setOpacity(newOpacity)
-    onChange?.(generateFinalColor(color, newOpacity)) // Pass final color to parent
-  }
+    setOpacity(newOpacity);
+    onChange?.(generateFinalColor(color, newOpacity)); // Pass final color to parent
+  };
 
   const handleCopy = async () => {
-    await copy(finalColor)
-  }
+    await copy(finalColor);
+  };
 
   return (
     <div className="w-full max-w-xs space-y-2 relative z-10 min-h-[200px]">
@@ -90,15 +90,15 @@ function ColorInput({
             type="text"
             value={finalColor.toUpperCase()} // Show final color
             onChange={(e) => {
-              const value = e.target.value.slice(0, 7) // Extract base color
+              const value = e.target.value.slice(0, 7); // Extract base color
               if (/^#[0-9A-F]{6}$/i.test(value)) {
-                updateFinalColor(value)
+                updateFinalColor(value);
               }
             }}
             className={cn(
               "flex-1 px-2 py-1 rounded-md border border-zinc-200 dark:border-zinc-800",
               "bg-white dark:bg-zinc-900 text-sm font-mono",
-              "focus:outline-none focus:ring-2 focus:ring-indigo-500/20",
+              "focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             )}
           />
           <button
@@ -154,7 +154,7 @@ function ColorInput({
                 "[&::-moz-range-thumb]:shadow-[0_0_0_4px_rgba(255,255,255,0.9),0_2px_5px_rgba(0,0,0,0.1)]",
                 "[&::-moz-range-thumb]:dark:shadow-[0_0_0_4px_rgba(0,0,0,0.9),0_2px_5px_rgba(0,0,0,0.5)]",
                 "[&::-moz-range-thumb]:hover:scale-110",
-                "[&::-moz-range-thumb]:transition-all",
+                "[&::-moz-range-thumb]:transition-all"
               )}
               style={{
                 color,
@@ -201,7 +201,7 @@ function ColorInput({
                 onClick={() => updateFinalColor(swatch)}
                 className={cn(
                   "w-6 h-6 rounded-md border border-zinc-200 dark:border-zinc-700",
-                  "transition-transform hover:scale-110 relative",
+                  "transition-transform hover:scale-110 relative"
                 )}
                 style={{ backgroundColor: swatch }}
               >
@@ -209,7 +209,7 @@ function ColorInput({
                   <CheckIcon
                     className={cn(
                       "w-4 h-4 absolute inset-0 m-auto text-white",
-                      "drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]",
+                      "drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
                     )}
                   />
                 )}
@@ -219,7 +219,7 @@ function ColorInput({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export { ColorInput }
+export { ColorInput };
