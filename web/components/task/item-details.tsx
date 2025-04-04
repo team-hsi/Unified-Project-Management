@@ -1,7 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-// import { SheetTitle } from "../ui/sheet";
 import {
-  ArrowUpRight,
   CalendarRange,
   ChevronsUp,
   Loader,
@@ -9,16 +7,14 @@ import {
   Plus,
   Users,
 } from "lucide-react";
-import { TaskPriorityBadge } from "./task-priority-badge";
 import { Textarea } from "../ui/textarea";
-import { Task } from "./types";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { StatusSelect } from "./status-select";
+// import { StatusSelect } from "./status-select";
 import { Item } from "../kanban/types";
 
 export const ItemDetails = ({ item }: { item: Item }) => {
