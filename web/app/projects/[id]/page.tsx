@@ -1,7 +1,9 @@
-import { fetchTasks } from "@/actions/task-actions";
 import { ProjectHeader } from "@/components/project/project-header";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { ViewContainer } from "@/components/project/view-container";
+import { getBuckets } from "@/actions/bucket-actions";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { getItems } from "@/actions/item-actions";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -9,17 +11,29 @@ type Props = {
 };
 
 const Page = async (props: Props) => {
-  const queryClient = getQueryClient();
-  queryClient.prefetchQuery({ queryKey: ["board"], queryFn: fetchTasks });
   const params = await props.params;
+  const projectId = decodeURIComponent(params.id);
   const searchParams = await props.searchParams;
   const view = (searchParams.view as string) || "kanban";
 
+  const queryClient = getQueryClient();
+
+  queryClient.prefetchQuery({
+    queryKey: ["buckets", projectId],
+    queryFn: getBuckets,
+  });
+  queryClient.prefetchQuery({
+    queryKey: ["items", projectId],
+    queryFn: getItems,
+  });
+
   return (
-    <div className="p-4 flex flex-col gap-4">
-      <ProjectHeader name={decodeURIComponent(params.id)} />
-      <ViewContainer view={view} />
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <div className="p-4 flex flex-col gap-4 overflow-hidden">
+        <ProjectHeader id={params.id} />
+        <ViewContainer view={view} projectId={params.id} />
+      </div>
+    </HydrationBoundary>
   );
 };
 

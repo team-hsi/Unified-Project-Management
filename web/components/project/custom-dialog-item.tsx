@@ -10,13 +10,13 @@ interface DialogItemProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-export function CustomDialogItem({
+export const CustomDialogItem = ({
   triggerChildren,
   children,
   onSelect,
   onOpenChange,
   ...props
-}: DialogItemProps) {
+}: DialogItemProps) => {
   return (
     <Dialog onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -33,4 +33,4 @@ export function CustomDialogItem({
       {children}
     </Dialog>
   );
-}
+};

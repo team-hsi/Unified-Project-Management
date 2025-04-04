@@ -25,7 +25,7 @@ import { usePathname } from "next/navigation";
 import { getProjects } from "@/actions/project-actions";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { CreateProjectDialog } from "./create-project-dialog";
-import { CustomDialogItem } from "./custom-dialog-item.tsx";
+import { CustomDialogItem } from "./custom-dialog-item";
 import { DeleteProjectDialog } from "./delete-project-dialog";
 import { UpdateProjectDialog } from "./update-project-dialog";
 
@@ -71,14 +71,9 @@ export const NavProjects = () => {
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((project: Project) => (
-          <SidebarMenuItem key={project.id || project.name}>
-            <SidebarMenuButton
-              asChild
-              isActive={segments.includes(encodeURIComponent(project.name))}
-            >
-              <Link href={`/projects/${encodeURIComponent(project.name)}`}>
-                {project.name}
-              </Link>
+          <SidebarMenuItem key={project.id}>
+            <SidebarMenuButton asChild isActive={segments.includes(project.id)}>
+              <Link href={`/projects/${project.id}`}>{project.name}</Link>
             </SidebarMenuButton>
             <DropdownMenu
               open={openDropdowns[project.id]}

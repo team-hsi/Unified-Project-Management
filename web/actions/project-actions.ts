@@ -46,7 +46,6 @@ export const deleteProject = async (values: PartialProject) => {
       "Content-Type": "application/json",
     },
   });
-  console.log("res", res);
   if (res.status === 204) {
     return null;
   }
