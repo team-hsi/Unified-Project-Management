@@ -16,16 +16,10 @@ export const KanbanBoard = ({ projectId }: { projectId: string }) => {
         queryKey: ["buckets", projectId],
         queryFn: getBuckets,
         select: (data: Bucket[]) => {
-          return data.map((bucket: Bucket) => {
-            const newProperties = {
-              color: stringToColor(bucket.name + bucket.createdAt),
-              type: "bucket",
-            };
-            return {
-              ...bucket,
-              ...newProperties,
-            };
-          });
+          return data.sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
         },
       },
       {

@@ -29,9 +29,9 @@ const Page = async (props: Props) => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className="p-4 flex flex-col gap-4">
-        <ProjectHeader name={decodeURIComponent(params.id)} />
-        <ViewContainer view={view} projectId={projectId} />
+      <div className=" container p-4 flex flex-col gap-4 overflow-hidden">
+        <ProjectHeader id={params.id} />
+        <ViewContainer view={view} projectId={params.id} />
       </div>
     </HydrationBoundary>
   );

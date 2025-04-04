@@ -1,20 +1,19 @@
-import { PlusIcon } from "lucide-react";
-// import { KanbanCard } from "@/components/kanban/kanban-card";
 import type { Bucket, Item } from "./types";
 import { useEffect, useRef, useState } from "react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import stringToColor, { cn } from "@/lib/utils";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-// import { getStatusStyles } from "./utils";
 import { useAutoScroll } from "@/hooks/use-auto-scroll";
 import { KanbanCard } from "./kanban-item";
+import BucketDropdown from "./bucket-dropdown";
+import InlineEdit from "../ui/inline-edit";
 
-interface KanbanColumnProps {
+interface KanbanBucketProps {
   bucket: Bucket;
   items?: Item[];
 }
 
-export const KanbanBucket = ({ bucket, items }: KanbanColumnProps) => {
+export const KanbanBucket = ({ bucket, items }: KanbanBucketProps) => {
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -38,12 +37,9 @@ export const KanbanBucket = ({ bucket, items }: KanbanColumnProps) => {
     );
   }, [bucket.id, items]);
   const color = stringToColor(bucket.name + bucket.createdAt);
-
   return (
     <div
-      className={cn("rounded-lg p-4 h-fit flex flex-col w-92 border", {
-        // "bg-white/20 ": isDraggedOver,
-      })}
+      className={cn("rounded-lg p-4 h-fit flex flex-col max-w-92 border ", {})}
       style={{
         backgroundColor: isDraggedOver
           ? "rgba(255, 255, 255, 0.3)"
@@ -65,23 +61,20 @@ export const KanbanBucket = ({ bucket, items }: KanbanColumnProps) => {
           )}, ${parseInt(color.slice(5, 7), 16)}, 0.2)`, // 0.5 is 50% opacity
         }}
       >
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-start gap-2 w-64">
           <div
-            className={cn(
-              "h-4 w-4 rounded-full border-2"
-
-              // getStatusStyles(bucket.id).border
-            )}
+            className={cn("h-4 w-4 rounded-full border-2")}
             style={{ borderColor: color }}
           />
-          <h3 className="font-medium">{bucket.name}</h3>
-          {/* <span className={cn(" ml-2 text-muted-foreground")}>
-            {bucket.count}
-          </span> */}
+          <InlineEdit
+            text={bucket.name}
+            args={{ id: bucket.id }}
+            queryKey={["buckets", bucket.project.id]}
+            textStyle="cursor-pointer"
+            inputStyle="rounded-md"
+          />
         </div>
-        <button className="text-gray-400 hover:text-gray-600">
-          <PlusIcon className="h-4 w-4" />
-        </button>
+        <BucketDropdown bucketId={bucket.id} projectId={bucket.project.id} />
       </div>
       <div className="space-y-3 flex-1 overflow-y-auto" ref={scrollRef}>
         {items?.map((item) => (
