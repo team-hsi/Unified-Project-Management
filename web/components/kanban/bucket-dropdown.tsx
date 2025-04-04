@@ -60,6 +60,7 @@ const BucketDropdown = ({
           onSelect={handleItemSelect}
         />
         <EditBucket
+          values={{ id: bucketId, name: "" }}
           onOpenChange={handleDialogOpenChange}
           onSelect={handleItemSelect}
         />

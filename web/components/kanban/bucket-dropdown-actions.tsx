@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -13,6 +14,8 @@ import { CustomDialogItem } from "@/components/project/custom-dialog-item";
 import { useState } from "react";
 import { ColorInput } from "../ui/color-input";
 import { useBucketMutation } from "@/hooks/useBucketMutation";
+import { Label } from "../ui/label";
+import stringToColor from "@/lib/utils";
 
 /*
  * Add bucket component
@@ -29,7 +32,7 @@ export const AddBucketItem = ({
   onOpenChange?: (open: boolean) => void;
 }) => {
   const { createBucketItem } = useBucketMutation({
-    queryKey: ["buckets", projectId],
+    queryKey: ["items", projectId],
   });
 
   const handleSubmit = async (values: {
@@ -61,20 +64,29 @@ export const AddBucketItem = ({
 
 /*
  * Edit bucket component
+ ! currently not working due to Api endpoint not being implemented for color property
  */
+//Todo: add color picker and implement this component
 
 export const EditBucket = ({
+  values,
   onSelect,
   onOpenChange,
 }: {
+  values: { id: string; name: string; color?: string };
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
-  const [bucketName, setBucketName] = useState("");
-
+  const [bucketData, setBucketData] = useState({
+    name: values.name,
+    id: values.id,
+  });
+  const [color, setColor] = useState<string>(
+    values.color || stringToColor(values.id)
+  );
   const handleEditBucket = () => {
-    toast.success(`Bucket renamed to "${bucketName}"`);
-    setBucketName("");
+    toast.success(`Bucket renamed to "${bucketData.name}"`);
+    setBucketData({ ...bucketData, name: "" });
   };
 
   return (
@@ -84,17 +96,34 @@ export const EditBucket = ({
       onSelect={onSelect}
     >
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit Bucket</DialogTitle>
-        </DialogHeader>
+        <div className="flex flex-col items-center gap-2">
+          <div
+            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border"
+            aria-hidden="true"
+          >
+            <Edit className="opacity-80" size={16} strokeWidth={2} />
+          </div>
+          <DialogHeader>
+            <DialogTitle className="sm:text-center">Edit Bucket</DialogTitle>
+            <DialogDescription className="sm:text-center">
+              Update the bucket details.
+            </DialogDescription>
+          </DialogHeader>
+        </div>
+        <Label>Name</Label>
         <Input
           placeholder="Enter new bucket name"
-          value={bucketName}
-          onChange={(e) => setBucketName(e.target.value)}
+          value={bucketData.name}
+          onChange={(e) =>
+            setBucketData({ ...bucketData, name: e.target.value })
+          }
         />
-        <ColorInput />
+        <ColorInput onChange={setColor} defaultValue={color} />
         <DialogFooter>
-          <Button onClick={handleEditBucket} disabled={!bucketName.trim()}>
+          <Button
+            onClick={handleEditBucket}
+            disabled={!bucketData.name.trim() || bucketData.name.length < 3}
+          >
             Save
           </Button>
         </DialogFooter>

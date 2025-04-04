@@ -67,7 +67,7 @@ function ColorInput({
   };
 
   return (
-    <div className="w-full max-w-xs space-y-2 relative z-10 min-h-[200px]">
+    <div className="w-full  space-y-2 relative z-10 min-h-[200px]">
       {label && (
         <label
           htmlFor="color-input"
@@ -190,10 +190,7 @@ function ColorInput({
 
         {/* Color Swatches */}
         <div className="mt-4 space-y-1.5">
-          <div className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
-            Swatches
-          </div>
-          <div className="grid grid-cols-6 gap-1">
+          <div className="flex flex-wrap gap-2 w-full justify-center">
             {swatches.map((swatch) => (
               <button
                 type="button"
