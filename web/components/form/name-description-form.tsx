@@ -18,6 +18,7 @@ import { Loader } from "lucide-react";
 const formSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters long"),
   description: z.string().optional(),
+  id: z.string().optional(),
 });
 
 interface FormProps {
@@ -38,6 +39,7 @@ export const NameDescriptionForm = ({
     defaultValues: defaultValues || {
       name: "",
       description: "",
+      id: "",
     },
   });
 
@@ -53,7 +55,7 @@ export const NameDescriptionForm = ({
                 <FormLabel className="px-2">Name</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Enter name..."
+                    placeholder={defaultValues?.name || "Enter name..."}
                     disabled={isPending}
                     {...field}
                   />

@@ -29,7 +29,7 @@ export default function HorizontalScroll({ children }: HorizontalScrollProps) {
       }}
     >
       <motion.div
-        className="flex gap-4 h-full"
+        className="flex gap-4 h-full w-fit"
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0}
