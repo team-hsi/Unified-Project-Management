@@ -16,6 +16,37 @@ export const getBuckets = async () => {
   }
 };
 
+export const createBucket = async ({
+  id,
+  name,
+  color,
+}: {
+  id: string;
+  name: string;
+  color: string;
+}) => {
+  try {
+    const res = await fetch(`${API}/v1/buckets/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        color,
+        projectId: id,
+      }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to create bucket");
+    }
+    return res.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 export const updateBucket = async ({ id, name }: PartialProject) => {
   try {
     const res = await fetch(`${API}/v1/buckets/${id}`, {

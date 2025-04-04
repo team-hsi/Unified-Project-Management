@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import ProjectTabs from "./project-tabs";
 import { Filter } from "lucide-react";
+import { CreateBucket } from "../kanban/create-bucket-dialog";
 
 export const ProjectHeader = ({ id }: { id: string }) => {
   return (
@@ -26,7 +27,7 @@ export const ProjectHeader = ({ id }: { id: string }) => {
           <Button size="sm">
             <Filter /> Filter
           </Button>
-          <Button size="sm">New Task</Button>
+          <CreateBucket id={id} />
         </div>
       </div>
     </div>

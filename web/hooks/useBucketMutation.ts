@@ -2,9 +2,18 @@ import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation } from "@tanstack/react-query";
 import { createItem } from "@/actions/item-actions";
 import { toast } from "sonner";
-import { deleteBucket as deleteBucketAction } from "@/actions/bucket-actions";
+import {
+  createBucket as createBucketAction,
+  deleteBucket as deleteBucketAction,
+} from "@/actions/bucket-actions";
 
-export const useBucketMutation = ({ queryKey }: { queryKey: string[] }) => {
+export const useBucketMutation = ({
+  queryKey,
+  successAction,
+}: {
+  queryKey: string[];
+  successAction?: () => void;
+}) => {
   const queryClient = getQueryClient();
 
   const createBucketItem = useMutation({
@@ -12,6 +21,15 @@ export const useBucketMutation = ({ queryKey }: { queryKey: string[] }) => {
     onSuccess: () => {
       toast.success("Item created successfully!");
       queryClient.invalidateQueries({ queryKey });
+    },
+  });
+
+  const createBucket = useMutation({
+    mutationFn: createBucketAction,
+    onSuccess: () => {
+      toast.success("Bucket created successfully!");
+      queryClient.invalidateQueries({ queryKey });
+      successAction?.();
     },
   });
 
@@ -24,6 +42,7 @@ export const useBucketMutation = ({ queryKey }: { queryKey: string[] }) => {
   });
 
   return {
+    createBucket,
     createBucketItem,
     deleteBucket,
   };
