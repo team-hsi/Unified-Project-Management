@@ -45,7 +45,7 @@ export const LoginForm = () => {
               <Label htmlFor="password">password</Label>
               <Input id="password" name="password" type="password" />
             </div>
-            <Link href={`/projects/${encodeURIComponent("Marketing Website")}`}>
+            <Link href="/">
               <Button type="button" className="w-full">
                 Continue
               </Button>
