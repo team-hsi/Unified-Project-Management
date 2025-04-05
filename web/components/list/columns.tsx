@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import {
-  ClockOne,
-  CheckCircle,
-  XCircle,
-  QuestionCircle,
-  ArrowRight,
-  ArrowUp,
-  ArrowDown,
+  //   ClockOne,
+  //   CheckCircle,
+  //   XCircle,
+  //   QuestionCircle,
+  //   ArrowRight,
+  //   ArrowUp,
+  //   ArrowDown,
   Dots,
 } from "@mynaui/icons-react";
 import {
@@ -17,46 +17,45 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent,
+  // DropdownMenuSub,
+  // DropdownMenuSubTrigger,
+  // DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EditItemModal } from "./edit-item-modal"; // Renamed from EditTaskModal
+import { EditItemModal } from "./edit-item-modal";
 
 // Define the Item type
 export type Item = {
   id: string;
   name: string;
   description: string;
-  status: "Todo" | "In-Progress" | "Done" | "Canceled";
-  priority: "Low" | "Medium" | "High";
-  assignedTo: string;
+  // status: "Todo" | "In-Progress" | "Done" | "Canceled";
+  // priority: "Low" | "Medium" | "High";
+  // assignedTo: string;
   startDate: string;
   dueDate: string;
   bucketId: string;
-  labels: string[];
-  estimatedHours?: string;
+  // labels: string[];
 };
 
 // Define label colors for styling
-const labelColors: Record<string, string> = {
-  Bug: "bg-red-100 text-red-800",
-  Feature: "bg-blue-100 text-blue-800",
-  Enhancement: "bg-green-100 text-green-800",
-  Documentation: "bg-yellow-100 text-yellow-800",
-};
+// const labelColors: Record<string, string> = {
+//   Bug: "bg-red-100 text-red-800",
+//   Feature: "bg-blue-100 text-blue-800",
+//   Enhancement: "bg-green-100 text-green-800",
+//   Documentation: "bg-yellow-100 text-yellow-800",
+// };
 
 // Define the type for the parameters passed to getColumns
 interface ColumnsProps {
-  setLabel: (itemId: string, label: string | null) => void;
-  getLabel: (itemId: string) => string | null;
+  // setLabel: (itemId: string, label: string | null) => void;
+  // getLabel: (itemId: string) => string | null;
   onUpdateItem?: (updatedItem: Item) => void; // Renamed from onUpdateTask
 }
 
 export const getColumns = ({
-  setLabel,
-  getLabel,
+  // setLabel,
+  // getLabel,
   onUpdateItem,
 }: ColumnsProps): ColumnDef<Item>[] => [
   {
@@ -93,22 +92,16 @@ export const getColumns = ({
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: "description",
-    header: () => <div className="text-left font-semibold">Description</div>,
-    cell: ({ row }) => (
-      <div className="text-left font-medium">{row.getValue("description")}</div>
-    ),
-  },
+
   {
     accessorKey: "name",
     header: () => <div className="text-left font-semibold">Name</div>,
     cell: ({ row }) => {
-      const itemId = row.getValue("id") as string;
-      const label = getLabel(itemId);
+      // const itemId = row.getValue("id") as string;
+      // const label = getLabel(itemId);
       return (
         <div className="text-left font-medium flex items-center space-x-2">
-          {label && (
+          {/* {label && (
             <span
               className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${
                 labelColors[label] || "bg-gray-100 text-gray-800"
@@ -116,77 +109,84 @@ export const getColumns = ({
             >
               {label}
             </span>
-          )}
+          )} */}
           <span>{row.getValue("name")}</span>
         </div>
       );
     },
   },
   {
-    accessorKey: "status",
-    header: () => <div className="text-left font-semibold">Status</div>,
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-      const statusIcons = {
-        "In-Progress": ClockOne,
-        Todo: QuestionCircle,
-        Done: CheckCircle,
-        Canceled: XCircle,
-      };
-      const Icon = statusIcons[status] || QuestionCircle;
-      return (
-        <div
-          className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg"
-          role="presentation"
-        >
-          <div className="w-6 flex justify-center">
-            <Icon className="h-5 w-5" />
-          </div>
-          <div className="min-w-[96px] flex justify-start">
-            <span className="font-medium">
-              {status.charAt(0).toUpperCase() +
-                status.slice(1).replace("-", " ")}
-            </span>
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "priority",
-    header: () => <div className="text-left font-semibold">Priority</div>,
-    cell: ({ row }) => {
-      const priority = row.getValue("priority") as string;
-      const priorityIcons = {
-        Medium: ArrowRight,
-        High: ArrowUp,
-        Low: ArrowDown,
-      };
-      const Icon = priorityIcons[priority] || ArrowRight;
-      return (
-        <div
-          className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg"
-          role="presentation"
-        >
-          <div className="w-6 flex justify-center">
-            <Icon className="h-5 w-5" />
-          </div>
-          <div className="min-w-[64px] flex justify-start">
-            <span className="font-medium">
-              {priority.charAt(0).toUpperCase() + priority.slice(1)}
-            </span>
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "assignedTo",
-    header: () => <div className="text-left font-semibold">Assigned To</div>,
+    accessorKey: "description",
+    header: () => <div className="text-left font-semibold">Description</div>,
     cell: ({ row }) => (
-      <div className="text-left font-medium">{row.getValue("assignedTo")}</div>
+      <div className="text-left font-medium">{row.getValue("description")}</div>
     ),
   },
+  // {
+  //   accessorKey: "status",
+  //   header: () => <div className="text-left font-semibold">Status</div>,
+  //   cell: ({ row }) => {
+  //     const status = row.getValue("status") as string;
+  //     const statusIcons = {
+  //       "In-Progress": ClockOne,
+  //       Todo: QuestionCircle,
+  //       Done: CheckCircle,
+  //       Canceled: XCircle,
+  //     };
+  //     const Icon = statusIcons[status] || QuestionCircle;
+  //     return (
+  //       <div
+  //         className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg"
+  //         role="presentation"
+  //       >
+  //         <div className="w-6 flex justify-center">
+  //           <Icon className="h-5 w-5" />
+  //         </div>
+  //         <div className="min-w-[96px] flex justify-start">
+  //           <span className="font-medium">
+  //             {status.charAt(0).toUpperCase() +
+  //               status.slice(1).replace("-", " ")}
+  //           </span>
+  //         </div>
+  //       </div>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "priority",
+  //   header: () => <div className="text-left font-semibold">Priority</div>,
+  //   cell: ({ row }) => {
+  //     const priority = row.getValue("priority") as string;
+  //     const priorityIcons = {
+  //       Medium: ArrowRight,
+  //       High: ArrowUp,
+  //       Low: ArrowDown,
+  //     };
+  //     const Icon = priorityIcons[priority] || ArrowRight;
+  //     return (
+  //       <div
+  //         className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg"
+  //         role="presentation"
+  //       >
+  //         <div className="w-6 flex justify-center">
+  //           <Icon className="h-5 w-5" />
+  //         </div>
+  //         <div className="min-w-[64px] flex justify-start">
+  //           <span className="font-medium">
+  //             {priority.charAt(0).toUpperCase() + priority.slice(1)}
+  //           </span>
+  //         </div>
+  //       </div>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "assignedTo",
+  //   header: () => <div className="text-left font-semibold">Assigned To</div>,
+  //   cell: ({ row }) => (
+  //     <div className="text-left font-medium">{row.getValue("assignedTo")}</div>
+  //   ),
+  // },
   {
     accessorKey: "startDate",
     header: () => <div className="text-left font-semibold">Start Date</div>,
@@ -217,22 +217,22 @@ export const getColumns = ({
       return <div className="text-right font-medium">{formatted}</div>;
     },
   },
-  {
-    accessorKey: "bucketId",
-    header: () => <div className="text-left font-semibold">Bucket ID</div>,
-    cell: ({ row }) => (
-      <div className="text-left font-medium">{row.getValue("bucketId")}</div>
-    ),
-  },
+  // {
+  //   accessorKey: "bucketId",
+  //   header: () => <div className="text-left font-semibold">Bucket ID</div>,
+  //   cell: ({ row }) => (
+  //     <div className="text-left font-medium">{row.getValue("bucketId")}</div>
+  //   ),
+  // },
   {
     id: "actions",
     header: () => <div className="text-center font-semibold">Actions</div>,
     cell: ({ row }) => {
       const item = row.original;
-      const itemWithLabel = {
-        ...item,
-        labels: item.labels || [], // Ensure labels is always an array
-      };
+      // const itemWithLabel = {
+      //   ...item,
+      //   labels: item.labels || [], // Ensure labels is always an array
+      // };
       const [isModalOpen, setIsModalOpen] = useState(false);
 
       const handleSave = (updatedItem: Item) => {
@@ -260,33 +260,33 @@ export const getColumns = ({
         }
       };
 
-      const handleSetLabel = async (label: string | null) => {
-        try {
-          const updatedLabels = label ? [label] : [];
-          const updatedItem = { ...item, labels: updatedLabels };
+      // const handleSetLabel = async (label: string | null) => {
+      //   try {
+      //     const updatedLabels = label ? [label] : [];
+      //     const updatedItem = { ...item, labels: updatedLabels };
 
-          const response = await fetch(`/v1/items/${item.id}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedItem),
-          });
+      //     const response = await fetch(`/v1/items/${item.id}`, {
+      //       method: "PUT",
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //       },
+      //       body: JSON.stringify(updatedItem),
+      //     });
 
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
+      //     if (!response.ok) {
+      //       throw new Error(`HTTP error! status: ${response.status}`);
+      //     }
 
-          const result = await response.json();
-          setLabel(item.id, label);
-          if (onUpdateItem) {
-            onUpdateItem(result);
-          }
-        } catch (error) {
-          console.error("Failed to set label:", error);
-          alert("Failed to set label. Please try again.");
-        }
-      };
+      //     const result = await response.json();
+      //     setLabel(item.id, label);
+      //     if (onUpdateItem) {
+      //       onUpdateItem(result);
+      //     }
+      //   } catch (error) {
+      //     console.error("Failed to set label:", error);
+      //     alert("Failed to set label. Please try again.");
+      //   }
+      // };
 
       return (
         <div className="flex justify-center">
@@ -300,7 +300,7 @@ export const getColumns = ({
               <DropdownMenuItem onClick={() => setIsModalOpen(true)}>
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuSub>
+              {/* <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   <DropdownMenuItem onClick={() => handleSetLabel("Bug")}>
@@ -320,14 +320,15 @@ export const getColumns = ({
                     Documentation
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
-              </DropdownMenuSub>
+              </DropdownMenuSub> */}
               <DropdownMenuItem variant="destructive" onClick={handleDelete}>
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <EditItemModal
-            item={itemWithLabel}
+            item={item}
+            // item={itemWithLabel}
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onSave={handleSave}

@@ -9,13 +9,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Item } from "./columns";
 
@@ -34,18 +34,15 @@ export function EditItemModal({
 }: EditItemModalProps) {
   const [name, setName] = useState(item.name);
   const [description, setDescription] = useState(item.description);
-  const [label, setLabel] = useState<string | null>(item.labels[0] || null);
-  const [status, setStatus] = useState<
-    "Todo" | "In-Progress" | "Done" | "Canceled"
-  >(item.status);
-  const [priority, setPriority] = useState<"Low" | "Medium" | "High">(
-    item.priority
-  );
+  // const [label, setLabel] = useState<string | null>(item.labels[0] || null);
+  // const [status, setStatus] = useState<
+  //   "Todo" | "In-Progress" | "Done" | "Canceled"
+  // >(item.status);
+  // const [priority, setPriority] = useState<"Low" | "Medium" | "High">(
+  //   item.priority
+  // );
   const [startDate, setStartDate] = useState(item.startDate);
   const [dueDate, setDueDate] = useState(item.dueDate);
-  const [estimatedHours, setEstimatedHours] = useState<string>(
-    item.estimatedHours || ""
-  );
 
   const handleSave = async () => {
     try {
@@ -53,15 +50,14 @@ export function EditItemModal({
         ...item,
         name,
         description,
-        labels: label ? [label] : [],
-        status,
-        priority,
+        // labels: label ? [label] : [],
+        // status,
+        // priority,
         startDate,
         dueDate,
-        estimatedHours,
       };
 
-      const response = await fetch(`/v1/items/${item.id}`, {
+      const response = await fetch(`/v1/items/{id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -121,7 +117,7 @@ export function EditItemModal({
             />
           </div>
           {/* Label */}
-          <div className="grid gap-2">
+          {/* <div className="grid gap-2">
             <label htmlFor="label" className="text-sm font-medium">
               Label
             </label>
@@ -151,9 +147,9 @@ export function EditItemModal({
                 <SelectItem value="Documentation">Documentation</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
           {/* Status */}
-          <div className="grid gap-2">
+          {/* <div className="grid gap-2">
             <label htmlFor="status" className="text-sm font-medium">
               Status
             </label>
@@ -176,9 +172,9 @@ export function EditItemModal({
                 <SelectItem value="Canceled">Canceled</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
           {/* Priority */}
-          <div className="grid gap-2">
+          {/* <div className="grid gap-2">
             <label htmlFor="priority" className="text-sm font-medium">
               Priority
             </label>
@@ -200,9 +196,9 @@ export function EditItemModal({
                 <SelectItem value="High">High</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
           {/* Assigned To */}
-          <div className="grid gap-2">
+          {/* <div className="grid gap-2">
             <label htmlFor="assignedTo" className="text-sm font-medium">
               Assigned To
             </label>
@@ -213,7 +209,7 @@ export function EditItemModal({
               className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
               placeholder="Assigned To"
             />
-          </div>
+          </div> */}
           {/* Start Date */}
           <div className="grid gap-2">
             <label htmlFor="startDate" className="text-sm font-medium">
@@ -238,20 +234,6 @@ export function EditItemModal({
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
-            />
-          </div>
-          {/* Estimated Hours */}
-          <div className="grid gap-2">
-            <label htmlFor="estimatedHours" className="text-sm font-medium">
-              Estimated Hours
-            </label>
-            <Input
-              id="estimatedHours"
-              type="number"
-              value={estimatedHours}
-              onChange={(e) => setEstimatedHours(e.target.value)}
-              className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
-              placeholder="Enter estimated hours"
             />
           </div>
         </div>

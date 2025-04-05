@@ -7,7 +7,8 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query"; // Add this import
 import { useTaskLabels } from "@/hooks/use-task-labels";
 import { useTableFilter } from "@/hooks/use-table-filter";
 import { useTableActions } from "@/hooks/use-table-actions";
@@ -15,6 +16,7 @@ import { Item } from "@/components/list/columns";
 
 import { DataTablePagination } from "./data-table-pagination";
 import { ListViewSkeleton } from "@/components/list/skeletons";
+import { getItems } from "@/actions/item-actions";
 
 import { Plus, Download, ChevronUpDown, FineTune } from "@mynaui/icons-react";
 
@@ -36,29 +38,38 @@ import {
   DropdownMenuSeparator,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
-
 import { getColumns } from "@/components/list/columns";
+
+import { useParams } from "next/navigation";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data?: TData[]; // Make data optional since we'll fetch it
+  projectId: string; // Add projectId as a prop
 }
 
 export function DataTable<TData extends Item, TValue>({
   data: initialData = [],
-}: DataTableProps<TData, TValue>) {
+}: // Add projectId to props
+DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({
-    id: false, // Hide the 'id' column by default
+    id: false,
   });
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Item[]>(initialData);
+  const { id } = useParams<{ id: string }>();
 
-  const { setLabel, getLabel } = useTaskLabels();
-  const { filteredData, searchQuery, handleSearchChange } =
-    useTableFilter(data);
+  const { data: fetchedData, isLoading } = useSuspenseQuery({
+    queryKey: ["items", id],
+    queryFn: getItems,
+  });
+
+  // const { setLabel, getLabel } = useTaskLabels();
+  const { filteredData, searchQuery, handleSearchChange } = useTableFilter(
+    fetchedData || data
+  );
 
   const handleUpdateItem = (updatedItem: Item) => {
     setData((prevData) =>
@@ -71,13 +82,12 @@ export function DataTable<TData extends Item, TValue>({
   };
 
   const columns = getColumns({
-    setLabel,
-    getLabel,
+    // setLabel,
+    // getLabel,
     onUpdateItem: handleUpdateItem,
   });
 
   const {
-    handleAddItem,
     handleExport,
     columnSearchQuery,
     handleColumnSearchChange,
@@ -117,44 +127,7 @@ export function DataTable<TData extends Item, TValue>({
     manualPagination: false,
   });
 
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch("/v1/items/getall");
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        // Map the API response to the Item type
-        const items: Item[] = result.map((item: any) => ({
-          id: item.id,
-          name: item.name,
-          description: "", // Not provided by /v1/items/getall, can fetch via /v1/items/{id} if needed
-          status: "Todo", // Default value since not provided by API
-          priority: "Low", // Default value since not provided by API
-          assignedTo: "", // Default value since not provided by API
-          startDate: new Date().toISOString(), // Default value
-          dueDate: new Date().toISOString(), // Default value
-          bucketId: item.bucketId,
-          labels: [], // Default value
-          estimatedHours: "", // Default value
-        }));
-        setData(items);
-      } catch (error) {
-        console.error("Failed to fetch items:", error);
-        alert("Failed to fetch items. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchItems();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <ListViewSkeleton />;
   }
 
@@ -171,10 +144,6 @@ export function DataTable<TData extends Item, TValue>({
           />
         </div>
         <div className="flex items-center space-x-2">
-          <Button onClick={handleAddItem}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Item
-          </Button>
           <Button onClick={handleExport}>
             <Download className="h-4 w-4 mr-2" />
             Export
