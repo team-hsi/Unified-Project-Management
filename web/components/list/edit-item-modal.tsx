@@ -238,17 +238,17 @@ export function EditItemModal({
           </div>
         </div>
         {/* Buttons */}
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-col gap-2">
           <Button
             variant="outline"
             onClick={onClose}
-            className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+            className="bg-gray-800 border-gray-700 w-full text-white hover:bg-gray-700"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
-            className="bg-white text-black hover:bg-gray-200"
+            className="bg-white text-black w-full hover:bg-gray-200"
           >
             Save
           </Button>
