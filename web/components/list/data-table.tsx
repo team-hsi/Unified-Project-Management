@@ -11,7 +11,7 @@ import { useState, useEffect } from "react";
 import { useTaskLabels } from "@/hooks/use-task-labels";
 import { useTableFilter } from "@/hooks/use-table-filter";
 import { useTableActions } from "@/hooks/use-table-actions";
-import { Task } from "@/components/list/columns";
+import { Item } from "@/components/list/columns";
 
 import { DataTablePagination } from "./data-table-pagination";
 import { ListViewSkeleton } from "@/components/list/skeletons";
@@ -44,7 +44,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function DataTable<TData extends Task, TValue>({
+export function DataTable<TData extends Item, TValue>({
   data: initialData = [],
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
@@ -53,33 +53,31 @@ export function DataTable<TData extends Task, TValue>({
   });
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [data, setData] = useState<Task[]>(initialData); // Local state for data
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<Item[]>(initialData);
 
   const { setLabel, getLabel } = useTaskLabels();
   const { filteredData, searchQuery, handleSearchChange } =
     useTableFilter(data);
 
-  // Define handleUpdateTask before using it in getColumns
-  const handleUpdateTask = (updatedTask: Task) => {
-    setData(
-      (prevData) =>
-        updatedTask.id
-          ? prevData.map((task) =>
-              task.id === updatedTask.id ? updatedTask : task
-            )
-          : prevData.filter((task) => task.id !== updatedTask.id) // For deletion
+  const handleUpdateItem = (updatedItem: Item) => {
+    setData((prevData) =>
+      updatedItem.id
+        ? prevData.map((item) =>
+            item.id === updatedItem.id ? updatedItem : item
+          )
+        : prevData.filter((item) => item.id !== updatedItem.id)
     );
   };
 
-  // Now that handleUpdateTask is defined, we can use it in getColumns
   const columns = getColumns({
     setLabel,
     getLabel,
-    onUpdateTask: handleUpdateTask,
+    onUpdateItem: handleUpdateItem,
   });
 
   const {
+    handleAddItem,
     handleExport,
     columnSearchQuery,
     handleColumnSearchChange,
@@ -119,9 +117,8 @@ export function DataTable<TData extends Task, TValue>({
     manualPagination: false,
   });
 
-  // Fetch tasks from the API
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchItems = async () => {
       try {
         setLoading(true);
         const response = await fetch("/v1/items/getall");
@@ -131,16 +128,30 @@ export function DataTable<TData extends Task, TValue>({
         }
 
         const result = await response.json();
-        setData(result);
+        // Map the API response to the Item type
+        const items: Item[] = result.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          description: "", // Not provided by /v1/items/getall, can fetch via /v1/items/{id} if needed
+          status: "Todo", // Default value since not provided by API
+          priority: "Low", // Default value since not provided by API
+          assignedTo: "", // Default value since not provided by API
+          startDate: new Date().toISOString(), // Default value
+          dueDate: new Date().toISOString(), // Default value
+          bucketId: item.bucketId,
+          labels: [], // Default value
+          estimatedHours: "", // Default value
+        }));
+        setData(items);
       } catch (error) {
-        console.error("Failed to fetch tasks:", error);
-        alert("Failed to fetch tasks. Please try again.");
+        console.error("Failed to fetch items:", error);
+        alert("Failed to fetch items. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTasks();
+    fetchItems();
   }, []);
 
   if (loading) {
@@ -149,21 +160,21 @@ export function DataTable<TData extends Task, TValue>({
 
   return (
     <div className="space-y-4">
-      {/* Header with Search, Export, and View Buttons */}
       <div className="flex items-center justify-between">
-        {/* Search by Title */}
         <div className="flex items-center space-x-2">
           <Input
             type="text"
-            placeholder="Search by title..."
+            placeholder="Search by name..."
             value={searchQuery}
             onChange={handleSearchChange}
             className="max-w-xs"
           />
         </div>
-
-        {/* Action Buttons */}
         <div className="flex items-center space-x-2">
+          <Button onClick={handleAddItem}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Item
+          </Button>
           <Button onClick={handleExport}>
             <Download className="h-4 w-4 mr-2" />
             Export
@@ -195,7 +206,7 @@ export function DataTable<TData extends Task, TValue>({
                   columnId === "select" ||
                   columnId === "actions"
                 ) {
-                  return null; // Skip 'select' and 'actions' columns
+                  return null;
                 }
                 return (
                   <DropdownMenuCheckboxItem
@@ -211,8 +222,6 @@ export function DataTable<TData extends Task, TValue>({
           </DropdownMenu>
         </div>
       </div>
-
-      {/* Table */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -261,8 +270,6 @@ export function DataTable<TData extends Task, TValue>({
           </TableBody>
         </Table>
       </div>
-
-      {/* Pagination Controls */}
       <DataTablePagination table={table} />
     </div>
   );

@@ -17,49 +17,56 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Task } from "./columns";
+import { Item } from "./columns";
 
-interface EditTaskModalProps {
-  task: Task;
+interface EditItemModalProps {
+  item: Item;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (updatedTask: Task) => void;
+  onSave: (updatedItem: Item) => void;
 }
 
-export function EditTaskModal({
-  task,
+export function EditItemModal({
+  item,
   isOpen,
   onClose,
   onSave,
-}: EditTaskModalProps) {
-  const [title, setTitle] = useState(task.title);
-  const [label, setLabel] = useState<
-    "Bug" | "Feature" | "Enhancement" | "Documentation" | null
-  >(task.label || null);
+}: EditItemModalProps) {
+  const [name, setName] = useState(item.name);
+  const [description, setDescription] = useState(item.description);
+  const [label, setLabel] = useState<string | null>(item.labels[0] || null);
   const [status, setStatus] = useState<
     "Todo" | "In-Progress" | "Done" | "Canceled"
-  >(task.status);
+  >(item.status);
   const [priority, setPriority] = useState<"Low" | "Medium" | "High">(
-    task.priority
+    item.priority
+  );
+  const [startDate, setStartDate] = useState(item.startDate);
+  const [dueDate, setDueDate] = useState(item.dueDate);
+  const [estimatedHours, setEstimatedHours] = useState<string>(
+    item.estimatedHours || ""
   );
 
   const handleSave = async () => {
     try {
-      const updatedTask = {
-        title,
+      const updatedItem: Item = {
+        ...item,
+        name,
+        description,
+        labels: label ? [label] : [],
         status,
         priority,
-        label,
-        assignedTo: task.assignedTo,
+        startDate,
+        dueDate,
+        estimatedHours,
       };
 
-      // Make the fetch PUT request
-      const response = await fetch(`/v1/items/{id}`, {
+      const response = await fetch(`/v1/items/${item.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedTask),
+        body: JSON.stringify(updatedItem),
       });
 
       if (!response.ok) {
@@ -70,8 +77,8 @@ export function EditTaskModal({
       onSave(result);
       onClose();
     } catch (error) {
-      console.error("Failed to update task:", error);
-      alert("Failed to update task. Please try again.");
+      console.error("Failed to update item:", error);
+      alert("Failed to update item. Please try again.");
     }
   };
 
@@ -80,24 +87,37 @@ export function EditTaskModal({
       <DialogContent className="sm:max-w-[425px] bg-black text-white border-gray-700">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
-            Update task
+            Update Item
           </DialogTitle>
           <DialogDescription className="text-gray-400">
-            Update the task details and save the changes
+            Update the item details and save the changes
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          {/* Title */}
+          {/* Name */}
           <div className="grid gap-2">
-            <label htmlFor="title" className="text-sm font-medium">
-              Title
+            <label htmlFor="name" className="text-sm font-medium">
+              Name
             </label>
             <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
-              placeholder="Enter task title"
+              placeholder="Enter item name"
+            />
+          </div>
+          {/* Description */}
+          <div className="grid gap-2">
+            <label htmlFor="description" className="text-sm font-medium">
+              Description
+            </label>
+            <Input
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
+              placeholder="Enter item description"
             />
           </div>
           {/* Label */}
@@ -188,15 +208,55 @@ export function EditTaskModal({
             </label>
             <Input
               id="assignedTo"
-              value={task.assignedTo}
+              value={item.assignedTo}
               disabled
               className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
               placeholder="Assigned To"
             />
           </div>
+          {/* Start Date */}
+          <div className="grid gap-2">
+            <label htmlFor="startDate" className="text-sm font-medium">
+              Start Date
+            </label>
+            <Input
+              id="startDate"
+              type="datetime-local"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
+            />
+          </div>
+          {/* Due Date */}
+          <div className="grid gap-2">
+            <label htmlFor="dueDate" className="text-sm font-medium">
+              Due Date
+            </label>
+            <Input
+              id="dueDate"
+              type="datetime-local"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
+            />
+          </div>
+          {/* Estimated Hours */}
+          <div className="grid gap-2">
+            <label htmlFor="estimatedHours" className="text-sm font-medium">
+              Estimated Hours
+            </label>
+            <Input
+              id="estimatedHours"
+              type="number"
+              value={estimatedHours}
+              onChange={(e) => setEstimatedHours(e.target.value)}
+              className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
+              placeholder="Enter estimated hours"
+            />
+          </div>
         </div>
         {/* Buttons */}
-        <div className="flex flex-col gap-2">
+        <div className="flex justify-end gap-2">
           <Button
             variant="outline"
             onClick={onClose}

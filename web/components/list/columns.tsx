@@ -22,18 +22,21 @@ import {
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EditTaskModal } from "./edit-task-modal";
+import { EditItemModal } from "./edit-item-modal"; // Renamed from EditTaskModal
 
-// Define the Task type
-export type Task = {
+// Define the Item type
+export type Item = {
   id: string;
-  task: string;
-  title: string;
+  name: string;
+  description: string;
   status: "Todo" | "In-Progress" | "Done" | "Canceled";
   priority: "Low" | "Medium" | "High";
   assignedTo: string;
-  createdAt: string;
-  label?: "Bug" | "Feature" | "Enhancement" | "Documentation" | null;
+  startDate: string;
+  dueDate: string;
+  bucketId: string;
+  labels: string[];
+  estimatedHours?: string;
 };
 
 // Define label colors for styling
@@ -46,21 +49,16 @@ const labelColors: Record<string, string> = {
 
 // Define the type for the parameters passed to getColumns
 interface ColumnsProps {
-  setLabel: (
-    taskId: string,
-    label: "Bug" | "Feature" | "Enhancement" | "Documentation" | null
-  ) => void;
-  getLabel: (
-    taskId: string
-  ) => "Bug" | "Feature" | "Enhancement" | "Documentation" | null;
-  onUpdateTask?: (updatedTask: Task) => void;
+  setLabel: (itemId: string, label: string | null) => void;
+  getLabel: (itemId: string) => string | null;
+  onUpdateItem?: (updatedItem: Item) => void; // Renamed from onUpdateTask
 }
 
 export const getColumns = ({
   setLabel,
   getLabel,
-  onUpdateTask,
-}: ColumnsProps): ColumnDef<Task>[] => [
+  onUpdateItem,
+}: ColumnsProps): ColumnDef<Item>[] => [
   {
     accessorKey: "id",
     header: () => <div className="text-left font-semibold">ID</div>,
@@ -96,18 +94,18 @@ export const getColumns = ({
     enableHiding: false,
   },
   {
-    accessorKey: "task",
-    header: () => <div className="text-left font-semibold">Task</div>,
+    accessorKey: "description",
+    header: () => <div className="text-left font-semibold">Description</div>,
     cell: ({ row }) => (
-      <div className="text-left font-medium">{row.getValue("task")}</div>
+      <div className="text-left font-medium">{row.getValue("description")}</div>
     ),
   },
   {
-    accessorKey: "title",
-    header: () => <div className="text-left font-semibold">Title</div>,
+    accessorKey: "name",
+    header: () => <div className="text-left font-semibold">Name</div>,
     cell: ({ row }) => {
-      const taskId = row.getValue("id") as string;
-      const label = getLabel(taskId);
+      const itemId = row.getValue("id") as string;
+      const label = getLabel(itemId);
       return (
         <div className="text-left font-medium flex items-center space-x-2">
           {label && (
@@ -119,7 +117,7 @@ export const getColumns = ({
               {label}
             </span>
           )}
-          <span>{row.getValue("title")}</span>
+          <span>{row.getValue("name")}</span>
         </div>
       );
     },
@@ -190,10 +188,10 @@ export const getColumns = ({
     ),
   },
   {
-    accessorKey: "createdAt",
-    header: () => <div className="text-left font-semibold">Created At</div>,
+    accessorKey: "startDate",
+    header: () => <div className="text-left font-semibold">Start Date</div>,
     cell: ({ row }) => {
-      const date = new Date(row.getValue("createdAt"));
+      const date = new Date(row.getValue("startDate"));
       const formatted = new Intl.DateTimeFormat("en-US", {
         year: "numeric",
         month: "short",
@@ -205,25 +203,47 @@ export const getColumns = ({
     },
   },
   {
+    accessorKey: "dueDate",
+    header: () => <div className="text-left font-semibold">Due Date</div>,
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("dueDate"));
+      const formatted = new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(date);
+      return <div className="text-right font-medium">{formatted}</div>;
+    },
+  },
+  {
+    accessorKey: "bucketId",
+    header: () => <div className="text-left font-semibold">Bucket ID</div>,
+    cell: ({ row }) => (
+      <div className="text-left font-medium">{row.getValue("bucketId")}</div>
+    ),
+  },
+  {
     id: "actions",
     header: () => <div className="text-center font-semibold">Actions</div>,
     cell: ({ row }) => {
-      const task = row.original;
-      const taskWithLabel = {
-        ...task,
-        label: getLabel(task.id),
+      const item = row.original;
+      const itemWithLabel = {
+        ...item,
+        labels: item.labels || [], // Ensure labels is always an array
       };
       const [isModalOpen, setIsModalOpen] = useState(false);
 
-      const handleSave = (updatedTask: Task) => {
-        if (onUpdateTask) {
-          onUpdateTask(updatedTask);
+      const handleSave = (updatedItem: Item) => {
+        if (onUpdateItem) {
+          onUpdateItem(updatedItem);
         }
       };
 
       const handleDelete = async () => {
         try {
-          const response = await fetch(`/v1/items/{id}`, {
+          const response = await fetch(`/v1/items/${item.id}`, {
             method: "DELETE",
           });
 
@@ -231,25 +251,26 @@ export const getColumns = ({
             throw new Error(`HTTP error! status: ${response.status}`);
           }
 
-          if (onUpdateTask) {
-            onUpdateTask({ ...task, id: "" }); // Hack to trigger a refresh
+          if (onUpdateItem) {
+            onUpdateItem({ ...item, id: "" }); // Hack to trigger a refresh
           }
         } catch (error) {
-          console.error("Failed to delete task:", error);
-          alert("Failed to delete task. Please try again.");
+          console.error("Failed to delete item:", error);
+          alert("Failed to delete item. Please try again.");
         }
       };
 
-      const handleSetLabel = async (
-        label: "Bug" | "Feature" | "Enhancement" | "Documentation" | null
-      ) => {
+      const handleSetLabel = async (label: string | null) => {
         try {
-          const response = await fetch(`/v1/items/{id}/label`, {
+          const updatedLabels = label ? [label] : [];
+          const updatedItem = { ...item, labels: updatedLabels };
+
+          const response = await fetch(`/v1/items/${item.id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ label }),
+            body: JSON.stringify(updatedItem),
           });
 
           if (!response.ok) {
@@ -257,7 +278,10 @@ export const getColumns = ({
           }
 
           const result = await response.json();
-          setLabel(task.id, label);
+          setLabel(item.id, label);
+          if (onUpdateItem) {
+            onUpdateItem(result);
+          }
         } catch (error) {
           console.error("Failed to set label:", error);
           alert("Failed to set label. Please try again.");
@@ -302,8 +326,8 @@ export const getColumns = ({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <EditTaskModal
-            task={taskWithLabel}
+          <EditItemModal
+            item={itemWithLabel}
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onSave={handleSave}
