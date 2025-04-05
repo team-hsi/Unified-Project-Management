@@ -1,45 +1,26 @@
 import { useState, useRef } from "react";
 import { Input } from "./input";
-import { useMutation } from "@tanstack/react-query";
-import { updateBucket } from "@/actions/bucket-actions";
-import { getQueryClient } from "@/lib/query-client/get-query-client";
-import { PartialProject } from "../project/types";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 const InlineEdit = ({
   text,
   textStyle,
   inputStyle,
-  args,
-  queryKey,
+  onSave,
 }: {
   text: string;
   textStyle?: string;
   inputStyle?: string;
-  args?: PartialProject;
-  queryKey?: string[];
+  onSave: (value: string) => void;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(text);
   const inputRef = useRef(null);
-  const queryClient = getQueryClient();
-
-  const { mutateAsync } = useMutation({
-    mutationFn: updateBucket,
-    onSuccess: () => {
-      toast.success("Bucket name updated");
-      queryClient.invalidateQueries({ queryKey });
-    },
-  });
-  const onSave = (name: string) => {
-    mutateAsync({ name, ...args });
-  };
 
   const handleBlur = () => {
     setIsEditing(false);
-    if (value.trim() !== "") onSave(value);
-    else setValue(text);
+    if (value.trim() !== "" && value.length >= 3) onSave(value);
+    else setValue(text); // Reset on bad input
   };
 
   const handleKeyDown = (e: { key: string }) => {

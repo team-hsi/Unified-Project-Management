@@ -1,8 +1,9 @@
+'use client";';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   CalendarRange,
   ChevronsUp,
-  Loader,
+  // Loader,
   Newspaper,
   Plus,
   Users,
@@ -16,23 +17,39 @@ import {
 } from "../ui/accordion";
 // import { StatusSelect } from "./status-select";
 import { Item } from "../kanban/types";
+import InlineEdit from "../ui/inline-edit";
+import { useItemMutation } from "@/hooks/useItemMutation";
 
 export const ItemDetails = ({ item }: { item: Item }) => {
+  const { updateItemInline } = useItemMutation({
+    queryKey: ["items", item.bucket.project.id],
+  });
   //TODO: refactor this component
   return (
     <div className="w-4/5 mx-auto">
       <div className="flex flex-col gap-6 lg:px-6">
         <div className="font-bold text-xl md:text-2xl xl:text-3xl mt-4">
-          {item.name}
+          {/* {item.name} */}
+          <InlineEdit
+            text={item.name}
+            textStyle="cursor-pointer"
+            inputStyle="rounded-md"
+            onSave={(value) =>
+              updateItemInline.mutateAsync({
+                id: item.id,
+                name: value,
+              })
+            }
+          />
         </div>
         <div className="space-y-4">
           {/* TaskMetadata */}
           <section className=" flex flex-col flex-wrap gap-4">
             <div className="flex   items-center  gap-2 flex-auto">
-              <div className="flex items-center gap-2 ">
+              {/* <div className="flex items-center gap-2 ">
                 <Loader size={15} className=" text-muted-foreground" />
                 <p className="w-24 text-sm text-muted-foreground">Status</p>
-              </div>
+              </div> */}
               {/* <StatusSelect value={task.status} size="sm" /> */}
             </div>
 

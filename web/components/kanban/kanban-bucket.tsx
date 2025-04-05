@@ -7,6 +7,7 @@ import { useAutoScroll } from "@/hooks/use-auto-scroll";
 import { KanbanCard } from "./kanban-item";
 import BucketDropdown from "./bucket-dropdown";
 import InlineEdit from "../ui/inline-edit";
+import { useBucketMutation } from "@/hooks/useBucketMutation";
 
 interface KanbanBucketProps {
   bucket: Bucket;
@@ -18,6 +19,9 @@ export const KanbanBucket = ({ bucket, items }: KanbanBucketProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   useAutoScroll(scrollRef);
+  const { updateBucket } = useBucketMutation({
+    queryKey: ["buckets", bucket.project.id],
+  });
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
@@ -68,10 +72,11 @@ export const KanbanBucket = ({ bucket, items }: KanbanBucketProps) => {
           />
           <InlineEdit
             text={bucket.name}
-            args={{ id: bucket.id }}
-            queryKey={["buckets", bucket.project.id]}
             textStyle="cursor-pointer"
             inputStyle="rounded-md"
+            onSave={(value) =>
+              updateBucket.mutateAsync({ id: bucket.id, name: value })
+            }
           />
         </div>
         <BucketDropdown bucketId={bucket.id} projectId={bucket.project.id} />
