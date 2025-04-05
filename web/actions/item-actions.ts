@@ -16,6 +16,19 @@ export const getItems = async () => {
   }
 };
 
+export const getProjectItems = async ({ id }: PartialProject) => {
+  try {
+    const res = await fetch(`${API}/v1/projects/${id}/items`);
+    if (!res.ok) {
+      throw new Error(`Error fetching tasks: ${res.statusText}`);
+    }
+    return res.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 export const updateItemInline = async (values: UpdateItemPayload) => {
   const { id, ...rest } = values;
   const res = await fetch(`${API}/v1/items/${id}`, {

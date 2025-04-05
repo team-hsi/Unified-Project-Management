@@ -8,6 +8,7 @@ import { KanbanCard } from "./kanban-item";
 import BucketDropdown from "./bucket-dropdown";
 import InlineEdit from "../ui/inline-edit";
 import { useBucketMutation } from "@/hooks/useBucketMutation";
+import { Button } from "../ui/button";
 
 interface KanbanBucketProps {
   bucket: Bucket;
@@ -17,11 +18,15 @@ interface KanbanBucketProps {
 export const KanbanBucket = ({ bucket, items }: KanbanBucketProps) => {
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
+  const [lastAttemptedName, setLastAttemptedName] = useState<string | null>(
+    null
+  );
   const scrollRef = useRef<HTMLDivElement | null>(null);
   useAutoScroll(scrollRef);
   const { updateBucket } = useBucketMutation({
     queryKey: ["buckets", bucket.project.id],
   });
+
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
@@ -40,6 +45,22 @@ export const KanbanBucket = ({ bucket, items }: KanbanBucketProps) => {
       })
     );
   }, [bucket.id, items]);
+
+  const displayName = updateBucket.isPending
+    ? updateBucket.variables?.name
+    : bucket.name;
+
+  const handleSave = (value: string) => {
+    setLastAttemptedName(value);
+    updateBucket.mutate({ id: bucket.id, name: value });
+  };
+
+  const handleRetry = () => {
+    if (lastAttemptedName) {
+      updateBucket.mutate({ id: bucket.id, name: lastAttemptedName });
+    }
+  };
+
   const color = stringToColor(bucket.name + bucket.createdAt);
   return (
     <div
@@ -70,14 +91,28 @@ export const KanbanBucket = ({ bucket, items }: KanbanBucketProps) => {
             className={cn("h-4 w-4 rounded-full border-2")}
             style={{ borderColor: color }}
           />
-          <InlineEdit
-            text={bucket.name}
-            textStyle="cursor-pointer"
-            inputStyle="rounded-md"
-            onSave={(value) =>
-              updateBucket.mutateAsync({ id: bucket.id, name: value })
-            }
-          />
+          {updateBucket.isError ? (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center text-destructive">
+                <span>{lastAttemptedName || bucket.name}</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleRetry}
+                className="h-6 px-2 text-xs"
+              >
+                Retry
+              </Button>
+            </div>
+          ) : (
+            <InlineEdit
+              text={displayName as string}
+              textStyle="cursor-pointer"
+              inputStyle="rounded-md"
+              onSave={handleSave}
+            />
+          )}
         </div>
         <BucketDropdown bucketId={bucket.id} projectId={bucket.project.id} />
       </div>

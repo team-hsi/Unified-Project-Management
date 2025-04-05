@@ -43,8 +43,9 @@ export const useBucketMutation = ({
   });
   const updateBucket = useMutation({
     mutationFn: updateBucketAction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
+    mutationKey: ["updateBucket"],
+    onSettled: () => {
+      return queryClient.invalidateQueries({ queryKey });
     },
   });
 
