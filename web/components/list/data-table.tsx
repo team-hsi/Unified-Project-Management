@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query"; // Add this import
-import { useTaskLabels } from "@/hooks/use-task-labels";
+// import { useTaskLabels } from "@/hooks/use-task-labels";
 import { useTableFilter } from "@/hooks/use-table-filter";
 import { useTableActions } from "@/hooks/use-table-actions";
 import { Item } from "@/components/list/columns";
@@ -18,7 +18,7 @@ import { DataTablePagination } from "./data-table-pagination";
 import { ListViewSkeleton } from "@/components/list/skeletons";
 import { getItems } from "@/actions/item-actions";
 
-import { Plus, Download, ChevronUpDown, FineTune } from "@mynaui/icons-react";
+import { Download, ChevronUpDown, FineTune } from "@mynaui/icons-react";
 
 import {
   Table,
