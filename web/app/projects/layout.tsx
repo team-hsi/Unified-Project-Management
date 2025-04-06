@@ -6,6 +6,8 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { ProjectStoreProvider } from "@/lib/stores/store-provider";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const ProjectLayout = async ({ children }: { children: React.ReactNode }) => {
   const queryClient = getQueryClient();
