@@ -129,14 +129,25 @@ export const getColumns = ({
     accessorKey: "status",
     header: () => <div className="text-left font-semibold">Status</div>,
     cell: ({ row }) => {
-      const status = row.getValue("status") as string;
+      // Define valid status types
+      type StatusType = "In-Progress" | "Todo" | "Done" | "Canceled";
+
       const statusIcons = {
         "In-Progress": ClockOne,
         Todo: QuestionCircle,
         Done: CheckCircle,
         Canceled: XCircle,
-      };
-      const Icon = statusIcons[status] || QuestionCircle;
+      } as const;
+
+      // Get status as a string since it might be anything
+      const status = row.getValue("status") as string;
+
+      // Type guard to check if status is valid
+      const isValidStatus = (s: string): s is StatusType => s in statusIcons;
+
+      // Use the icon if status is valid, otherwise default to QuestionCircle
+      const Icon = isValidStatus(status) ? statusIcons[status] : QuestionCircle;
+
       return (
         <div
           className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg"
@@ -159,13 +170,27 @@ export const getColumns = ({
     accessorKey: "priority",
     header: () => <div className="text-left font-semibold">Priority</div>,
     cell: ({ row }) => {
-      const priority = row.getValue("priority") as string;
+      // Define valid priority types
+      type PriorityType = "Medium" | "High" | "Low";
+
       const priorityIcons = {
         Medium: ArrowRight,
         High: ArrowUp,
         Low: ArrowDown,
-      };
-      const Icon = priorityIcons[priority] || ArrowRight;
+      } as const;
+
+      // Get priority as a string since it might be anything
+      const priority = row.getValue("priority") as string;
+
+      // Type guard to check if priority is valid
+      const isValidPriority = (p: string): p is PriorityType =>
+        p in priorityIcons;
+
+      // Use the icon if priority is valid, otherwise default to ArrowRight
+      const Icon = isValidPriority(priority)
+        ? priorityIcons[priority]
+        : ArrowRight;
+
       return (
         <div
           className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg"
