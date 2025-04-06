@@ -26,7 +26,7 @@ export function useLogin() {
       email: string;
       password: string;
     }) => {
-      const result = await loginAction(email, password);
+      const result = await loginAction({ email, password });
 
       if (!result.success) {
         throw new Error(result.error || "Failed to login");

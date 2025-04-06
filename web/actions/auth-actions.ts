@@ -1,3 +1,4 @@
+"use server";
 import { User } from "@/hooks/auth-hooks";
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -19,7 +20,13 @@ export const signupAction = async (userData: Omit<User, "id">) => {
   return { success: true, user };
 };
 
-export const loginAction = async (email: string, password: string) => {
+export const loginAction = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
   const res = await fetch(`${API}/v1/users/login`, {
     method: "POST",
     headers: {
@@ -32,8 +39,7 @@ export const loginAction = async (email: string, password: string) => {
   });
 
   if (!res.ok) {
-    const error = await res.json();
-    return { success: false, error: error.error };
+    return { success: false, error: "Invalid email or password" };
   }
 
   const user = await res.json();
