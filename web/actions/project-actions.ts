@@ -8,6 +8,13 @@ export const getProjects = async () => {
   const res = await fetch(`${API}/v1/projects/getall`);
   return res.json();
 };
+export const getProject = async (id: string) => {
+  const res = await fetch(`${API}/v1/projects/${id}`);
+  if (!res.ok) {
+    return null;
+  }
+  return res.json();
+};
 
 export const createProject = async (values: PartialProject) => {
   const res = await fetch(`${API}/v1/projects/create`, {
