@@ -28,6 +28,7 @@ import { CreateProjectDialog } from "./create-project-dialog";
 import { CustomDialogItem } from "./custom-dialog-item";
 import { DeleteProjectDialog } from "./delete-project-dialog";
 import { UpdateProjectDialog } from "./update-project-dialog";
+// import { ProjectUrlSync } from "../auth/project-url-sync";
 
 export const NavProjects = () => {
   const { data: projects } = useSuspenseQuery({
@@ -68,6 +69,7 @@ export const NavProjects = () => {
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+      {/* <ProjectUrlSync /> */}
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((project: Project) => (

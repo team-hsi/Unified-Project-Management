@@ -13,7 +13,7 @@ import { DropIndicator } from "./drop-indicator";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "../ui/card";
 import { Item } from "./types";
-import { ItemSheet } from "../sheets/item-sheet copy";
+import { ItemSheet } from "../sheets/item-sheet";
 
 interface KanbanCardProps {
   item: Item;

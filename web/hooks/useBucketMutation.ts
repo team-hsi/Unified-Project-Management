@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import {
   createBucket as createBucketAction,
   deleteBucket as deleteBucketAction,
+  updateBucket as updateBucketAction,
 } from "@/actions/bucket-actions";
 
 export const useBucketMutation = ({
@@ -40,9 +41,17 @@ export const useBucketMutation = ({
       queryClient.invalidateQueries({ queryKey });
     },
   });
+  const updateBucket = useMutation({
+    mutationFn: updateBucketAction,
+    mutationKey: ["updateBucket"],
+    onSettled: () => {
+      return queryClient.invalidateQueries({ queryKey });
+    },
+  });
 
   return {
     createBucket,
+    updateBucket,
     createBucketItem,
     deleteBucket,
   };

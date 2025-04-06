@@ -1,4 +1,6 @@
 import { User } from "@/components/user/types";
+import { z } from "zod";
+import { itemFormSchema } from "../form/schema";
 
 export type Priority = "Low" | "Medium" | "High";
 export type Status = "not-started" | "in-progress" | "review" | "completed";
@@ -31,3 +33,5 @@ export type StatusOption = {
   dotColor: string;
   group?: string;
 };
+
+export type ItemFormValues = z.infer<typeof itemFormSchema>;

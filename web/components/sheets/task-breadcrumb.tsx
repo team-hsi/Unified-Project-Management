@@ -6,13 +6,20 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
-import { ChevronsRight, Edit, Maximize2, MoreHorizontal } from "lucide-react";
+import { ChevronsRight, Maximize2 } from "lucide-react";
 import { Fragment } from "react";
 import { Button } from "../ui/button";
 import { SheetClose } from "../ui/sheet";
 import Link from "next/link";
+import { Badge } from "../ui/badge";
 
-export const TaskBreadcrumb = ({ segments }: { segments: string[] }) => {
+export const TaskBreadcrumb = ({
+  segments,
+  unsavedForm,
+}: {
+  segments: string[];
+  unsavedForm: boolean;
+}) => {
   return (
     <div className="flex h-12 shrink-0 items-center px-4 w-full gap-2 border-b bg-muted rounded-t-xl">
       <SheetClose className=" h-7 w-7 grid rounded-md justify-center items-center hover:bg-accent hover:text-accent-foreground">
@@ -45,12 +52,11 @@ export const TaskBreadcrumb = ({ segments }: { segments: string[] }) => {
         </BreadcrumbList>
       </Breadcrumb>
       <div className=" ml-auto flex gap-2">
-        <Button size="icon" variant="ghost">
-          <Edit className=" text-muted-foreground" size={15} />
-        </Button>
-        <Button size="icon" variant="ghost">
-          <MoreHorizontal className=" text-muted-foreground" size={15} />
-        </Button>
+        {unsavedForm ? (
+          <Badge variant="outline" className="text-amber-500 border-amber-500">
+            Unsaved Change
+          </Badge>
+        ) : null}
       </div>
     </div>
   );

@@ -9,14 +9,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Columns2, Loader } from "lucide-react";
+import { Columns2, Loader, Plus } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { ColorInput } from "../ui/color-input";
 import { Button } from "../ui/button";
 import { useBucketMutation } from "@/hooks/useBucketMutation";
 
-export const CreateBucket = ({ id }: { id: string }) => {
+export const CreateBucket = ({
+  id,
+  children,
+}: {
+  id: string;
+  children?: React.ReactNode;
+}) => {
   const [open, setOpen] = React.useState(false);
   const [bucketData, setBucketData] = React.useState({
     name: "",
@@ -32,7 +38,11 @@ export const CreateBucket = ({ id }: { id: string }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">New Task</Button>
+        {children || (
+          <Button size="sm">
+            <Plus /> New Bucket
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <div className="flex flex-col items-center gap-2">

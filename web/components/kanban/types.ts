@@ -39,6 +39,8 @@ export interface Item {
     createdAt: string;
     updatedAt: string;
   };
+  priority: "low" | "medium" | "high" | null;
+  status: string;
   description: string;
   startDate: string | null;
   dueDate: string | null;

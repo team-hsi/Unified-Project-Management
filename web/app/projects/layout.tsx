@@ -1,8 +1,10 @@
 import { getProjects } from "@/actions/project-actions";
+import { ProjectUrlSync } from "@/components/auth/project-url-sync";
 import { ProjectNavigation } from "@/components/project/project-navigation";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
+import { ProjectStoreProvider } from "@/lib/stores/store-provider";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 const ProjectLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -11,11 +13,14 @@ const ProjectLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <ProjectNavigation />
-          {children}
-        </SidebarInset>
+        <ProjectStoreProvider>
+          <ProjectUrlSync />
+          <AppSidebar />
+          <SidebarInset>
+            <ProjectNavigation />
+            {children}
+          </SidebarInset>
+        </ProjectStoreProvider>
       </SidebarProvider>
     </HydrationBoundary>
   );

@@ -85,3 +85,16 @@ export const deleteBucket = async ({ id }: { id: string }) => {
     throw error;
   }
 };
+
+export const getProjectBuckets = async ({ id }: PartialProject) => {
+  try {
+    const res = await fetch(`${API}/v1/projects/${id}/buckets`);
+    if (!res.ok) {
+      throw new Error(`Error fetching tasks: ${res.statusText}`);
+    }
+    return res.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
