@@ -17,9 +17,9 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent,
+  // DropdownMenuSub,
+  // DropdownMenuSubTrigger,
+  // DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EditItemModal } from "./edit-item-modal";
@@ -39,12 +39,12 @@ export type Item = {
 };
 
 // Define label colors for styling
-const labelColors: Record<string, string> = {
-  Bug: "bg-red-100 text-red-800",
-  Feature: "bg-blue-100 text-blue-800",
-  Enhancement: "bg-green-100 text-green-800",
-  Documentation: "bg-yellow-100 text-yellow-800",
-};
+// const labelColors: Record<string, string> = {
+//   Bug: "bg-red-100 text-red-800",
+//   Feature: "bg-blue-100 text-blue-800",
+//   Enhancement: "bg-green-100 text-green-800",
+//   Documentation: "bg-yellow-100 text-yellow-800",
+// };
 
 // Define the type for the parameters passed to getColumns
 interface ColumnsProps {
@@ -236,13 +236,13 @@ export const getColumns = ({
 
       const handleEditClick = () => {
         if (onUpdateItem) {
-          onUpdateItem(item); // Open the modal
+          onUpdateItem(item);
         }
       };
 
       const handleDeleteClick = () => {
         if (onDeleteItem) {
-          onDeleteItem(item.id); // Trigger delete mutation
+          onDeleteItem(item.id);
         }
       };
 
