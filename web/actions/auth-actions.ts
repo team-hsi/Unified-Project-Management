@@ -1,5 +1,7 @@
 "use server";
 import { User } from "@/hooks/auth-hooks";
+import { createSession, deleteSession } from "@/actions/session";
+import { redirect } from "next/navigation";
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 export const signupAction = async (userData: Omit<User, "id">) => {
@@ -12,11 +14,16 @@ export const signupAction = async (userData: Omit<User, "id">) => {
   });
 
   if (!res.ok) {
-    const error = await res.json();
-    return { success: false, error: error.error };
+    const data = await res.json();
+    return { success: false, error: data.error };
   }
-
-  const user = await res.json();
+  const { user, tokens } = await res.json();
+  const session = {
+    userId: user.id,
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+  };
+  await createSession(session);
   return { success: true, user };
 };
 
@@ -41,7 +48,17 @@ export const loginAction = async ({
   if (!res.ok) {
     return { success: false, error: "Invalid email or password" };
   }
-
-  const user = await res.json();
+  const { user, tokens } = await res.json();
+  const session = {
+    userId: user.id,
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+  };
+  await createSession(session);
   return { success: true, user };
+};
+
+export const logoutAction = async () => {
+  await deleteSession();
+  redirect("/sign-in");
 };
