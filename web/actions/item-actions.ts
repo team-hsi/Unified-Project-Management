@@ -33,3 +33,48 @@ export const createItem = async (values: PartialProject) => {
   }
   return res.json();
 };
+
+export const editItem = async (itemId: string, values: PartialProject) => {
+  try {
+    const res = await fetch(`${API}/v1/items/${itemId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: values.name,
+        description: values.description,
+        bucketId: values.id,
+        // Add other fields as needed based on your API requirements
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error updating item: ${res.statusText}`);
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error(`Failed to edit item ${itemId}:`, error);
+    throw error;
+  }
+};
+
+export const deleteItem = async (itemId: string) => {
+  try {
+    const res = await fetch(`${API}/v1/items/${itemId}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error deleting item: ${res.statusText}`);
+    }
+
+    // Some APIs return nothing on successful DELETE, others return data
+    // Adjust based on your API's behavior
+    return res.status === 204 ? null : res.json();
+  } catch (error) {
+    console.error(`Failed to delete item ${itemId}:`, error);
+    throw error;
+  }
+};

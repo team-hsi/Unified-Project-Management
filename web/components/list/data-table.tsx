@@ -8,15 +8,18 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query"; // Add this import
-// import { useTaskLabels } from "@/hooks/use-task-labels";
+import {
+  useSuspenseQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"; // Add useMutation and useQueryClient
 import { useTableFilter } from "@/hooks/use-table-filter";
 import { useTableActions } from "@/hooks/use-table-actions";
 import { Item } from "@/components/list/columns";
-
+import { EditItemModal } from "@/components/list/edit-item-modal";
 import { DataTablePagination } from "./data-table-pagination";
 import { ListViewSkeleton } from "@/components/list/skeletons";
-import { getItems } from "@/actions/item-actions";
+import { getItems, editItem, deleteItem } from "@/actions/item-actions";
 
 import { Download, ChevronUpDown, FineTune } from "@mynaui/icons-react";
 
@@ -39,52 +42,81 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { getColumns } from "@/components/list/columns";
-
 import { useParams } from "next/navigation";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data?: TData[]; // Make data optional since we'll fetch it
-  projectId: string; // Add projectId as a prop
+  data?: TData[];
+  projectId: string;
 }
 
 export function DataTable<TData extends Item, TValue>({
   data: initialData = [],
-}: // Add projectId to props
-DataTableProps<TData, TValue>) {
+}: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState({
-    id: false,
-  });
+  const [columnVisibility, setColumnVisibility] = useState({ id: false });
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [data, setData] = useState<Item[]>(initialData);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const { id } = useParams<{ id: string }>();
+  const queryClient = useQueryClient(); // For invalidating queries
 
   const { data: fetchedData, isLoading } = useSuspenseQuery({
     queryKey: ["items", id],
     queryFn: getItems,
   });
 
-  // const { setLabel, getLabel } = useTaskLabels();
   const { filteredData, searchQuery, handleSearchChange } = useTableFilter(
     fetchedData || data
   );
 
-  const handleUpdateItem = (updatedItem: Item) => {
-    setData((prevData) =>
-      updatedItem.id
-        ? prevData.map((item) =>
-            item.id === updatedItem.id ? updatedItem : item
-          )
-        : prevData.filter((item) => item.id !== updatedItem.id)
-    );
-  };
+  // Edit mutation
+  const editMutation = useMutation({
+    mutationFn: ({
+      itemId,
+      values,
+    }: {
+      itemId: string;
+      values: Partial<Item>;
+    }) => editItem(itemId, values),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["items", id] }); // Refetch items after edit
+    },
+    onError: (error) => {
+      console.error("Error updating item:", error);
+      alert("Failed to update item. Please try again.");
+    },
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (itemId: string) => deleteItem(itemId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["items", id] }); // Refetch items after delete
+    },
+    onError: (error) => {
+      console.error("Error deleting item:", error);
+      alert("Failed to delete item. Please try again.");
+    },
+  });
 
   const columns = getColumns({
-    // setLabel,
-    // getLabel,
-    onUpdateItem: handleUpdateItem,
+    onUpdateItem: (item: Item) => {
+      setSelectedItem(item);
+      setIsEditModalOpen(true);
+    },
+    onDeleteItem: (itemId: string) => deleteMutation.mutate(itemId),
+    onSaveItem: (updatedItem: Item) =>
+      editMutation.mutate({
+        itemId: updatedItem.id,
+        values: {
+          name: updatedItem.name,
+          description: updatedItem.description,
+          id: updatedItem.bucketId,
+        },
+      }),
   });
 
   const {
@@ -108,10 +140,7 @@ DataTableProps<TData, TValue>) {
     state: {
       rowSelection,
       columnVisibility,
-      pagination: {
-        pageIndex,
-        pageSize,
-      },
+      pagination: { pageIndex, pageSize },
     },
     onRowSelectionChange: setRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
@@ -240,6 +269,23 @@ DataTableProps<TData, TValue>) {
         </Table>
       </div>
       <DataTablePagination table={table} />
+      {selectedItem && (
+        <EditItemModal
+          item={selectedItem}
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={(updatedItem) =>
+            editMutation.mutate({
+              itemId: updatedItem.id,
+              values: {
+                name: updatedItem.name,
+                description: updatedItem.description,
+                id: updatedItem.bucketId,
+              },
+            })
+          }
+        />
+      )}
     </div>
   );
 }

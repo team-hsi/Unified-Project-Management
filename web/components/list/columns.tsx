@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import {
-  //   ClockOne,
-  //   CheckCircle,
-  //   XCircle,
-  //   QuestionCircle,
-  //   ArrowRight,
-  //   ArrowUp,
-  //   ArrowDown,
+  ClockOne,
+  CheckCircle,
+  XCircle,
+  QuestionCircle,
+  ArrowRight,
+  ArrowUp,
+  ArrowDown,
   Dots,
 } from "@mynaui/icons-react";
 import {
@@ -17,9 +17,9 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  // DropdownMenuSub,
-  // DropdownMenuSubTrigger,
-  // DropdownMenuSubContent,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EditItemModal } from "./edit-item-modal";
@@ -29,34 +29,38 @@ export type Item = {
   id: string;
   name: string;
   description: string;
-  // status: "Todo" | "In-Progress" | "Done" | "Canceled";
-  // priority: "Low" | "Medium" | "High";
+  status: "Todo" | "In-Progress" | "Done" | "Canceled";
+  priority: "Low" | "Medium" | "High";
   // assignedTo: string;
   startDate: string;
   dueDate: string;
   bucketId: string;
-  // labels: string[];
+  labels: string[];
 };
 
 // Define label colors for styling
-// const labelColors: Record<string, string> = {
-//   Bug: "bg-red-100 text-red-800",
-//   Feature: "bg-blue-100 text-blue-800",
-//   Enhancement: "bg-green-100 text-green-800",
-//   Documentation: "bg-yellow-100 text-yellow-800",
-// };
+const labelColors: Record<string, string> = {
+  Bug: "bg-red-100 text-red-800",
+  Feature: "bg-blue-100 text-blue-800",
+  Enhancement: "bg-green-100 text-green-800",
+  Documentation: "bg-yellow-100 text-yellow-800",
+};
 
 // Define the type for the parameters passed to getColumns
 interface ColumnsProps {
   // setLabel: (itemId: string, label: string | null) => void;
   // getLabel: (itemId: string) => string | null;
-  onUpdateItem?: (updatedItem: Item) => void; // Renamed from onUpdateTask
+  onUpdateItem?: (item: Item) => void; // Trigger modal opening
+  onDeleteItem?: (itemId: string) => void; // Trigger delete mutation
+  onSaveItem?: (updatedItem: Item) => void; // Trigger edit mutation
 }
 
 export const getColumns = ({
   // setLabel,
   // getLabel,
   onUpdateItem,
+  onDeleteItem,
+  onSaveItem,
 }: ColumnsProps): ColumnDef<Item>[] => [
   {
     accessorKey: "id",
@@ -92,7 +96,6 @@ export const getColumns = ({
     enableSorting: false,
     enableHiding: false,
   },
-
   {
     accessorKey: "name",
     header: () => <div className="text-left font-semibold">Name</div>,
@@ -122,64 +125,64 @@ export const getColumns = ({
       <div className="text-left font-medium">{row.getValue("description")}</div>
     ),
   },
-  // {
-  //   accessorKey: "status",
-  //   header: () => <div className="text-left font-semibold">Status</div>,
-  //   cell: ({ row }) => {
-  //     const status = row.getValue("status") as string;
-  //     const statusIcons = {
-  //       "In-Progress": ClockOne,
-  //       Todo: QuestionCircle,
-  //       Done: CheckCircle,
-  //       Canceled: XCircle,
-  //     };
-  //     const Icon = statusIcons[status] || QuestionCircle;
-  //     return (
-  //       <div
-  //         className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg"
-  //         role="presentation"
-  //       >
-  //         <div className="w-6 flex justify-center">
-  //           <Icon className="h-5 w-5" />
-  //         </div>
-  //         <div className="min-w-[96px] flex justify-start">
-  //           <span className="font-medium">
-  //             {status.charAt(0).toUpperCase() +
-  //               status.slice(1).replace("-", " ")}
-  //           </span>
-  //         </div>
-  //       </div>
-  //     );
-  //   },
-  // },
-  // {
-  //   accessorKey: "priority",
-  //   header: () => <div className="text-left font-semibold">Priority</div>,
-  //   cell: ({ row }) => {
-  //     const priority = row.getValue("priority") as string;
-  //     const priorityIcons = {
-  //       Medium: ArrowRight,
-  //       High: ArrowUp,
-  //       Low: ArrowDown,
-  //     };
-  //     const Icon = priorityIcons[priority] || ArrowRight;
-  //     return (
-  //       <div
-  //         className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg"
-  //         role="presentation"
-  //       >
-  //         <div className="w-6 flex justify-center">
-  //           <Icon className="h-5 w-5" />
-  //         </div>
-  //         <div className="min-w-[64px] flex justify-start">
-  //           <span className="font-medium">
-  //             {priority.charAt(0).toUpperCase() + priority.slice(1)}
-  //           </span>
-  //         </div>
-  //       </div>
-  //     );
-  //   },
-  // },
+  {
+    accessorKey: "status",
+    header: () => <div className="text-left font-semibold">Status</div>,
+    cell: ({ row }) => {
+      const status = row.getValue("status") as string;
+      const statusIcons = {
+        "In-Progress": ClockOne,
+        Todo: QuestionCircle,
+        Done: CheckCircle,
+        Canceled: XCircle,
+      };
+      const Icon = statusIcons[status] || QuestionCircle;
+      return (
+        <div
+          className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg"
+          role="presentation"
+        >
+          <div className="w-6 flex justify-center">
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="min-w-[96px] flex justify-start">
+            <span className="font-medium">
+              {status.charAt(0).toUpperCase() +
+                status.slice(1).replace("-", " ")}
+            </span>
+          </div>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "priority",
+    header: () => <div className="text-left font-semibold">Priority</div>,
+    cell: ({ row }) => {
+      const priority = row.getValue("priority") as string;
+      const priorityIcons = {
+        Medium: ArrowRight,
+        High: ArrowUp,
+        Low: ArrowDown,
+      };
+      const Icon = priorityIcons[priority] || ArrowRight;
+      return (
+        <div
+          className="inline-flex items-center space-x-0.5 px-2 py-1 border border-gray-700 rounded-lg"
+          role="presentation"
+        >
+          <div className="w-6 flex justify-center">
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="min-w-[64px] flex justify-start">
+            <span className="font-medium">
+              {priority.charAt(0).toUpperCase() + priority.slice(1)}
+            </span>
+          </div>
+        </div>
+      );
+    },
+  },
   // {
   //   accessorKey: "assignedTo",
   //   header: () => <div className="text-left font-semibold">Assigned To</div>,
@@ -226,37 +229,26 @@ export const getColumns = ({
   // },
   {
     id: "actions",
-    header: () => <div className="text-center font-semibold">Actions</div>,
+    header: () => <div className="text-center font-semibold"></div>,
     cell: ({ row }) => {
       const item = row.original;
-      // const itemWithLabel = {
-      //   ...item,
-      //   labels: item.labels || [], // Ensure labels is always an array
-      // };
       const [isModalOpen, setIsModalOpen] = useState(false);
 
-      const handleSave = (updatedItem: Item) => {
+      const handleEditClick = () => {
         if (onUpdateItem) {
-          onUpdateItem(updatedItem);
+          onUpdateItem(item); // Open the modal
         }
       };
 
-      const handleDelete = async () => {
-        try {
-          const response = await fetch(`/v1/items/${item.id}`, {
-            method: "DELETE",
-          });
+      const handleDeleteClick = () => {
+        if (onDeleteItem) {
+          onDeleteItem(item.id); // Trigger delete mutation
+        }
+      };
 
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-
-          if (onUpdateItem) {
-            onUpdateItem({ ...item, id: "" }); // Hack to trigger a refresh
-          }
-        } catch (error) {
-          console.error("Failed to delete item:", error);
-          alert("Failed to delete item. Please try again.");
+      const handleSave = (updatedItem: Item) => {
+        if (onSaveItem) {
+          onSaveItem(updatedItem); // Trigger edit mutation
         }
       };
 
@@ -297,7 +289,7 @@ export const getColumns = ({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsModalOpen(true)}>
+              <DropdownMenuItem onClick={handleEditClick}>
                 Edit
               </DropdownMenuItem>
               {/* <DropdownMenuSub>
@@ -321,14 +313,16 @@ export const getColumns = ({
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub> */}
-              <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={handleDeleteClick}
+              >
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <EditItemModal
             item={item}
-            // item={itemWithLabel}
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onSave={handleSave}

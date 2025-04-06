@@ -9,13 +9,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Item } from "./columns";
 
@@ -35,47 +35,50 @@ export function EditItemModal({
   const [name, setName] = useState(item.name);
   const [description, setDescription] = useState(item.description);
   // const [label, setLabel] = useState<string | null>(item.labels[0] || null);
-  // const [status, setStatus] = useState<
-  //   "Todo" | "In-Progress" | "Done" | "Canceled"
-  // >(item.status);
-  // const [priority, setPriority] = useState<"Low" | "Medium" | "High">(
-  //   item.priority
-  // );
+  const [status, setStatus] = useState<
+    "Todo" | "In-Progress" | "Done" | "Canceled"
+  >(item.status);
+  const [priority, setPriority] = useState<"Low" | "Medium" | "High">(
+    item.priority
+  );
   const [startDate, setStartDate] = useState(item.startDate);
   const [dueDate, setDueDate] = useState(item.dueDate);
 
-  const handleSave = async () => {
-    try {
-      const updatedItem: Item = {
-        ...item,
-        name,
-        description,
-        // labels: label ? [label] : [],
-        // status,
-        // priority,
-        startDate,
-        dueDate,
-      };
+  const handleSave = () => {
+    const updatedItem: Item = {
+      ...item,
+      name,
+      description,
+      // labels: label ? [label] : [],
+      // status,
+      // priority,
+      startDate,
+      dueDate,
+    };
 
-      const response = await fetch(`/v1/items/{id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedItem),
-      });
+    // try {
+    //   const response = await fetch(`/v1/items/{id}`, {
+    //     method: "PUT",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(updatedItem),
+    //   });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+    //   if (!response.ok) {
+    //     throw new Error(`HTTP error! status: ${response.status}`);
+    //   }
 
-      const result = await response.json();
-      onSave(result);
-      onClose();
-    } catch (error) {
-      console.error("Failed to update item:", error);
-      alert("Failed to update item. Please try again.");
-    }
+    //   const result = await response.json();
+    //   onSave(result);
+    //   onClose();
+    // } catch (error) {
+    //   console.error("Failed to update item:", error);
+    //   alert("Failed to update item. Please try again.");
+    // }
+
+    onSave(updatedItem); // Use the onSave prop to trigger the mutation
+    onClose();
   };
 
   return (
@@ -149,7 +152,7 @@ export function EditItemModal({
             </Select>
           </div> */}
           {/* Status */}
-          {/* <div className="grid gap-2">
+          <div className="grid gap-2">
             <label htmlFor="status" className="text-sm font-medium">
               Status
             </label>
@@ -172,9 +175,9 @@ export function EditItemModal({
                 <SelectItem value="Canceled">Canceled</SelectItem>
               </SelectContent>
             </Select>
-          </div> */}
+          </div>
           {/* Priority */}
-          {/* <div className="grid gap-2">
+          <div className="grid gap-2">
             <label htmlFor="priority" className="text-sm font-medium">
               Priority
             </label>
@@ -196,7 +199,7 @@ export function EditItemModal({
                 <SelectItem value="High">High</SelectItem>
               </SelectContent>
             </Select>
-          </div> */}
+          </div>
           {/* Assigned To */}
           {/* <div className="grid gap-2">
             <label htmlFor="assignedTo" className="text-sm font-medium">
