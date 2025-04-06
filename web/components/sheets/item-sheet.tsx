@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   Sheet,
   SheetContent,
@@ -9,14 +10,16 @@ import { TaskWorkflow } from "../task/task-workflow";
 import { Item } from "../kanban/types";
 import { ItemDetails } from "../task/item-details";
 
-export function ItemSheet({
+export const ItemSheet = ({
   children,
   item,
 }: {
   children: React.ReactNode;
   item: Item;
-}) {
+}) => {
   const segments = ["design", "in-progress"];
+  const [unsavedForm, setUnsavedForm] = React.useState(false);
+
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
@@ -25,10 +28,14 @@ export function ItemSheet({
         hideClose
       >
         <SheetTitle className="sr-only"> task detail side sheet</SheetTitle>
-        <TaskBreadcrumb segments={segments} />
-        <ItemDetails item={item} />
+        <TaskBreadcrumb segments={segments} unsavedForm={unsavedForm} />
+        <ItemDetails
+          item={item}
+          setUnsavedForm={setUnsavedForm}
+          unsavedForm={unsavedForm}
+        />
         <TaskWorkflow />
       </SheetContent>
     </Sheet>
   );
-}
+};

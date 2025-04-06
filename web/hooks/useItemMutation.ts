@@ -27,6 +27,7 @@ export const useItemMutation = ({
     mutationFn: updateItemInlineAction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
+      successAction?.();
     },
   });
 

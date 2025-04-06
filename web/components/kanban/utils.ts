@@ -1,6 +1,4 @@
-import { Priority } from "@/components/task/types";
-
-export const getPriorityColor = (priority: Priority) => {
+export const getPriorityColor = (priority: string) => {
   switch (priority) {
     case "Low":
       return {
