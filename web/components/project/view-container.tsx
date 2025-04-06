@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
 import { KanbanBoardSkeleton } from "@/components/kanban/skeletons";
 import { DataTable } from "@/components/list/data-table";
-import { columns } from "@/components/list/columns";
+import { getColumns } from "@/components/list/columns";
 import { ListViewSkeleton } from "@/components/list/skeletons";
 import { getData } from "@/lib/data";
 
@@ -33,7 +33,7 @@ const ListView = async () => {
   const data = await getData();
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={getColumns} data={data} />
     </div>
   );
 };

@@ -47,7 +47,7 @@ import { useParams } from "next/navigation";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data?: TData[];
-  projectId: string;
+  id: string;
 }
 
 export function DataTable<TData extends Item, TValue>({
