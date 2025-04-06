@@ -32,8 +32,8 @@ export function EditItemModal({
   onClose,
   onSave,
 }: EditItemModalProps) {
-  const [name, setName] = useState(item.name);
-  const [description, setDescription] = useState(item.description);
+  const [name, setName] = useState(item.name ?? ""); // Default to "" if null
+  const [description, setDescription] = useState(item.description ?? ""); // Default to "" if null
   // const [label, setLabel] = useState<string | null>(item.labels[0] || null);
   const [status, setStatus] = useState<
     "Todo" | "In-Progress" | "Done" | "Canceled"
@@ -41,8 +41,8 @@ export function EditItemModal({
   const [priority, setPriority] = useState<"Low" | "Medium" | "High">(
     item.priority
   );
-  const [startDate, setStartDate] = useState(item.startDate);
-  const [dueDate, setDueDate] = useState(item.dueDate);
+  const [startDate, setStartDate] = useState(item.startDate ?? ""); // Default to "" if null
+  const [dueDate, setDueDate] = useState(item.dueDate ?? ""); // Default to "" if null
 
   const handleSave = () => {
     const updatedItem: Item = {
@@ -50,32 +50,11 @@ export function EditItemModal({
       name,
       description,
       // labels: label ? [label] : [],
-      // status,
-      // priority,
+      status,
+      priority,
       startDate,
       dueDate,
     };
-
-    // try {
-    //   const response = await fetch(`/v1/items/{id}`, {
-    //     method: "PUT",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(updatedItem),
-    //   });
-
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP error! status: ${response.status}`);
-    //   }
-
-    //   const result = await response.json();
-    //   onSave(result);
-    //   onClose();
-    // } catch (error) {
-    //   console.error("Failed to update item:", error);
-    //   alert("Failed to update item. Please try again.");
-    // }
 
     onSave(updatedItem); // Use the onSave prop to trigger the mutation
     onClose();
