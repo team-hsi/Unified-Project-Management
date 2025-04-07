@@ -1,6 +1,7 @@
 "use server";
 
 import { PartialProject } from "@/components/project/types";
+import { UpdateBucketPayload } from "./action-types";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 export const getBuckets = async () => {
@@ -25,76 +26,57 @@ export const createBucket = async ({
   name: string;
   color: string;
 }) => {
-  try {
-    const res = await fetch(`${API}/v1/buckets/create`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        color,
-        projectId: id,
-      }),
-    });
-    if (!res.ok) {
-      throw new Error("Failed to create bucket");
-    }
-    return res.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
+  const res = await fetch(`${API}/v1/buckets/create`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name,
+      color,
+      projectId: id,
+    }),
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    return { success: false, error: data.error };
   }
+  const data = await res.json();
+  return { success: true, data };
 };
 
-export const updateBucket = async ({ id, name }: PartialProject) => {
-  try {
-    const res = await fetch(`${API}/v1/buckets/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name }),
-    });
-    if (!res.ok) {
-      throw new Error("Failed to update bucket");
-    }
-    return res.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
+export const updateBucket = async (payload: UpdateBucketPayload) => {
+  const { id, ...rest } = payload;
+  const res = await fetch(`${API}/v1/buckets/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(rest),
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    return { success: false, error: data.error };
   }
+  const data = await res.json();
+  return { success: true, data };
 };
 
 export const deleteBucket = async ({ id }: { id: string }) => {
-  try {
-    const res = await fetch(`${API}/v1/buckets/${id}`, {
-      method: "DELETE",
-    });
-    if (res.status === 204) {
-      console.log("Bucket deleted successfully");
-      return null;
-    }
-    if (!res.ok || res.status === 404) {
-      console.log("Failed to delete bucket");
-    }
-
-    return res.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
+  const res = await fetch(`${API}/v1/buckets/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    return { success: false, error: data.error };
   }
+  return { success: true };
 };
 
 export const getProjectBuckets = async ({ id }: PartialProject) => {
-  try {
-    const res = await fetch(`${API}/v1/projects/${id}/buckets`);
-    if (!res.ok) {
-      throw new Error(`Error fetching tasks: ${res.statusText}`);
-    }
-    return res.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
+  const res = await fetch(`${API}/v1/projects/${id}/buckets`);
+  if (!res.ok) {
+    throw new Error(`Error fetching tasks: ${res.statusText}`);
   }
+  return res.json();
 };

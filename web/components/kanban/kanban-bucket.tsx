@@ -114,7 +114,11 @@ export const KanbanBucket = ({ bucket, items }: KanbanBucketProps) => {
             />
           )}
         </div>
-        <BucketDropdown bucketId={bucket.id} projectId={bucket.project.id} />
+        <BucketDropdown
+          bucketId={bucket.id}
+          projectId={bucket.project.id}
+          color={bucket.color}
+        />
       </div>
       <div className="space-y-3 flex-1 overflow-y-auto" ref={scrollRef}>
         {items?.map((item) => (

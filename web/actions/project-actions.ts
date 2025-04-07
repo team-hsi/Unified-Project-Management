@@ -1,6 +1,7 @@
 "use server";
 
 import type { PartialProject } from "@/components/project/types";
+import { notFound } from "next/navigation";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -11,9 +12,15 @@ export const getProjects = async () => {
 export const getProject = async (id: string) => {
   const res = await fetch(`${API}/v1/projects/${id}`);
   if (!res.ok) {
-    return null;
+    if (res.status === 400) {
+      notFound();
+    } else {
+      const data = await res.json();
+      return { success: false, error: data.error };
+    }
   }
-  return res.json();
+  const data = await res.json();
+  return { success: true, data };
 };
 
 export const createProject = async (values: PartialProject) => {

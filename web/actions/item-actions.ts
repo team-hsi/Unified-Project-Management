@@ -2,7 +2,6 @@
 
 import { PartialProject } from "@/components/project/types";
 import type { UpdateItemPayload } from "@/actions/action-types";
-import { Suspense } from "react";
 const API = process.env.NEXT_PUBLIC_API_URL;
 export const getItems = async () => {
   try {
@@ -18,16 +17,11 @@ export const getItems = async () => {
 };
 
 export const getProjectItems = async ({ id }: PartialProject) => {
-  try {
-    const res = await fetch(`${API}/v1/projects/${id}/items`);
-    if (!res.ok) {
-      throw new Error(`Error fetching tasks: ${res.statusText}`);
-    }
-    return res.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
+  const res = await fetch(`${API}/v1/projects/${id}/items`);
+  if (!res.ok) {
+    throw new Error(`Error fetching tasks: ${res.statusText}`);
   }
+  return res.json();
 };
 
 export const updateItemInline = async (values: UpdateItemPayload) => {
@@ -58,9 +52,11 @@ export const createItem = async (values: PartialProject) => {
     }),
   });
   if (!res.ok) {
-    throw new Error("Failed to create project");
+    const data = await res.json();
+    return { success: false, error: data.error };
   }
-  return res.json();
+  const data = await res.json();
+  return { success: true, data };
 };
 
 export const deleteItemById = async (id: string) => {

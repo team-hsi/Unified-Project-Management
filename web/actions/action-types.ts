@@ -8,3 +8,8 @@ export type UpdateItemPayload = {
   status?: "complete" | "incomplete";
   id: string;
 };
+export type UpdateBucketPayload = {
+  id: string;
+  name?: string;
+  color?: string;
+};

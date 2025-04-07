@@ -1,20 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Edit, Loader, Plus, Trash2 } from "lucide-react";
+import { Edit, Loader, Palette, Plus, Trash2 } from "lucide-react";
 import { NameDescriptionForm } from "../form/name-description-form";
 import { CustomDialogItem } from "@/components/project/custom-dialog-item";
 import { useState } from "react";
 import { ColorInput } from "../ui/color-input";
 import { useBucketMutation } from "@/hooks/useBucketMutation";
-import { Label } from "../ui/label";
 import stringToColor from "@/lib/utils";
 
 /*
@@ -73,21 +70,20 @@ export const EditBucket = ({
   onSelect,
   onOpenChange,
 }: {
-  values: { id: string; name: string; color?: string };
+  values: { id: string; projectId: string; color?: string };
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
-  const [bucketData, setBucketData] = useState({
-    name: values.name,
-    id: values.id,
-  });
   const [color, setColor] = useState<string>(
     values.color || stringToColor(values.id)
   );
-  const handleEditBucket = () => {
-    toast.success(`Bucket renamed to "${bucketData.name}"`);
-    setBucketData({ ...bucketData, name: "" });
-  };
+  const { updateBucket } = useBucketMutation({
+    queryKey: ["buckets", values.projectId],
+    successAction: () => {
+      toast.success("Bucket updated successfully!");
+      onOpenChange?.(false);
+    },
+  });
 
   return (
     <CustomDialogItem
@@ -101,30 +97,30 @@ export const EditBucket = ({
             className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border"
             aria-hidden="true"
           >
-            <Edit className="opacity-80" size={16} strokeWidth={2} />
+            <Palette className="opacity-80" size={16} strokeWidth={2} />
           </div>
           <DialogHeader>
-            <DialogTitle className="sm:text-center">Edit Bucket</DialogTitle>
-            <DialogDescription className="sm:text-center">
-              Update the bucket details.
-            </DialogDescription>
+            <DialogTitle className="sm:text-center">
+              Change Bucket Color
+            </DialogTitle>
           </DialogHeader>
         </div>
-        <Label>Name</Label>
-        <Input
-          placeholder="Enter new bucket name"
-          value={bucketData.name}
-          onChange={(e) =>
-            setBucketData({ ...bucketData, name: e.target.value })
-          }
-        />
         <ColorInput onChange={setColor} defaultValue={color} />
         <DialogFooter>
           <Button
-            onClick={handleEditBucket}
-            disabled={!bucketData.name.trim() || bucketData.name.length < 3}
+            onClick={() => {
+              updateBucket.mutateAsync({
+                id: values.id,
+                color,
+              });
+            }}
+            disabled={updateBucket.isPending || color === values.color}
           >
-            Save
+            {updateBucket.isPending ? (
+              <Loader className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Change Color"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

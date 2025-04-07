@@ -18,10 +18,10 @@ export interface Bucket {
     createdAt: string;
     updatedAt: string;
   };
+  color: string;
   createdAt: string;
   updatedAt: string;
   // TODO: Add these new properties to the API it doesn't have them yet
-  // color: string;
 }
 export interface Item {
   id: string;
