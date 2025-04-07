@@ -45,7 +45,10 @@ export const editItem = async (itemId: string, values: PartialProject) => {
         name: values.name,
         description: values.description,
         bucketId: values.id,
-        // Add other fields as needed based on your API requirements
+        startDate: values.startDate,
+        dueDate: values.dueDate,
+        priority: values.priority,
+        status: values.status,
       }),
     });
 

@@ -23,8 +23,15 @@ interface EditItemModalProps {
   item: Item;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (updatedItem: Item) => void;
+  onSave: (updatedItem: Item) => Promise<void>; // Updated to return a Promise
 }
+
+// Utility function to format date to YYYY-MM-DD
+const formatDateToYYYYMMDD = (dateString: string): string => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toISOString().split("T")[0]; // Extracts YYYY-MM-DD
+};
 
 export function EditItemModal({
   item,
@@ -32,36 +39,74 @@ export function EditItemModal({
   onClose,
   onSave,
 }: EditItemModalProps) {
-  const [name, setName] = useState(item.name ?? ""); // Default to "" if null
-  const [description, setDescription] = useState(item.description ?? ""); // Default to "" if null
-  // const [label, setLabel] = useState<string | null>(item.labels[0] || null);
+  const [name, setName] = useState(item.name ?? "");
+  const [description, setDescription] = useState(item.description ?? "");
   const [status, setStatus] = useState<
     "Todo" | "In-Progress" | "Done" | "Canceled"
   >(item.status);
   const [priority, setPriority] = useState<"Low" | "Medium" | "High">(
     item.priority
   );
-  const [startDate, setStartDate] = useState(item.startDate ?? ""); // Default to "" if null
-  const [dueDate, setDueDate] = useState(item.dueDate ?? ""); // Default to "" if null
+  const [startDate, setStartDate] = useState(item.startDate ?? "");
+  const [dueDate, setDueDate] = useState(item.dueDate ?? "");
+  const [loading, setLoading] = useState(false); // New loading state
+  const [error, setError] = useState<string | null>(null); // Optional: for error feedback
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    // Validate all required fields
+    if (
+      !name ||
+      !description ||
+      !status ||
+      !priority ||
+      !startDate ||
+      !dueDate
+    ) {
+      setError("All fields are required.");
+      return;
+    }
+
+    setError(null); // Clear any previous error
+    setLoading(true); // Activate loading state
+
+    const formattedStartDate = formatDateToYYYYMMDD(startDate);
+    const formattedDueDate = formatDateToYYYYMMDD(dueDate);
+
     const updatedItem: Item = {
       ...item,
       name,
       description,
-      // labels: label ? [label] : [],
       status,
       priority,
-      startDate,
-      dueDate,
+      startDate: formattedStartDate,
+      dueDate: formattedDueDate,
     };
 
-    onSave(updatedItem); // Use the onSave prop to trigger the mutation
+    try {
+      await onSave(updatedItem); // Wait for the save operation to complete
+      onClose(); // Close only on success
+    } catch (err) {
+      setError("Failed to save item. Please try again."); // Optional: error handling
+      console.error("Save error:", err);
+    } finally {
+      setLoading(false); // Deactivate loading state regardless of success/failure
+    }
+  };
+
+  const handleClose = () => {
+    setName(item.name ?? "");
+    setDescription(item.description ?? "");
+    setStatus(item.status);
+    setPriority(item.priority);
+    setStartDate(item.startDate ?? "");
+    setDueDate(item.dueDate ?? "");
+    setError(null); // Clear error on close
+    setLoading(false); // Reset loading state
     onClose();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px] bg-black text-white border-gray-700">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
@@ -71,6 +116,7 @@ export function EditItemModal({
             Update the item details and save the changes
           </DialogDescription>
         </DialogHeader>
+        {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
         <div className="grid gap-4 py-4">
           {/* Name */}
           <div className="grid gap-2">
@@ -83,6 +129,8 @@ export function EditItemModal({
               onChange={(e) => setName(e.target.value)}
               className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
               placeholder="Enter item name"
+              required
+              disabled={loading}
             />
           </div>
           {/* Description */}
@@ -96,40 +144,10 @@ export function EditItemModal({
               onChange={(e) => setDescription(e.target.value)}
               className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
               placeholder="Enter item description"
+              required
+              disabled={loading}
             />
           </div>
-          {/* Label */}
-          {/* <div className="grid gap-2">
-            <label htmlFor="label" className="text-sm font-medium">
-              Label
-            </label>
-            <Select
-              value={label || undefined}
-              onValueChange={(value) =>
-                setLabel(
-                  value as
-                    | "Bug"
-                    | "Feature"
-                    | "Enhancement"
-                    | "Documentation"
-                    | null
-                )
-              }
-            >
-              <SelectTrigger
-                id="label"
-                className="bg-gray-950 border-gray-700 text-white"
-              >
-                <SelectValue placeholder="Select a label" />
-              </SelectTrigger>
-              <SelectContent className="bg-gray-950 border-gray-700 text-white">
-                <SelectItem value="Bug">Bug</SelectItem>
-                <SelectItem value="Feature">Feature</SelectItem>
-                <SelectItem value="Enhancement">Enhancement</SelectItem>
-                <SelectItem value="Documentation">Documentation</SelectItem>
-              </SelectContent>
-            </Select>
-          </div> */}
           {/* Status */}
           <div className="grid gap-2">
             <label htmlFor="status" className="text-sm font-medium">
@@ -140,6 +158,7 @@ export function EditItemModal({
               onValueChange={(value) =>
                 setStatus(value as "Todo" | "In-Progress" | "Done" | "Canceled")
               }
+              disabled={loading}
             >
               <SelectTrigger
                 id="status"
@@ -165,6 +184,7 @@ export function EditItemModal({
               onValueChange={(value) =>
                 setPriority(value as "Low" | "Medium" | "High")
               }
+              disabled={loading}
             >
               <SelectTrigger
                 id="priority"
@@ -179,19 +199,6 @@ export function EditItemModal({
               </SelectContent>
             </Select>
           </div>
-          {/* Assigned To */}
-          {/* <div className="grid gap-2">
-            <label htmlFor="assignedTo" className="text-sm font-medium">
-              Assigned To
-            </label>
-            <Input
-              id="assignedTo"
-              value={item.assignedTo}
-              disabled
-              className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
-              placeholder="Assigned To"
-            />
-          </div> */}
           {/* Start Date */}
           <div className="grid gap-2">
             <label htmlFor="startDate" className="text-sm font-medium">
@@ -199,10 +206,12 @@ export function EditItemModal({
             </label>
             <Input
               id="startDate"
-              type="datetime-local"
+              type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
+              required
+              disabled={loading}
             />
           </div>
           {/* Due Date */}
@@ -212,10 +221,12 @@ export function EditItemModal({
             </label>
             <Input
               id="dueDate"
-              type="datetime-local"
+              type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               className="bg-gray-950 border-gray-700 text-white placeholder-gray-500"
+              required
+              disabled={loading}
             />
           </div>
         </div>
@@ -223,16 +234,18 @@ export function EditItemModal({
         <div className="flex flex-col gap-2">
           <Button
             variant="outline"
-            onClick={onClose}
+            onClick={handleClose}
             className="bg-gray-800 border-gray-700 w-full text-white hover:bg-gray-700"
+            disabled={loading}
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
             className="bg-white text-black w-full hover:bg-gray-200"
+            disabled={loading}
           >
-            Save
+            {loading ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>

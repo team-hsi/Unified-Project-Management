@@ -12,7 +12,7 @@ import {
   useSuspenseQuery,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query"; // Add useMutation and useQueryClient
+} from "@tanstack/react-query";
 import { useTableFilter } from "@/hooks/use-table-filter";
 import { useTableActions } from "@/hooks/use-table-actions";
 import { Item } from "@/components/list/columns";
@@ -20,9 +20,7 @@ import { EditItemModal } from "@/components/list/edit-item-modal";
 import { DataTablePagination } from "./data-table-pagination";
 import { ListViewSkeleton } from "@/components/list/skeletons";
 import { getItems, editItem, deleteItem } from "@/actions/item-actions";
-
 import { Download, ChevronUpDown, FineTune } from "@mynaui/icons-react";
-
 import {
   Table,
   TableBody,
@@ -42,26 +40,26 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { getColumns } from "@/components/list/columns";
-import { useParams } from "next/navigation";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+  columns?: ColumnDef<TData, TValue>[];
   data?: TData[];
   id: string;
 }
 
 export function DataTable<TData extends Item, TValue>({
   data: initialData = [],
+  id,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState({ id: false });
+  const [columnVisibility, setColumnVisibility] = useState<
+    Record<string, boolean>
+  >({ id: false });
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [data, setData] = useState<Item[]>(initialData);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const { id } = useParams<{ id: string }>();
-  const queryClient = useQueryClient(); // For invalidating queries
+  const queryClient = useQueryClient();
 
   const { data: fetchedData, isLoading } = useSuspenseQuery({
     queryKey: ["items", id],
@@ -69,10 +67,9 @@ export function DataTable<TData extends Item, TValue>({
   });
 
   const { filteredData, searchQuery, handleSearchChange } = useTableFilter(
-    fetchedData || data
+    fetchedData || initialData
   );
 
-  // Edit mutation
   const editMutation = useMutation({
     mutationFn: ({
       itemId,
@@ -81,21 +78,16 @@ export function DataTable<TData extends Item, TValue>({
       itemId: string;
       values: Partial<Item>;
     }) => editItem(itemId, values),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["items", id] }); // Refetch items after edit
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["items", id] }),
     onError: (error) => {
       console.error("Error updating item:", error);
       alert("Failed to update item. Please try again.");
     },
   });
 
-  // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: (itemId: string) => deleteItem(itemId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["items", id] }); // Refetch items after delete
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["items", id] }),
     onError: (error) => {
       console.error("Error deleting item:", error);
       alert("Failed to delete item. Please try again.");
@@ -104,8 +96,8 @@ export function DataTable<TData extends Item, TValue>({
 
   const columns = getColumns({
     onUpdateItem: (item: Item) => {
-      setSelectedItem(item);
-      setIsEditModalOpen(true);
+      setSelectedItem(item); // Set the selected item when editing
+      setIsEditModalOpen(true); // Open the modal
     },
     onDeleteItem: (itemId: string) => deleteMutation.mutate(itemId),
     onSaveItem: (updatedItem: Item) =>
@@ -156,30 +148,36 @@ export function DataTable<TData extends Item, TValue>({
     manualPagination: false,
   });
 
+  // Handle modal close and reset selectedItem
+  const handleModalClose = () => {
+    setIsEditModalOpen(false);
+    setSelectedItem(null); // Reset selectedItem when modal closes
+  };
+
   if (isLoading) {
     return <ListViewSkeleton />;
   }
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="w-full sm:w-auto flex items-center space-x-2">
           <Input
             type="text"
             placeholder="Search by name..."
             value={searchQuery}
             onChange={handleSearchChange}
-            className="max-w-xs"
+            className="w-full sm:max-w-xs"
           />
         </div>
-        <div className="flex items-center space-x-2">
-          <Button onClick={handleExport}>
+        <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+          <Button onClick={handleExport} className="w-full sm:w-auto">
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" className="w-full sm:w-auto">
                 <FineTune className="h-4 w-4 mr-1" />
                 View
                 <ChevronUpDown className="h-4 w-4 ml-1" />
@@ -198,7 +196,8 @@ export function DataTable<TData extends Item, TValue>({
               </div>
               <DropdownMenuSeparator />
               {filteredColumns.map((column) => {
-                const columnId = column.id || column.accessorKey;
+                const columnId = column.id as string;
+
                 if (
                   !columnId ||
                   columnId === "select" ||
@@ -220,13 +219,16 @@ export function DataTable<TData extends Item, TValue>({
           </DropdownMenu>
         </div>
       </div>
-      <div className="rounded-md border">
-        <Table>
+      <div className="responsive-table-container rounded-md border">
+        <Table className="responsive-table">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="px-0 py-2">
+                  <TableHead
+                    key={header.id}
+                    className="px-4 py-2 whitespace-nowrap"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -246,7 +248,10 @@ export function DataTable<TData extends Item, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-0 py-2">
+                    <TableCell
+                      key={cell.id}
+                      className="px-4 py-2 whitespace-nowrap"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -269,18 +274,22 @@ export function DataTable<TData extends Item, TValue>({
         </Table>
       </div>
       <DataTablePagination table={table} />
-      {selectedItem && (
+      {isEditModalOpen && selectedItem && (
         <EditItemModal
           item={selectedItem}
           isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          onSave={(updatedItem) =>
+          onClose={handleModalClose} // Use the new handler
+          onSave={async (updatedItem) =>
             editMutation.mutate({
               itemId: updatedItem.id,
               values: {
                 name: updatedItem.name,
                 description: updatedItem.description,
                 id: updatedItem.bucketId,
+                startDate: updatedItem.startDate,
+                dueDate: updatedItem.dueDate,
+                priority: updatedItem.priority,
+                status: updatedItem.status,
               },
             })
           }

@@ -224,8 +224,6 @@ export const getColumns = ({
         year: "numeric",
         month: "short",
         day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
       }).format(date);
       return <div className="text-left font-medium">{formatted}</div>;
     },
@@ -239,8 +237,6 @@ export const getColumns = ({
         year: "numeric",
         month: "short",
         day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
       }).format(date);
       return <div className="text-left font-medium">{formatted}</div>;
     },
@@ -257,6 +253,7 @@ export const getColumns = ({
     header: () => <div className="text-center font-semibold"></div>,
     cell: ({ row }) => {
       const item = row.original;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const [isModalOpen, setIsModalOpen] = useState(false);
 
       const handleEditClick = () => {
@@ -271,10 +268,11 @@ export const getColumns = ({
         }
       };
 
-      const handleSave = (updatedItem: Item) => {
+      const handleSave = (updatedItem: Item): Promise<void> => {
         if (onSaveItem) {
           onSaveItem(updatedItem); // Trigger edit mutation
         }
+        return Promise.resolve();
       };
 
       // const handleSetLabel = async (label: string | null) => {
