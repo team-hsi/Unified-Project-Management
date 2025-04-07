@@ -23,14 +23,15 @@ interface EditItemModalProps {
   item: Item;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (updatedItem: Item) => Promise<void>; // Updated to return a Promise
+  onSave: (updatedItem: Item) => Promise<void>;
+  onLoadingChange?: (isLoading: boolean) => void; // New prop to communicate loading state
 }
 
 // Utility function to format date to YYYY-MM-DD
 const formatDateToYYYYMMDD = (dateString: string): string => {
   if (!dateString) return "";
   const date = new Date(dateString);
-  return date.toISOString().split("T")[0]; // Extracts YYYY-MM-DD
+  return date.toISOString().split("T")[0];
 };
 
 export function EditItemModal({
@@ -38,6 +39,7 @@ export function EditItemModal({
   isOpen,
   onClose,
   onSave,
+  onLoadingChange,
 }: EditItemModalProps) {
   const [name, setName] = useState(item.name ?? "");
   const [description, setDescription] = useState(item.description ?? "");
@@ -49,11 +51,10 @@ export function EditItemModal({
   );
   const [startDate, setStartDate] = useState(item.startDate ?? "");
   const [dueDate, setDueDate] = useState(item.dueDate ?? "");
-  const [loading, setLoading] = useState(false); // New loading state
-  const [error, setError] = useState<string | null>(null); // Optional: for error feedback
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSave = async () => {
-    // Validate all required fields
     if (
       !name ||
       !description ||
@@ -66,8 +67,9 @@ export function EditItemModal({
       return;
     }
 
-    setError(null); // Clear any previous error
-    setLoading(true); // Activate loading state
+    setError(null);
+    setLoading(true);
+    if (onLoadingChange) onLoadingChange(true); // Notify parent of loading start
 
     const formattedStartDate = formatDateToYYYYMMDD(startDate);
     const formattedDueDate = formatDateToYYYYMMDD(dueDate);
@@ -83,30 +85,32 @@ export function EditItemModal({
     };
 
     try {
-      await onSave(updatedItem); // Wait for the save operation to complete
+      await onSave(updatedItem);
       onClose(); // Close only on success
     } catch (err) {
-      setError("Failed to save item. Please try again."); // Optional: error handling
+      setError("Failed to save item. Please try again.");
       console.error("Save error:", err);
     } finally {
-      setLoading(false); // Deactivate loading state regardless of success/failure
+      setLoading(false);
+      if (onLoadingChange) onLoadingChange(false); // Notify parent of loading end
     }
   };
 
   const handleClose = () => {
+    if (loading) return; // Prevent closing while loading
     setName(item.name ?? "");
     setDescription(item.description ?? "");
     setStatus(item.status);
     setPriority(item.priority);
     setStartDate(item.startDate ?? "");
     setDueDate(item.dueDate ?? "");
-    setError(null); // Clear error on close
-    setLoading(false); // Reset loading state
+    setError(null);
+    setLoading(false);
     onClose();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-[425px] bg-black text-white border-gray-700">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
@@ -118,7 +122,6 @@ export function EditItemModal({
         </DialogHeader>
         {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
         <div className="grid gap-4 py-4">
-          {/* Name */}
           <div className="grid gap-2">
             <label htmlFor="name" className="text-sm font-medium">
               Name
@@ -133,7 +136,6 @@ export function EditItemModal({
               disabled={loading}
             />
           </div>
-          {/* Description */}
           <div className="grid gap-2">
             <label htmlFor="description" className="text-sm font-medium">
               Description
@@ -148,7 +150,6 @@ export function EditItemModal({
               disabled={loading}
             />
           </div>
-          {/* Status */}
           <div className="grid gap-2">
             <label htmlFor="status" className="text-sm font-medium">
               Status
@@ -174,7 +175,6 @@ export function EditItemModal({
               </SelectContent>
             </Select>
           </div>
-          {/* Priority */}
           <div className="grid gap-2">
             <label htmlFor="priority" className="text-sm font-medium">
               Priority
@@ -199,7 +199,6 @@ export function EditItemModal({
               </SelectContent>
             </Select>
           </div>
-          {/* Start Date */}
           <div className="grid gap-2">
             <label htmlFor="startDate" className="text-sm font-medium">
               Start Date
@@ -214,7 +213,6 @@ export function EditItemModal({
               disabled={loading}
             />
           </div>
-          {/* Due Date */}
           <div className="grid gap-2">
             <label htmlFor="dueDate" className="text-sm font-medium">
               Due Date
@@ -230,7 +228,6 @@ export function EditItemModal({
             />
           </div>
         </div>
-        {/* Buttons */}
         <div className="flex flex-col gap-2">
           <Button
             variant="outline"
