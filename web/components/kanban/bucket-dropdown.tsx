@@ -16,9 +16,11 @@ import {
 const BucketDropdown = ({
   bucketId,
   projectId,
+  color,
 }: {
   bucketId: string;
   projectId: string;
+  color: string;
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [hasOpenDialog, setHasOpenDialog] = useState(false);
@@ -60,7 +62,11 @@ const BucketDropdown = ({
           onSelect={handleItemSelect}
         />
         <EditBucket
-          values={{ id: bucketId, name: "" }}
+          values={{
+            id: bucketId,
+            projectId: projectId,
+            color: color,
+          }}
           onOpenChange={handleDialogOpenChange}
           onSelect={handleItemSelect}
         />

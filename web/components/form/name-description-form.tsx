@@ -18,7 +18,6 @@ import { Loader } from "lucide-react";
 const formSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters long"),
   description: z.string().optional(),
-  id: z.string().optional(),
 });
 
 interface FormProps {
@@ -37,9 +36,8 @@ export const NameDescriptionForm = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues || {
-      name: "",
+      name: "New Item",
       description: "",
-      id: "",
     },
   });
 

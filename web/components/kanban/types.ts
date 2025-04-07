@@ -1,3 +1,5 @@
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { cache } from "react";
 import { Task } from "@/components/task/types";
 
 export type Edge = "top" | "right" | "bottom" | "left";
@@ -18,10 +20,10 @@ export interface Bucket {
     createdAt: string;
     updatedAt: string;
   };
+  color: string;
   createdAt: string;
   updatedAt: string;
   // TODO: Add these new properties to the API it doesn't have them yet
-  // color: string;
 }
 export interface Item {
   id: string;
@@ -36,6 +38,7 @@ export interface Item {
       createdAt: string;
       updatedAt: string;
     };
+    color: string;
     createdAt: string;
     updatedAt: string;
   };
