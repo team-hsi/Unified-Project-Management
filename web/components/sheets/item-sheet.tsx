@@ -9,6 +9,7 @@ import { TaskBreadcrumb } from "./task-breadcrumb";
 import { TaskWorkflow } from "../task/task-workflow";
 import { Item } from "../kanban/types";
 import { ItemDetails } from "../task/item-details";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const ItemSheet = ({
   children,
@@ -17,14 +18,18 @@ export const ItemSheet = ({
   children: React.ReactNode;
   item: Item;
 }) => {
-  const segments = ["design", "in-progress"];
+  const segments = [item.bucket.project.name, item.bucket.name];
   const [unsavedForm, setUnsavedForm] = React.useState(false);
+  const isMobile = useIsMobile();
 
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent
-        className="rounded-xl max-w-lg  md:max-w-xl lg:max-w-2xl"
+        className={`rounded-xl ${
+          isMobile ? "h-full" : "max-w-lg md:max-w-xl lg:max-w-2xl"
+        }`}
+        side={isMobile ? "bottom" : "right"}
         hideClose
       >
         <SheetTitle className="sr-only"> task detail side sheet</SheetTitle>

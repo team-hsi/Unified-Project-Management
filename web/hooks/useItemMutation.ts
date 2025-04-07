@@ -2,6 +2,7 @@ import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation } from "@tanstack/react-query";
 import {
   createItem as createItemAction,
+  deleteItemById,
   updateItemInline as updateItemInlineAction,
 } from "@/actions/item-actions";
 import { toast } from "sonner";
@@ -20,6 +21,7 @@ export const useItemMutation = ({
     onSuccess: () => {
       toast.success("Item created successfully!");
       queryClient.invalidateQueries({ queryKey });
+      successAction?.();
     },
   });
 
@@ -30,9 +32,17 @@ export const useItemMutation = ({
       successAction?.();
     },
   });
+  const deleteItem = useMutation({
+    mutationFn: deleteItemById,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+      successAction?.();
+    },
+  });
 
   return {
     createItem,
     updateItemInline,
+    deleteItem,
   };
 };

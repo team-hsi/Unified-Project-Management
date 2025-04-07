@@ -75,7 +75,7 @@ export const KanbanCard = ({ item }: KanbanCardProps) => {
     <ItemSheet item={item}>
       <Card
         className={cn(
-          "relative rounded-sm bg-background group p-3 shadow-sm w-full hover:cursor-grab gap-0 active:cursor-grabbing",
+          "relative rounded-lg bg-background group p-3 shadow-sm w-full hover:cursor-grab gap-0 active:cursor-grabbing",
           "bg-card hover:bg-muted",
           { "opacity-50": isDragging }
         )}
@@ -89,7 +89,14 @@ export const KanbanCard = ({ item }: KanbanCardProps) => {
             </p>
           )}
         </CardContent>
-        <DualButton />
+        <DualButton
+          className="bg-muted"
+          data={{
+            itemId: item.id,
+            projectId: item.bucket.project.id,
+            status: item.status,
+          }}
+        />
         {closestEdge && <DropIndicator edge={closestEdge} />}
       </Card>
     </ItemSheet>

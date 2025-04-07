@@ -2,6 +2,7 @@
 
 import { PartialProject } from "@/components/project/types";
 import type { UpdateItemPayload } from "@/actions/action-types";
+import { Suspense } from "react";
 const API = process.env.NEXT_PUBLIC_API_URL;
 export const getItems = async () => {
   try {
@@ -60,4 +61,18 @@ export const createItem = async (values: PartialProject) => {
     throw new Error("Failed to create project");
   }
   return res.json();
+};
+
+export const deleteItemById = async (id: string) => {
+  const res = await fetch(`${API}/v1/items/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!res.ok) {
+    throw new Error("Failed to delete item");
+  }
+
+  return { success: true };
 };

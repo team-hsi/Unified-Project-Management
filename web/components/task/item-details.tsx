@@ -4,6 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   CalendarRange,
   ChevronsUp,
+  Database,
+  DatabaseIcon,
   Loader,
   Newspaper,
   Plus,
@@ -144,7 +146,7 @@ export const ItemDetails = ({
                                 checked ? "complete" : "incomplete"
                               );
                             }}
-                            className="rounded-full data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600 border-white/70 cursor-pointer"
+                            className="rounded-full data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600 border-foreground cursor-pointer"
                           />
                           <span className="capitalize">{field.value}</span>
                         </div>
@@ -176,7 +178,7 @@ export const ItemDetails = ({
                               {field.value ? (
                                 format(field.value, "yyyy-MM-dd")
                               ) : (
-                                <span>Select date</span>
+                                <span className="pl-5">Set date</span>
                               )}
                             </Button>
                           </FormControl>
@@ -257,7 +259,7 @@ export const ItemDetails = ({
                       >
                         <FormControl>
                           <SelectTrigger className="w-[180px] bg-transparent border-0 p-0 h-auto text-white focus:ring-0">
-                            <SelectValue placeholder="Select priority" />
+                            <SelectValue placeholder="set priority" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="bg-[#1e1e1e] border-gray-700">
