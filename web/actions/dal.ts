@@ -23,9 +23,15 @@ export const verifySession = cache(async () => {
   };
 });
 
+export const getSession = cache(async () => {
+  const session = await verifySession();
+  if (!session) return redirect("/sign-in");
+  return;
+});
+
 export const getUser = cache(async () => {
   const session = await verifySession();
-  if (!session) return null;
+  if (!session) return redirect("/sign-in");
 
   try {
     const res = await fetch(

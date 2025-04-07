@@ -2,6 +2,7 @@
 import { User } from "@/hooks/auth-hooks";
 import { createSession, deleteSession } from "@/actions/session";
 import { redirect } from "next/navigation";
+import { getSession, getUser } from "./dal";
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 export const signupAction = async (userData: Omit<User, "id">) => {
@@ -62,3 +63,10 @@ export const logoutAction = async () => {
   await deleteSession();
   redirect("/sign-in");
 };
+
+export async function getCurrentSession() {
+  return await getSession();
+}
+export async function getSessionUser() {
+  return await getUser();
+}
