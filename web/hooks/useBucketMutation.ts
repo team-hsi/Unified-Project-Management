@@ -7,7 +7,7 @@ import {
   updateBucket as updateBucketAction,
 } from "@/actions/bucket-actions";
 import { useRouter } from "next/navigation";
-import { Bucket, Item } from "@/components/kanban/types";
+import { Bucket } from "@/components/kanban/types";
 
 export const useBucketMutation = ({
   queryKey,
