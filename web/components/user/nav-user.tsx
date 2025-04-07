@@ -1,7 +1,6 @@
 "use client";
 
 import { BadgeCheck, Bell, LogOut, Sparkles } from "lucide-react";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -13,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeSwitcher } from "../ui/theme-switch";
-import Link from "next/link";
+import { logoutAction } from "@/actions/auth-actions";
 
 export function NavUser({
   user,
@@ -69,25 +68,14 @@ export function NavUser({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link href="/sign-in">
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
-            </DropdownMenuItem>
-          </Link>
-          {/* <Separator /> */}
+          <DropdownMenuItem onSelect={async () => logoutAction()}>
+            <LogOut />
+            Log out
+          </DropdownMenuItem>
           <div className="w-full p-1 mt-2">
             <ThemeSwitcher className=" w-fit m-auto" />
           </div>
         </DropdownMenuGroup>
-        {/* <div className="flex items-center justify-between m-1 rounded-md hover:bg-muted p-1">
-          <span className="flex items-center gap-2">
-            <LogOut size={10} />
-            Log out
-          </span>
-          <Separator orientation="vertical" />
-          <ThemeSwitcher />
-        </div> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );
