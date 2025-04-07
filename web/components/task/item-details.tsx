@@ -4,8 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   CalendarRange,
   ChevronsUp,
-  Database,
-  DatabaseIcon,
   Loader,
   Newspaper,
   Plus,
@@ -89,7 +87,7 @@ export const ItemDetails = ({
     resolver: zodResolver(itemFormSchema),
     defaultValues: {
       status: (item.status as "incomplete" | "complete") || "incomplete",
-      dueDate: item?.dueDate ? new Date(item.dueDate) : null,
+      dueDate: item?.dueDate ? new Date(item.dueDate) : undefined,
       priority: item?.priority || "",
       description: item?.description || "",
     },
@@ -105,7 +103,7 @@ export const ItemDetails = ({
     return updateItemInline.mutateAsync({
       id: item.id,
       ...data,
-      dueDate: data.dueDate?.toISOString() || null,
+      dueDate: data.dueDate ? data.dueDate.toISOString() : "",
     });
   };
 

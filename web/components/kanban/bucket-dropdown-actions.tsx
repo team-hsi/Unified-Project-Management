@@ -13,9 +13,10 @@ import { useState } from "react";
 import { ColorInput } from "../ui/color-input";
 import { useBucketMutation } from "@/hooks/useBucketMutation";
 import stringToColor from "@/lib/utils";
+import { useItemMutation } from "@/hooks/useItemMutation";
 
 /*
- * Add bucket component
+ * Add Item
  */
 export const AddBucketItem = ({
   bucketId,
@@ -28,7 +29,7 @@ export const AddBucketItem = ({
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
-  const { createBucketItem } = useBucketMutation({
+  const { createItem } = useItemMutation({
     queryKey: ["items", projectId],
   });
 
@@ -36,7 +37,8 @@ export const AddBucketItem = ({
     name: string;
     description?: string;
   }) => {
-    await createBucketItem.mutateAsync({ ...values, id: bucketId });
+    onOpenChange?.(false);
+    await createItem.mutateAsync({ ...values, id: bucketId });
   };
 
   return (
@@ -51,7 +53,7 @@ export const AddBucketItem = ({
         </DialogHeader>
         <NameDescriptionForm
           onSubmit={handleSubmit}
-          isPending={createBucketItem.isPending}
+          isPending={createItem.isPending}
           label="Add"
         />
       </DialogContent>
@@ -60,7 +62,7 @@ export const AddBucketItem = ({
 };
 
 /*
- * Edit bucket component
+ * Edit bucket
  ! currently not working due to Api endpoint not being implemented for color property
  */
 //Todo: add color picker and implement this component
@@ -129,7 +131,7 @@ export const EditBucket = ({
 };
 
 /*
- * Delete bucket component
+ * Delete bucket
  */
 
 export const DeleteBucket = ({
@@ -147,6 +149,7 @@ export const DeleteBucket = ({
     queryKey: ["buckets", projectId],
   });
   const handleDeleteBucket = async () => {
+    // onOpenChange?.(false);
     await deleteBucket.mutateAsync({ id: bucketId });
   };
 

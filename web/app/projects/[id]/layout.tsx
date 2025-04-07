@@ -26,13 +26,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const ProjectLayout = async (props: Props) => {
   const params = await props.params;
-  // const project = await getProject(params.id);
-
-  // // If project doesn't exist, trigger the not-found page
-  // if (!project) {
-  //   notFound();
-  // }
-
   const queryClient = getQueryClient();
   queryClient.prefetchQuery({
     queryKey: ["buckets", params.id],

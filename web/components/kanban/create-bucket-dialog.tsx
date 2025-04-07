@@ -32,7 +32,6 @@ export const CreateBucket = ({
 
   const { createBucket } = useBucketMutation({
     queryKey: ["buckets", id],
-    successAction: () => setOpen(false),
   });
 
   return (
@@ -71,18 +70,15 @@ export const CreateBucket = ({
         <DialogFooter>
           <Button
             className="flex-1"
-            onClick={async () =>
+            onClick={async () => {
+              setOpen(false);
               await createBucket.mutateAsync({
                 name: bucketData.name,
                 color,
                 id,
-              })
-            }
-            disabled={
-              createBucket.isPending ||
-              !bucketData.name.trim() ||
-              bucketData.name.length < 3
-            }
+              });
+            }}
+            disabled={!bucketData.name.trim() || bucketData.name.length < 3}
           >
             {createBucket.isPending ? (
               <Loader className="mr-2 h-4 w-4 animate-spin" />

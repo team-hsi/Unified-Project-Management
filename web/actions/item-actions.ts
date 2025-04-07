@@ -26,6 +26,10 @@ export const getProjectItems = async ({ id }: PartialProject) => {
 
 export const updateItemInline = async (values: UpdateItemPayload) => {
   const { id, ...rest } = values;
+  //Todo: remove this when the backend is updated to accept null values
+  if ("dueDate" in rest) {
+    delete rest.dueDate;
+  }
   const res = await fetch(`${API}/v1/items/${id}`, {
     method: "PUT",
     headers: {
@@ -34,21 +38,25 @@ export const updateItemInline = async (values: UpdateItemPayload) => {
     body: JSON.stringify(rest),
   });
   if (!res.ok) {
-    throw new Error("Failed to update item");
+    const data = await res.json();
+    console.log(data);
+    console.log("check type", typeof data.error);
+    return { success: false, error: data.error };
   }
-  return res.json();
+  const data = await res.json();
+  return { success: true, data };
 };
 
-export const createItem = async (values: PartialProject) => {
+export const createItem = async (values: UpdateItemPayload) => {
+  const { id, ...rest } = values;
   const res = await fetch(`${API}/v1/items/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name: values.name,
-      description: values.description,
-      bucketId: values.id,
+      ...rest,
+      bucketId: id,
     }),
   });
   if (!res.ok) {
@@ -59,7 +67,8 @@ export const createItem = async (values: PartialProject) => {
   return { success: true, data };
 };
 
-export const deleteItemById = async (id: string) => {
+export const deleteItemById = async (values: UpdateItemPayload) => {
+  const { id } = values;
   const res = await fetch(`${API}/v1/items/${id}`, {
     method: "DELETE",
     headers: {
@@ -67,7 +76,8 @@ export const deleteItemById = async (id: string) => {
     },
   });
   if (!res.ok) {
-    throw new Error("Failed to delete item");
+    const data = await res.json();
+    return { success: false, error: data.error };
   }
 
   return { success: true };

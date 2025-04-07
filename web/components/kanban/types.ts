@@ -1,3 +1,5 @@
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { cache } from "react";
 import { Task } from "@/components/task/types";
 
 export type Edge = "top" | "right" | "bottom" | "left";
@@ -36,6 +38,7 @@ export interface Item {
       createdAt: string;
       updatedAt: string;
     };
+    color: string;
     createdAt: string;
     updatedAt: string;
   };

@@ -51,7 +51,7 @@ export const DualButton = ({
         aria-label="delete-item"
         onClick={(e) => {
           e.stopPropagation();
-          deleteItem.mutateAsync(data.itemId);
+          deleteItem.mutateAsync({ id: data.itemId });
         }}
       >
         <Trash size={16} strokeWidth={1} aria-hidden="true" />

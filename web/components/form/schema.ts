@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const itemFormSchema = z.object({
   status: z.enum(["incomplete", "complete"]),
-  dueDate: z.date().optional().nullable(),
+  dueDate: z.date().optional(),
   priority: z.enum(["low", "medium", "high", ""]),
   description: z
     .string()
