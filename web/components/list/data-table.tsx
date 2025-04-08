@@ -16,7 +16,7 @@ import { EditItemModal } from "@/components/list/edit-item-modal";
 import { DataTablePagination } from "./data-table-pagination";
 import { ListViewSkeleton } from "@/components/list/skeletons";
 import { getItems, editItem, deleteItem } from "@/actions/item-actions";
-import { Download, ChevronUpDown, FineTune } from "@mynaui/icons-react";
+import { Download, ChevronUpDown, FineTune, Plus } from "@mynaui/icons-react";
 import {
   Table,
   TableBody,
@@ -159,6 +159,8 @@ export function DataTable<TData extends Item, TValue>({
     manualPagination: false,
   });
 
+  const handleNewItem = () => {};
+
   // Handle modal close and reset selectedItem
   const handleModalClose = () => {
     setIsEditModalOpen(false);
@@ -181,9 +183,22 @@ export function DataTable<TData extends Item, TValue>({
             className="w-full sm:max-w-xs"
           />
         </div>
+
         <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-          <Button onClick={handleExport} className="w-full sm:w-auto">
-            <Download className="h-4 w-4 mr-2" />
+          <div className="w-full sm:w-auto flex items-center space-x-2">
+            <Button
+              onClick={handleNewItem}
+              className="w-full sm:w-auto cursor-pointer"
+            >
+              <Plus className="h-4 w-4" />
+              Add
+            </Button>
+          </div>
+          <Button
+            onClick={handleExport}
+            className="w-full sm:w-auto cursor-pointer"
+          >
+            <Download className="h-4 w-4" />
             Export
           </Button>
           <DropdownMenu>
