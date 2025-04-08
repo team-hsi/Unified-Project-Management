@@ -7,12 +7,8 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
-import {
-  useSuspenseQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useState, useCallback } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTableFilter } from "@/hooks/use-table-filter";
 import { useTableActions } from "@/hooks/use-table-actions";
 import { Item } from "@/components/list/columns";
@@ -61,7 +57,7 @@ export function DataTable<TData extends Item, TValue>({
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: fetchedData, isLoading } = useSuspenseQuery({
+  const { data: fetchedData, isLoading } = useQuery({
     queryKey: ["items", id],
     queryFn: getItems,
   });
@@ -94,13 +90,20 @@ export function DataTable<TData extends Item, TValue>({
     },
   });
 
-  const columns = getColumns({
-    onUpdateItem: (item: Item) => {
-      setSelectedItem(item); // Set the selected item when editing
-      setIsEditModalOpen(true); // Open the modal
+  const handleUpdateItem = useCallback((item: Item) => {
+    setSelectedItem(item);
+    setIsEditModalOpen(true);
+  }, []);
+
+  const handleDeleteItem = useCallback(
+    (itemId: string) => {
+      deleteMutation.mutate(itemId);
     },
-    onDeleteItem: (itemId: string) => deleteMutation.mutate(itemId),
-    onSaveItem: (updatedItem: Item) =>
+    [deleteMutation]
+  );
+
+  const handleSaveItem = useCallback(
+    (updatedItem: Item) => {
       editMutation.mutate({
         itemId: updatedItem.id,
         values: {
@@ -108,7 +111,15 @@ export function DataTable<TData extends Item, TValue>({
           description: updatedItem.description,
           id: updatedItem.bucketId,
         },
-      }),
+      });
+    },
+    [editMutation]
+  );
+
+  const columns = getColumns({
+    onUpdateItem: handleUpdateItem,
+    onDeleteItem: handleDeleteItem,
+    onSaveItem: handleSaveItem,
   });
 
   const {
