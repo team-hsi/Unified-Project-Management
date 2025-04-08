@@ -174,15 +174,6 @@ export function DataTable<TData extends Item, TValue>({
     });
   };
 
-  const handleFormChange = (field: keyof Item, value: string) => {
-    if (selectedItem) {
-      setSelectedItem({
-        ...selectedItem,
-        [field]: value,
-      });
-    }
-  };
-
   if (isLoading) {
     return <ListViewSkeleton />;
   }
