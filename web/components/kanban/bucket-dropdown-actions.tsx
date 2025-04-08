@@ -11,9 +11,9 @@ import { NameDescriptionForm } from "../form/name-description-form";
 import { CustomDialogItem } from "@/components/project/custom-dialog-item";
 import { useState } from "react";
 import { ColorInput } from "../ui/color-input";
-import { useBucketMutation } from "@/hooks/useBucketMutation";
+import { useBucketAction } from "@/hooks/use-bucket";
 import stringToColor from "@/lib/utils";
-import { useItemMutation } from "@/hooks/useItemMutation";
+import { useItemAction } from "@/hooks/use-item";
 
 /*
  * Add Item
@@ -29,7 +29,7 @@ export const AddBucketItem = ({
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
-  const { createItem } = useItemMutation({
+  const { createItem } = useItemAction({
     queryKey: ["items", projectId],
   });
 
@@ -79,7 +79,7 @@ export const EditBucket = ({
   const [color, setColor] = useState<string>(
     values.color || stringToColor(values.id)
   );
-  const { updateBucket } = useBucketMutation({
+  const { updateBucket } = useBucketAction({
     queryKey: ["buckets", values.projectId],
     successAction: () => {
       toast.success("Bucket updated successfully!");
@@ -145,7 +145,7 @@ export const DeleteBucket = ({
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
-  const { deleteBucket } = useBucketMutation({
+  const { deleteBucket } = useBucketAction({
     queryKey: ["buckets", projectId],
   });
   const handleDeleteBucket = async () => {

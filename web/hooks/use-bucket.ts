@@ -9,7 +9,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Bucket } from "@/components/kanban/types";
 
-export const useBucketMutation = ({
+export const useBucketAction = ({
   queryKey,
   successAction,
 }: {

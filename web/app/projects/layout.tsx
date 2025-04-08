@@ -1,3 +1,4 @@
+// import { verifySession } from "@/actions/dal";
 import { getProjects } from "@/actions/project-actions";
 import { ProjectUrlSync } from "@/components/auth/project-url-sync";
 import { ProjectNavigation } from "@/components/project/project-navigation";
@@ -10,8 +11,12 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 const ProjectLayout = async ({ children }: { children: React.ReactNode }) => {
+  // const session = await verifySession();
   const queryClient = getQueryClient();
-  queryClient.prefetchQuery({ queryKey: ["projects"], queryFn: getProjects });
+  queryClient.prefetchQuery({
+    queryKey: ["projects", "user"],
+    queryFn: getProjects,
+  });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <SidebarProvider>

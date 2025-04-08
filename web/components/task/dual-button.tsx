@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useItemMutation } from "@/hooks/useItemMutation";
+import { useItemAction } from "@/hooks/use-item";
 import { cn } from "@/lib/utils";
 import { CheckCircle, Trash } from "lucide-react";
 
@@ -14,7 +14,7 @@ export const DualButton = ({
     status?: string;
   };
 }) => {
-  const { deleteItem, updateItemInline } = useItemMutation({
+  const { deleteItem, updateItemInline } = useItemAction({
     queryKey: ["items", data.projectId],
   });
   return (

@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/accordion";
 import type { Item } from "@/components/kanban/types";
 import InlineEdit from "@/components/ui/inline-edit";
-import { useItemMutation } from "@/hooks/useItemMutation";
+import { useItemAction } from "@/hooks/use-item";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -75,7 +75,7 @@ export const ItemDetails = ({
   setUnsavedForm: (value: boolean) => void;
   unsavedForm: boolean;
 }) => {
-  const { updateItemInline } = useItemMutation({
+  const { updateItemInline } = useItemAction({
     queryKey: ["items", item.bucket.project.id],
     successAction: () => {
       setUnsavedForm(false);

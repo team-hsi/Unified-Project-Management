@@ -39,6 +39,7 @@ export interface Item {
     createdAt: string;
     updatedAt: string;
   };
+  position: number;
   priority: "low" | "medium" | "high" | null;
   status: string;
   description: string;

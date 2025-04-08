@@ -7,7 +7,7 @@ import { useAutoScroll } from "@/hooks/use-auto-scroll";
 import { KanbanCard } from "./kanban-item";
 import BucketDropdown from "./bucket-dropdown";
 import InlineEdit from "../ui/inline-edit";
-import { useBucketMutation } from "@/hooks/useBucketMutation";
+import { useBucketAction } from "@/hooks/use-bucket";
 import { Button } from "../ui/button";
 
 interface KanbanBucketProps {
@@ -23,7 +23,7 @@ export const KanbanBucket = ({ bucket, items }: KanbanBucketProps) => {
   );
   const scrollRef = useRef<HTMLDivElement | null>(null);
   useAutoScroll(scrollRef);
-  const { updateBucket } = useBucketMutation({
+  const { updateBucket } = useBucketAction({
     queryKey: ["buckets", bucket.project.id],
   });
 

@@ -22,19 +22,17 @@ import {
 import type { Project } from "./types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getProjects } from "@/actions/project-actions";
-import { useSuspenseQuery } from "@tanstack/react-query";
+// import { getUserProjects } from "@/actions/project-actions";
+// import { useSuspenseQuery } from "@tanstack/react-query";
 import { CreateProjectDialog } from "./create-project-dialog";
 import { CustomDialogItem } from "./custom-dialog-item";
 import { DeleteProjectDialog } from "./delete-project-dialog";
 import { UpdateProjectDialog } from "./update-project-dialog";
+import { useProjectAction } from "@/hooks/use-project";
 // import { ProjectUrlSync } from "../auth/project-url-sync";
 
 export const NavProjects = () => {
-  const { data: projects } = useSuspenseQuery({
-    queryKey: ["projects"],
-    queryFn: getProjects,
-  });
+  const { projects } = useProjectAction({});
   const { isMobile } = useSidebar();
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
@@ -66,13 +64,22 @@ export const NavProjects = () => {
       setOpenDropdowns((prev) => ({ ...prev, [projectId]: false }));
     }
   };
-
+  if (projects.data.length === 0) {
+    return (
+      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+        <SidebarGroupLabel>Projects</SidebarGroupLabel>
+        <div className="p-4 text-center text-muted-foreground">
+          <p>No projects found.</p>
+        </div>
+      </SidebarGroup>
+    );
+  }
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       {/* <ProjectUrlSync /> */}
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
-        {projects.map((project: Project) => (
+        {projects.data.map((project: Project) => (
           <SidebarMenuItem key={project.id}>
             <SidebarMenuButton asChild isActive={segments.includes(project.id)}>
               <Link href={`/projects/${project.id}`}>{project.name}</Link>

@@ -36,7 +36,7 @@ export type Item = {
   dueDate: string;
   bucketId: string;
   labels: string[];
-};
+};  
 
 // Define label colors for styling
 // const labelColors: Record<string, string> = {

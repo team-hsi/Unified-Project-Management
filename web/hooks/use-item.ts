@@ -8,7 +8,7 @@ import {
 import { toast } from "sonner";
 import { Bucket, Item } from "@/components/kanban/types";
 
-export const useItemMutation = ({
+export const useItemAction = ({
   queryKey,
   successAction,
 }: {

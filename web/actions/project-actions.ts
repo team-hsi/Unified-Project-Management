@@ -2,12 +2,13 @@
 
 import type { PartialProject } from "@/components/project/types";
 import { notFound } from "next/navigation";
+import { verifySession } from "./dal";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 export const getProjects = async () => {
   const res = await fetch(`${API}/v1/projects/getall`);
-  return res.json();
+  return { data: await res.json() };
 };
 export const getProject = async (id: string) => {
   const res = await fetch(`${API}/v1/projects/${id}`);
@@ -22,16 +23,31 @@ export const getProject = async (id: string) => {
   const data = await res.json();
   return { success: true, data };
 };
+export const getUserProjects = async () => {
+  const session = await verifySession();
+  const res = await fetch(`${API}/v1/users/${session.userId}/projects`);
+  if (!res.ok) {
+    const data = await res.json();
+    return { success: false, error: data.error };
+  }
+  const data = await res.json();
+  return { success: true, data };
+};
 
 export const createProject = async (values: PartialProject) => {
+  const session = await verifySession();
+  console.log(session);
+  console.log(values);
   const res = await fetch(`${API}/v1/projects/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${session.tokens.accessToken}`,
     },
     body: JSON.stringify({ name: values.name }),
   });
   if (!res.ok) {
+    console.log(await res.json());
     throw new Error("Failed to create project");
   }
   return res.json();
