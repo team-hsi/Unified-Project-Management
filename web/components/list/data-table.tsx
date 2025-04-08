@@ -13,9 +13,15 @@ import { useTableFilter } from "@/hooks/use-table-filter";
 import { useTableActions } from "@/hooks/use-table-actions";
 import { Item } from "@/components/list/columns";
 import { ItemSheet } from "../sheets/item-sheet";
+import { CreateItemSheet } from "../sheets/create-item-sheet";
 import { DataTablePagination } from "./data-table-pagination";
 import { ListViewSkeleton } from "@/components/list/skeletons";
-import { getItems, editItem, deleteItem } from "@/actions/item-actions";
+import {
+  getItems,
+  editItem,
+  deleteItem,
+  createItem,
+} from "@/actions/item-actions"; // Add createItem
 import { Download, ChevronUpDown, FineTune, Plus } from "@mynaui/icons-react";
 import {
   Table,
@@ -55,6 +61,7 @@ export function DataTable<TData extends Item, TValue>({
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false); // Add this state
   const queryClient = getQueryClient();
 
   const { data: fetchedData, isLoading } = useQuery({
@@ -76,19 +83,21 @@ export function DataTable<TData extends Item, TValue>({
     }) => editItem(itemId, values),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["items", projectId] }),
-    onError: (error) => {
-      console.error("Error updating item:", error);
-      alert("Failed to update item. Please try again.");
-    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (itemId: string) => deleteItem(itemId),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["items", projectId] }),
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (values: Partial<Item>) => createItem(values),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["items", projectId] }),
     onError: (error) => {
-      console.error("Error deleting item:", error);
-      alert("Failed to delete item. Please try again.");
+      console.error("Error creating item:", error);
+      alert("Failed to create item. Please try again.");
     },
   });
 
@@ -115,6 +124,22 @@ export function DataTable<TData extends Item, TValue>({
       });
     },
     [editMutation]
+  );
+
+  const handleCreateItem = useCallback(
+    (newItem: Item) => {
+      createMutation.mutate({
+        name: newItem.name,
+        description: newItem.description,
+        bucketId: newItem.bucketId,
+        startDate: newItem.startDate,
+        dueDate: newItem.dueDate,
+        priority: newItem.priority,
+        status: newItem.status,
+        labels: newItem.labels,
+      });
+    },
+    [createMutation]
   );
 
   const columns = getColumns({
@@ -160,20 +185,6 @@ export function DataTable<TData extends Item, TValue>({
     manualPagination: false,
   });
 
-  const handleNewItem = () => {
-    setSelectedItem({
-      id: "",
-      name: "",
-      description: "",
-      bucketId: "",
-      startDate: "",
-      dueDate: "",
-      priority: "low",
-      status: "todo",
-      labels: [],
-    });
-  };
-
   if (isLoading) {
     return <ListViewSkeleton />;
   }
@@ -193,13 +204,19 @@ export function DataTable<TData extends Item, TValue>({
 
         <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
           <div className="w-full sm:w-auto flex items-center space-x-2">
-            <Button
-              onClick={handleNewItem}
-              className="w-full sm:w-auto cursor-pointer"
+            <CreateItemSheet
+              onCreate={handleCreateItem}
+              isOpen={isCreateSheetOpen}
+              setIsOpen={setIsCreateSheetOpen}
             >
-              <Plus className="h-4 w-4" />
-              Add
-            </Button>
+              <Button
+                onClick={() => setIsCreateSheetOpen(true)}
+                className="w-full sm:w-auto cursor-pointer"
+              >
+                <Plus className="h-4 w-4" />
+                Add
+              </Button>
+            </CreateItemSheet>
           </div>
           <Button
             onClick={handleExport}
@@ -230,7 +247,6 @@ export function DataTable<TData extends Item, TValue>({
               <DropdownMenuSeparator />
               {filteredColumns.map((column) => {
                 const columnId = column.id as string;
-
                 if (
                   !columnId ||
                   columnId === "select" ||
@@ -316,6 +332,11 @@ export function DataTable<TData extends Item, TValue>({
         </Table>
       </div>
       <DataTablePagination table={table} />
+      {selectedItem && (
+        <ItemSheet item={selectedItem}>
+          <div />
+        </ItemSheet>
+      )}
     </div>
   );
 }
