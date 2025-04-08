@@ -297,7 +297,7 @@ export const getColumns = ({
         <div className="flex justify-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1 rounded-md border border-transparent hover:bg-gray-800 hover:border-2 hover:border-gray-400 focus:outline-none">
+              <button className="p-1 rounded-md border border-transparent bg-gray-800 hover:bg-gray-800 hover:border-2 hover:border-gray-400 focus:outline-none">
                 <Dots className="h-6 w-6 scale-125 drop-shadow-sm text-white hover:text-white" />
               </button>
             </DropdownMenuTrigger>
