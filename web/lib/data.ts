@@ -73,33 +73,4 @@ export const data = {
     },
   ],
 };
-
-import { Item } from "@/components/list/columns";
-
-export async function getData(): Promise<Item[]> {
-  // Fetch data from your API here, or return static data for now
-  return [
-    {
-      id: "728ed52f",
-      name: "Write documentation",
-      description: "Project Proposal",
-      status: "Todo",
-      priority: "High",
-      startDate: "2023-10-01",
-      dueDate: "2023-10-15",
-      bucketId: "1",
-      labels: ["Documentation", "Proposal"],
-    },
-    {
-      id: "489e1d42",
-      name: "Write documentation",
-      description: "Project Proposal",
-      status: "In-Progress",
-      priority: "Medium",
-      startDate: "2023-10-01",
-      dueDate: "2023-10-15",
-      bucketId: "1",
-      labels: ["Documentation", "Proposal"],
-    },
-  ];
-}
+export type Data = typeof data;

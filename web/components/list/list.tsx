@@ -1,19 +1,10 @@
 import { DataTable } from "@/components/list/data-table";
-import { getData } from "@/lib/data";
+import { getItems } from "@/actions/item-actions";
 import { ColumnDef } from "@tanstack/react-table";
+import { Item } from "@/components/list/columns";
 
-export interface Item {
-  id: string;
-  name: string;
-  description: string;
-  bucketId: string;
-  startDate?: string;
-  dueDate?: string;
-  priority?: string;
-  status?: string;
-}
 export const ListView = async () => {
-  const data = await getData();
+  const data = await getItems();
   const columns: ColumnDef<Item>[] = [
     { accessorKey: "name", header: "Name" },
     { accessorKey: "description", header: "Description" },
@@ -24,7 +15,7 @@ export const ListView = async () => {
   ];
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data} id="list-view" />{" "}
+      <DataTable columns={columns} data={data} id="list-view" />
     </div>
   );
 };
