@@ -1,13 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -17,15 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Item } from "./columns";
-
-interface EditItemModalProps {
-  item: Item;
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (updatedItem: Item) => Promise<void>;
-  onLoadingChange?: (isLoading: boolean) => void; // New prop to communicate loading state
-}
+import { ItemSheet } from "../sheets/item-sheet";
 
 // Utility function to format date to YYYY-MM-DD
 const formatDateToYYYYMMDD = (dateString: string): string => {
@@ -34,19 +19,13 @@ const formatDateToYYYYMMDD = (dateString: string): string => {
   return date.toISOString().split("T")[0];
 };
 
-export function EditItemModal({
-  item,
-  isOpen,
-  onClose,
-  onSave,
-  onLoadingChange,
-}: EditItemModalProps) {
+export function EditItemUI({ item }: { item: Item }) {
   const [name, setName] = useState(item.name ?? "");
   const [description, setDescription] = useState(item.description ?? "");
   const [status, setStatus] = useState<
-    "Todo" | "In-Progress" | "Done" | "Canceled"
+    "todo" | "in-progress" | "done" | "canceled"
   >(item.status);
-  const [priority, setPriority] = useState<"Low" | "Medium" | "High">(
+  const [priority, setPriority] = useState<"low" | "medium" | "high">(
     item.priority
   );
   const [startDate, setStartDate] = useState(item.startDate ?? "");
@@ -69,59 +48,38 @@ export function EditItemModal({
 
     setError(null);
     setLoading(true);
-    if (onLoadingChange) onLoadingChange(true); // Notify parent of loading start
 
     const formattedStartDate = formatDateToYYYYMMDD(startDate);
     const formattedDueDate = formatDateToYYYYMMDD(dueDate);
 
-    const updatedItem: Item = {
-      ...item,
-      name,
-      description,
-      status,
-      priority,
-      startDate: formattedStartDate,
-      dueDate: formattedDueDate,
-    };
-
     try {
-      await onSave(updatedItem);
-      onClose(); // Close only on success
+      console.log("Saving item with data:", {
+        name,
+        description,
+        status,
+        priority,
+        startDate: formattedStartDate,
+        dueDate: formattedDueDate,
+      });
     } catch (err) {
       setError("Failed to save item. Please try again.");
       console.error("Save error:", err);
     } finally {
       setLoading(false);
-      if (onLoadingChange) onLoadingChange(false); // Notify parent of loading end
     }
   };
 
-  const handleClose = () => {
-    if (loading) return; // Prevent closing while loading
-    setName(item.name ?? "");
-    setDescription(item.description ?? "");
-    setStatus(item.status);
-    setPriority(item.priority);
-    setStartDate(item.startDate ?? "");
-    setDueDate(item.dueDate ?? "");
-    setError(null);
-    setLoading(false);
-    onClose();
-  };
-
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[425px] bg-black text-white border-gray-700">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">
-            Update Item
-          </DialogTitle>
-          <DialogDescription className="text-gray-400">
-            Update the item details and save the changes
-          </DialogDescription>
-        </DialogHeader>
+    <ItemSheet item={item}>
+      <div className="w-full sm:max-w-lg bg-black text-white border-l border-gray-700 overflow-auto">
+        <div className="text-lg font-semibold mb-2">Update Item</div>
+        <p className="text-sm text-gray-400 mb-4">
+          Update the item details and save the changes
+        </p>
+
         {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
-        <div className="grid gap-4 py-4">
+
+        <div className="grid gap-4">
           <div className="grid gap-2">
             <label htmlFor="name" className="text-sm font-medium">
               Name
@@ -136,6 +94,7 @@ export function EditItemModal({
               disabled={loading}
             />
           </div>
+
           <div className="grid gap-2">
             <label htmlFor="description" className="text-sm font-medium">
               Description
@@ -150,6 +109,7 @@ export function EditItemModal({
               disabled={loading}
             />
           </div>
+
           <div className="grid gap-2">
             <label htmlFor="status" className="text-sm font-medium">
               Status
@@ -157,7 +117,7 @@ export function EditItemModal({
             <Select
               value={status}
               onValueChange={(value) =>
-                setStatus(value as "Todo" | "In-Progress" | "Done" | "Canceled")
+                setStatus(value as "todo" | "in-progress" | "done" | "canceled")
               }
               disabled={loading}
             >
@@ -174,15 +134,14 @@ export function EditItemModal({
                 <SelectItem value="Canceled">Canceled</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-          <div className="grid gap-2">
+
             <label htmlFor="priority" className="text-sm font-medium">
               Priority
             </label>
             <Select
               value={priority}
               onValueChange={(value) =>
-                setPriority(value as "Low" | "Medium" | "High")
+                setPriority(value as "low" | "medium" | "high")
               }
               disabled={loading}
             >
@@ -199,6 +158,7 @@ export function EditItemModal({
               </SelectContent>
             </Select>
           </div>
+
           <div className="grid gap-2">
             <label htmlFor="startDate" className="text-sm font-medium">
               Start Date
@@ -213,6 +173,7 @@ export function EditItemModal({
               disabled={loading}
             />
           </div>
+
           <div className="grid gap-2">
             <label htmlFor="dueDate" className="text-sm font-medium">
               Due Date
@@ -228,10 +189,11 @@ export function EditItemModal({
             />
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+
+        <div className="flex flex-col gap-2 mt-6">
           <Button
             variant="outline"
-            onClick={handleClose}
+            onClick={() => {}}
             className="bg-gray-800 border-gray-700 w-full text-white hover:bg-gray-700"
             disabled={loading}
           >
@@ -245,7 +207,7 @@ export function EditItemModal({
             {loading ? "Saving..." : "Save"}
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ItemSheet>
   );
 }

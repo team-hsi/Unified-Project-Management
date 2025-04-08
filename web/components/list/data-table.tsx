@@ -8,11 +8,11 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useState, useCallback } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useTableFilter } from "@/hooks/use-table-filter";
 import { useTableActions } from "@/hooks/use-table-actions";
 import { Item } from "@/components/list/columns";
-import { EditItemModal } from "@/components/list/edit-item-modal";
+import { ItemSheet } from "../sheets/item-sheet";
 import { DataTablePagination } from "./data-table-pagination";
 import { ListViewSkeleton } from "@/components/list/skeletons";
 import { getItems, editItem, deleteItem } from "@/actions/item-actions";
@@ -36,16 +36,17 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { getColumns } from "@/components/list/columns";
+import { getQueryClient } from "@/lib/query-client/get-query-client";
 
 interface DataTableProps<TData, TValue> {
   columns?: ColumnDef<TData, TValue>[];
   data?: TData[];
-  id: string;
+  projectId: string;
 }
 
 export function DataTable<TData extends Item, TValue>({
   data: initialData = [],
-  id,
+  projectId,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<
@@ -53,12 +54,11 @@ export function DataTable<TData extends Item, TValue>({
   >({ id: false });
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const queryClient = useQueryClient();
+  const queryClient = getQueryClient();
 
   const { data: fetchedData, isLoading } = useQuery({
-    queryKey: ["items", id],
+    queryKey: ["items", projectId],
     queryFn: getItems,
   });
 
@@ -74,7 +74,8 @@ export function DataTable<TData extends Item, TValue>({
       itemId: string;
       values: Partial<Item>;
     }) => editItem(itemId, values),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["items", id] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["items", projectId] }),
     onError: (error) => {
       console.error("Error updating item:", error);
       alert("Failed to update item. Please try again.");
@@ -83,7 +84,8 @@ export function DataTable<TData extends Item, TValue>({
 
   const deleteMutation = useMutation({
     mutationFn: (itemId: string) => deleteItem(itemId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["items", id] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["items", projectId] }),
     onError: (error) => {
       console.error("Error deleting item:", error);
       alert("Failed to delete item. Please try again.");
@@ -92,7 +94,6 @@ export function DataTable<TData extends Item, TValue>({
 
   const handleUpdateItem = useCallback((item: Item) => {
     setSelectedItem(item);
-    setIsEditModalOpen(true);
   }, []);
 
   const handleDeleteItem = useCallback(
@@ -159,12 +160,27 @@ export function DataTable<TData extends Item, TValue>({
     manualPagination: false,
   });
 
-  const handleNewItem = () => {};
+  const handleNewItem = () => {
+    setSelectedItem({
+      id: "",
+      name: "",
+      description: "",
+      bucketId: "",
+      startDate: "",
+      dueDate: "",
+      priority: "low",
+      status: "todo",
+      labels: [],
+    });
+  };
 
-  // Handle modal close and reset selectedItem
-  const handleModalClose = () => {
-    setIsEditModalOpen(false);
-    setSelectedItem(null); // Reset selectedItem when modal closes
+  const handleFormChange = (field: keyof Item, value: string) => {
+    if (selectedItem) {
+      setSelectedItem({
+        ...selectedItem,
+        [field]: value,
+      });
+    }
   };
 
   if (isLoading) {
@@ -278,10 +294,19 @@ export function DataTable<TData extends Item, TValue>({
                       key={cell.id}
                       className="px-4 py-2 whitespace-nowrap"
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      <ItemSheet item={row.original}>
+                        <div>
+                          <div
+                            className="cursor-pointer"
+                            onClick={() => handleUpdateItem(row.original)}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        </div>
+                      </ItemSheet>
                     </TableCell>
                   ))}
                 </TableRow>
@@ -300,27 +325,6 @@ export function DataTable<TData extends Item, TValue>({
         </Table>
       </div>
       <DataTablePagination table={table} />
-      {isEditModalOpen && selectedItem && (
-        <EditItemModal
-          item={selectedItem}
-          isOpen={isEditModalOpen}
-          onClose={handleModalClose} // Use the new handler
-          onSave={async (updatedItem) =>
-            editMutation.mutate({
-              itemId: updatedItem.id,
-              values: {
-                name: updatedItem.name,
-                description: updatedItem.description,
-                id: updatedItem.bucketId,
-                startDate: updatedItem.startDate,
-                dueDate: updatedItem.dueDate,
-                priority: updatedItem.priority,
-                status: updatedItem.status,
-              },
-            })
-          }
-        />
-      )}
     </div>
   );
 }

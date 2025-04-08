@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   ClockOne,
@@ -22,15 +21,15 @@ import {
   // DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EditItemModal } from "./edit-item-modal";
+import { ItemSheet } from "../sheets/item-sheet";
 
 // Define the Item type
 export type Item = {
   id: string;
   name: string;
   description: string;
-  status: "Todo" | "In-Progress" | "Done" | "Canceled";
-  priority: "Low" | "Medium" | "High";
+  status: "todo" | "in-progress" | "done" | "canceled";
+  priority: "low" | "medium" | "high";
   // assignedTo: string;
   startDate: string;
   dueDate: string;
@@ -253,8 +252,6 @@ export const getColumns = ({
     header: () => <div className="text-center font-semibold"></div>,
     cell: ({ row }) => {
       const item = row.original;
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const [isModalOpen, setIsModalOpen] = useState(false);
 
       const handleEditClick = () => {
         if (onUpdateItem) {
@@ -266,13 +263,6 @@ export const getColumns = ({
         if (onDeleteItem) {
           onDeleteItem(item.id);
         }
-      };
-
-      const handleSave = (updatedItem: Item): Promise<void> => {
-        if (onSaveItem) {
-          onSaveItem(updatedItem); // Trigger edit mutation
-        }
-        return Promise.resolve();
       };
 
       // const handleSetLabel = async (label: string | null) => {
@@ -344,12 +334,6 @@ export const getColumns = ({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <EditItemModal
-            item={item}
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            onSave={handleSave}
-          />
         </div>
       );
     },

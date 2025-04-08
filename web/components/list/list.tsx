@@ -15,7 +15,7 @@ export const ListView = async () => {
   ];
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data} id="list-view" />
+      <DataTable columns={columns} data={data} projectId="list-view" />
     </div>
   );
 };
