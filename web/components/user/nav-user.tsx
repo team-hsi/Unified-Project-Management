@@ -12,7 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeSwitcher } from "../ui/theme-switch";
-import { logoutAction } from "@/actions/auth-actions";
+import { getSessionUser, logoutAction } from "@/actions/auth-actions";
+import { useQuery } from "@tanstack/react-query";
 
 export function NavUser({
   user,
@@ -23,11 +24,17 @@ export function NavUser({
     avatar: string;
   };
 }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: getSessionUser,
+  });
+  if (isLoading) return <div>Loading...</div>;
+  if (!data) return <div>No user data found.</div>;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="h-8 w-8 rounded-lg cursor-pointer hover:opacity-50">
-          <AvatarImage src={user.avatar} alt={user.name} />
+          <AvatarImage src={user.avatar} alt={data.username} />
           <AvatarFallback className="rounded-lg">CN</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -39,12 +46,12 @@ export function NavUser({
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarImage src={user.avatar} alt={data.username} />
               <AvatarFallback className="rounded-lg">CN</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.name}</span>
-              <span className="truncate text-xs">{user.email}</span>
+              <span className="truncate font-medium">{data.username}</span>
+              <span className="truncate text-xs">{data.email}</span>
             </div>
           </div>
         </DropdownMenuLabel>

@@ -1,7 +1,4 @@
-import { getUserProjects } from "@/actions/project-actions";
 import UserProjects from "@/components/project/user-projects";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,8 +8,7 @@ export const metadata: Metadata = {
 
 const Page = async () => {
   return (
-    <div className="max-h-full overflow-hidden">
-      <h1>Projects</h1>
+    <div className="max-h-full overflow-hidden p-5">
       <UserProjects />
     </div>
   );

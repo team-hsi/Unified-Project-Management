@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import ProjectTabs from "./project-tabs";
 import { Filter } from "lucide-react";
 import { CreateBucket } from "../kanban/create-bucket-dialog";
-import { useProjectStore } from "@/lib/stores/store-provider";
+// import { useProjectStore } from "@/lib/stores/store-provider";
+import { Project } from "@/lib/stores/project-store";
 
-export const ProjectHeader = () => {
-  const activeProject = useProjectStore((store) => store.activeProject);
+export const ProjectHeader = ({ project }: { project: Project }) => {
+  // const activeProject = useProjectStore((store) => store.activeProject);
 
   return (
     <div className="flex flex-col rounded-lg">
@@ -14,11 +15,11 @@ export const ProjectHeader = () => {
         <div className="flex items-center gap-3">
           <div className="border-2 w-10 h-10 rounded-lg flex items-center justify-center text-xl font-semibold">
             {/* Use first letter of project name or fallback to ID */}
-            {activeProject?.name?.[0]?.toUpperCase()}
+            {project?.name?.[0]?.toUpperCase()}
           </div>
           <h1 className="text-2xl font-semibold">
             {/* Display project name if available, otherwise fallback to ID */}
-            {activeProject?.name}
+            {project?.name}
           </h1>
         </div>
         <div className="flex items-center gap-2">
@@ -34,7 +35,7 @@ export const ProjectHeader = () => {
           <Button size="sm">
             <Filter /> Filter
           </Button>
-          <CreateBucket id={activeProject?.id || ""} />
+          <CreateBucket id={project?.id || ""} />
         </div>
       </div>
     </div>

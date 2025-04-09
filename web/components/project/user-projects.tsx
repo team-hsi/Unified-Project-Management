@@ -10,7 +10,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -49,7 +48,7 @@ export default function UserProjects() {
 
   // Filter projects based on search query
   const filteredProjects =
-    projects?.data?.filter((project) =>
+    projects?.data?.filter((project: Project) =>
       project.name.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
@@ -62,7 +61,7 @@ export default function UserProjects() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           <h3 className="text-lg font-medium">All Projects</h3>
@@ -90,7 +89,7 @@ export default function UserProjects() {
 
       {filteredProjects.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProjects.map((project) => (
+          {filteredProjects.map((project: Project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>
@@ -119,75 +118,45 @@ function ProjectCard({ project }: { project: Project }) {
   const formattedCreatedDate = format(createdDate, "MMM d, yyyy");
 
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md">
-      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-        <div className="space-y-1">
-          <CardTitle className="text-base">
-            <Link href={`/projects/${project.id}`} className="hover:underline">
-              {project.name}
-            </Link>
-          </CardTitle>
-          <CardDescription className="line-clamp-1">
-            Created on {formattedCreatedDate}
-          </CardDescription>
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Edit project</DropdownMenuItem>
-            <DropdownMenuItem>Duplicate</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-between py-2">
-          <Badge className="bg-slate-500/15 text-slate-600 hover:bg-slate-500/25">
-            Project
-          </Badge>
-          <span className="text-xs text-muted-foreground">
-            Updated {timeAgo}
-          </span>
-        </div>
-        <div className="mt-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-4 w-4"
-            >
-              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            <span>Owner ID: {project.ownerId}</span>
+    <Link href={`/projects/${project.id}`} className="block">
+      <Card className="overflow-hidden transition-all hover:shadow-md">
+        <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+          <div className="space-y-1">
+            <CardTitle className="text-base">{project.name}</CardTitle>
+            <CardDescription className="line-clamp-1">
+              Created on {formattedCreatedDate}
+            </CardDescription>
           </div>
-        </div>
-      </CardContent>
-      <CardFooter className="border-t bg-muted/10 px-6 py-3">
-        <div className="flex w-full justify-between">
-          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs">
-            View Details
-          </Button>
-          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs">
-            Share
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>View details</DropdownMenuItem>
+              <DropdownMenuItem>Edit project</DropdownMenuItem>
+              <DropdownMenuItem>Duplicate</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-destructive">
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between py-2">
+            <Badge className="bg-slate-500/15 text-slate-600 hover:bg-slate-500/25">
+              Personal
+            </Badge>
+            <span className="text-xs text-muted-foreground">
+              Updated {timeAgo}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
 

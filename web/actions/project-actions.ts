@@ -3,6 +3,7 @@
 import type { PartialProject } from "@/components/project/types";
 import { notFound } from "next/navigation";
 import { verifySession } from "./dal";
+import { cache } from "react";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -10,7 +11,7 @@ export const getProjects = async () => {
   const res = await fetch(`${API}/v1/projects/getall`);
   return { data: await res.json() };
 };
-export const getProject = async (id: string) => {
+export const getProject = cache(async (id: string) => {
   const res = await fetch(`${API}/v1/projects/${id}`);
   if (!res.ok) {
     if (res.status === 400) {
@@ -22,7 +23,7 @@ export const getProject = async (id: string) => {
   }
   const data = await res.json();
   return { success: true, data };
-};
+});
 export const getUserProjects = async () => {
   const session = await verifySession();
   const res = await fetch(`${API}/v1/users/${session.userId}/projects`);
