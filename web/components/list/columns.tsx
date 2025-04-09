@@ -21,7 +21,6 @@ import {
   // DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ItemSheet } from "../sheets/item-sheet";
 
 // Define the Item type
 export type Item = {
