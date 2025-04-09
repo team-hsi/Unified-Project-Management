@@ -1,33 +1,28 @@
-import { Button } from "@/components/ui/button";
+"use client";
 import ProjectTabs from "./project-tabs";
-import { Filter } from "lucide-react";
 import { CreateBucket } from "../kanban/create-bucket-dialog";
+import { Project } from "@/lib/stores/project-store";
 
-export const ProjectHeader = ({ id }: { id: string }) => {
+export const ProjectHeader = ({ project }: { project: Project }) => {
   return (
     <div className="flex flex-col rounded-lg">
-      <div className="flex items-center justify-between w-full p-4 pb-3  mx-auto">
+      <div className="flex items-center justify-between w-full p-4 pb-3 mx-auto">
         <div className="flex items-center gap-3">
           <div className="border-2 w-10 h-10 rounded-lg flex items-center justify-center text-xl font-semibold">
-            {id[0]}
+            {/* Use first letter of project name or fallback to ID */}
+            {project?.name?.[0]?.toUpperCase()}
           </div>
-          <h1 className="text-2xl font-semibold">{id}</h1>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" className="text-sm font-medium">
-            Invite
-          </Button>
+          <h1 className="text-2xl font-semibold">
+            {/* Display project name if available, otherwise fallback to ID */}
+            {project?.name}
+          </h1>
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row max-w-7xl justify-between items-start sm:items-center p-4 pt-3 gap-4">
         <ProjectTabs />
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          {/* //Todo: expandable search input */}
-          <Button size="sm">
-            <Filter /> Filter
-          </Button>
-          <CreateBucket id={id} />
+          <CreateBucket id={project?.id || ""} />
         </div>
       </div>
     </div>

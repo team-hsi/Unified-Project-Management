@@ -18,10 +18,10 @@ export interface Bucket {
     createdAt: string;
     updatedAt: string;
   };
+  items: Item[];
+  color: string;
   createdAt: string;
   updatedAt: string;
-  // TODO: Add these new properties to the API it doesn't have them yet
-  // color: string;
 }
 export interface Item {
   id: string;
@@ -36,9 +36,13 @@ export interface Item {
       createdAt: string;
       updatedAt: string;
     };
+    color: string;
     createdAt: string;
     updatedAt: string;
   };
+  position: number;
+  priority: "low" | "medium" | "high" | null;
+  status: string;
   description: string;
   startDate: string | null;
   dueDate: string | null;
@@ -47,11 +51,11 @@ export interface Item {
   updatedAt: string;
 }
 
-export interface MoveCardParams {
-  movedTaskIndexInSourceColumn: number;
-  sourceColumnId: string;
-  destinationColumnId: string;
-  movedTaskIndexInDestinationColumn: number;
+export interface MoveItemParams {
+  movedItemIndexInSourceBucket: number;
+  sourceBucketId: string;
+  destinationBucketId: string;
+  movedItemIndexInDestinationBucket: number;
 }
 
 export interface ReorderBucketParams {

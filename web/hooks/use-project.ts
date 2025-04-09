@@ -1,9 +1,10 @@
 import { getQueryClient } from "@/lib/query-client/get-query-client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   createProject as createAction,
   deleteProject as deleteAction,
+  getUserProjects,
   updateProject as updateAction,
 } from "@/actions/project-actions";
 
@@ -11,18 +12,22 @@ interface HookProps {
   queryKey?: string[];
   successAction?: () => void;
 }
-export const useProjectMutation = ({
-  queryKey = ["projects"],
+export const useProjectAction = ({
+  queryKey = ["projects", "user"],
   successAction,
 }: HookProps) => {
   const queryClient = getQueryClient();
 
+  const { data: projects } = useSuspenseQuery({
+    queryKey,
+    queryFn: getUserProjects,
+  });
+
   const createProject = useMutation({
     mutationFn: createAction,
     onSuccess: () => {
-      toast.success("Project created successfully!");
       queryClient.invalidateQueries({ queryKey });
-      successAction?.();
+      toast.success("Project created successfully!");
     },
   });
 
@@ -31,19 +36,18 @@ export const useProjectMutation = ({
     onSuccess: () => {
       toast.success("Project updated successfully!");
       queryClient.invalidateQueries({ queryKey });
-      successAction?.();
     },
   });
   const deleteProject = useMutation({
     mutationFn: deleteAction,
     onSuccess: () => {
-      toast.success("Project deleted successfully!");
       queryClient.invalidateQueries({ queryKey });
       successAction?.();
     },
   });
 
   return {
+    projects,
     createProject,
     updateProject,
     deleteProject,

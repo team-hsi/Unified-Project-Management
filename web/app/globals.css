@@ -193,3 +193,23 @@
     display: none; /* Hide scrollbar for Chrome/Safari */
   }
 }
+
+.responsive-table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius);
+}
+
+.responsive-table {
+  min-width: 100%;
+  width: max-content;
+}
+
+@media (max-width: 640px) {
+  .responsive-table th,
+  .responsive-table td {
+    font-size: 0.875rem;
+    padding: 0.5rem;
+  }
+}

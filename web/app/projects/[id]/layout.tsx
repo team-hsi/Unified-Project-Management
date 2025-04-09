@@ -1,20 +1,28 @@
-import { Metadata } from "next";
-
-// import { ProjectBreadcrumbs } from "@/components/project/project-breadcrumbs";
+import { getQueryClient } from "@/lib/query-client/get-query-client";
+import { getProjectBuckets } from "@/actions/bucket-actions";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { getProjectItems } from "@/actions/item-actions";
 type Props = {
   params: Promise<{ id: string }>;
+  children: React.ReactNode;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-
-  return {
-    title: id,
-  };
-}
-
-const ProjectLayout = ({ children }: { children: React.ReactNode }) => {
-  return <>{children}</>;
+const ProjectLayout = async (props: Props) => {
+  const params = await props.params;
+  const queryClient = getQueryClient();
+  queryClient.prefetchQuery({
+    queryKey: ["buckets", params.id],
+    queryFn: () => getProjectBuckets({ id: params.id }),
+  });
+  queryClient.prefetchQuery({
+    queryKey: ["items", params.id],
+    queryFn: () => getProjectItems({ id: params.id }),
+  });
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      {props.children}
+    </HydrationBoundary>
+  );
 };
 
 export default ProjectLayout;

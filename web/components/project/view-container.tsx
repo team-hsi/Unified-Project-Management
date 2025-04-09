@@ -1,6 +1,32 @@
 import { Suspense } from "react";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
+
 import { KanbanBoardSkeleton } from "@/components/kanban/skeletons";
+import { ListViewSkeleton } from "@/components/list/skeletons";
+import { ListView } from "../list/list";
+
+//TODO: Implement dynamic imports for code splitting
+/*
+ * commented out dynamic imports for now
+ */
+// import dynamic from "next/dynamic";
+// // Dynamically import views for code splitting
+// const ListView = dynamic(() => import("@/components/list/list-view"), {
+//   loading: () => <ListViewSkeleton />,
+//   ssr: true,
+// });
+
+// const TimelineView = dynamic(
+//   () => import("@/components/timeline/timeline-view"),
+//   {
+//     loading: () => <TimelineViewSkeleton />,
+//     ssr: true,
+//   }
+// );
+
+// // Import skeletons statically since they're small and used for loading states
+// import { ListViewSkeleton } from "@/components/list/skeletons";
+// import { TimelineViewSkeleton } from "@/components/timeline/skeletons";
 
 const VIEWS = {
   kanban: {
@@ -8,13 +34,13 @@ const VIEWS = {
     skeleton: KanbanBoardSkeleton,
   },
   list: {
-    component: () => <div>List View Component</div>,
-    skeleton: () => <div>ListViewSkeleton Component</div>,
+    component: ListView,
+    skeleton: ListViewSkeleton,
   },
-  timeline: {
-    component: () => <div>Timeline View Component</div>,
-    skeleton: () => <div>TimelineViewSkeleton Component</div>,
-  },
+  // timeline: {
+  //   component: () => <div>Timeline View Component</div>,
+  //   skeleton: () => <div>TimelineViewSkeleton Component</div>,
+  // },
 };
 
 type ViewKey = keyof typeof VIEWS;

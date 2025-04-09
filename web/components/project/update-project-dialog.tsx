@@ -10,7 +10,7 @@ import { projectSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ProjectDialogProps } from "./types";
 import { z } from "zod";
-import { useProjectMutation } from "@/hooks/useProjectMutation";
+import { useProjectAction } from "@/hooks/use-project";
 import { NameDescriptionForm } from "../form/name-description-form";
 
 export const UpdateProjectDialog = ({
@@ -26,7 +26,7 @@ export const UpdateProjectDialog = ({
     resolver: zodResolver(projectSchema),
     defaultValues,
   });
-  const { updateProject } = useProjectMutation({
+  const { updateProject } = useProjectAction({
     successAction: () => {
       form.reset();
       onOpenChange?.(false);
