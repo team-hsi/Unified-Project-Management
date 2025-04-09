@@ -21,9 +21,10 @@ export const ItemSheet = ({
   const segments = [item.bucket.project.name, item.bucket.name];
   const [unsavedForm, setUnsavedForm] = React.useState(false);
   const isMobile = useIsMobile();
+  const [, setOpen] = React.useState(false);
 
   return (
-    <Sheet>
+    <Sheet onOpenChange={setOpen}>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent
         className={`rounded-xl ${
@@ -33,7 +34,14 @@ export const ItemSheet = ({
         hideClose
       >
         <SheetTitle className="sr-only"> task detail side sheet</SheetTitle>
-        <TaskBreadcrumb segments={segments} unsavedForm={unsavedForm} />
+        <TaskBreadcrumb
+          segments={segments}
+          unsavedForm={unsavedForm}
+          item={{ id: item.id, projectId: item.bucket.project.id }}
+          onClose={() => {
+            setOpen(false);
+          }}
+        />
         <ItemDetails
           item={item}
           setUnsavedForm={setUnsavedForm}

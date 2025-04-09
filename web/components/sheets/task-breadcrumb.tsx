@@ -6,20 +6,32 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 // import { Separator } from "@/components/ui/separator";
-import { ChevronsRight, ChevronsDown } from "lucide-react";
+import { ChevronsRight, ChevronsDown, Trash } from "lucide-react";
 import { Fragment } from "react";
 import { SheetClose } from "../ui/sheet";
 import { Badge } from "../ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Separator } from "../ui/separator";
+import { useItemAction } from "@/hooks/use-item";
+import { Button } from "../ui/button";
 
 export const TaskBreadcrumb = ({
+  item,
   segments,
   unsavedForm,
+  onClose,
 }: {
+  item: {
+    id: string;
+    projectId: string;
+  };
+  onClose: () => void;
   segments: string[];
   unsavedForm: boolean;
 }) => {
+  const { deleteItem } = useItemAction({
+    queryKey: ["items", item.projectId],
+  });
   const isMobile = useIsMobile();
   const Icon = isMobile ? ChevronsDown : ChevronsRight;
   return (
@@ -61,7 +73,20 @@ export const TaskBreadcrumb = ({
           })}
         </BreadcrumbList>
       </Breadcrumb>
-      <div className=" ml-auto flex gap-2">
+      <div className=" ml-auto flex gap-3">
+        <Button
+          className="rounded-none shadow-none hover:text-red-500 first:rounded-s-lg last:rounded-e-lg focus-visible:z-10"
+          variant="outline"
+          size="icon"
+          aria-label="delete-item"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+            deleteItem.mutateAsync({ id: item.id });
+          }}
+        >
+          <Trash size={16} strokeWidth={1} aria-hidden="true" />
+        </Button>
         {unsavedForm ? (
           <Badge variant="outline" className="text-amber-500 border-amber-500">
             Unsaved Change

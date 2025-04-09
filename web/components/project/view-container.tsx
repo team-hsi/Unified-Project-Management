@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
 
 import { KanbanBoardSkeleton } from "@/components/kanban/skeletons";
-// import { ListViewSkeleton } from "@/components/list/skeletons";
-// import { ListView } from "../list/list";
+import { ListViewSkeleton } from "@/components/list/skeletons";
+import { ListView } from "../list/list";
 
 //TODO: Implement dynamic imports for code splitting
 /*
@@ -33,14 +33,14 @@ const VIEWS = {
     component: KanbanBoard,
     skeleton: KanbanBoardSkeleton,
   },
-  // list: {
-  //   component: ListView,
-  //   skeleton: ListViewSkeleton,
-  // },
-  timeline: {
-    component: () => <div>Timeline View Component</div>,
-    skeleton: () => <div>TimelineViewSkeleton Component</div>,
+  list: {
+    component: ListView,
+    skeleton: ListViewSkeleton,
   },
+  // timeline: {
+  //   component: () => <div>Timeline View Component</div>,
+  //   skeleton: () => <div>TimelineViewSkeleton Component</div>,
+  // },
 };
 
 type ViewKey = keyof typeof VIEWS;
