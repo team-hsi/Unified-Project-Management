@@ -54,6 +54,10 @@ export const createItem = async (values: PartialProject) => {
       name: values.name,
       description: values.description,
       bucketId: values.id,
+      startDate: values.startDate,
+      dueDate: values.dueDate,
+      priority: values.priority,
+      status: values.status,
     }),
   });
   if (!res.ok) {

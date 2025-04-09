@@ -13,6 +13,7 @@ export function ListViewSkeleton() {
         <div className="flex items-center space-x-2">
           <Skeleton className="bg-muted h-10 w-24 rounded" />
           <Skeleton className="bg-muted h-10 w-24 rounded" />
+          <Skeleton className="bg-muted h-10 w-24 rounded" />
         </div>
       </div>
 

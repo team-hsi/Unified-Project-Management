@@ -7,20 +7,22 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
-import {
-  useSuspenseQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useState, useCallback } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useTableFilter } from "@/hooks/use-table-filter";
 import { useTableActions } from "@/hooks/use-table-actions";
 import { Item } from "@/components/list/columns";
-import { EditItemModal } from "@/components/list/edit-item-modal";
+import { ItemSheet } from "../sheets/item-sheet";
+import { CreateItemSheet } from "../sheets/create-item-sheet";
 import { DataTablePagination } from "./data-table-pagination";
 import { ListViewSkeleton } from "@/components/list/skeletons";
-import { getItems, editItem, deleteItem } from "@/actions/item-actions";
-import { Download, ChevronUpDown, FineTune } from "@mynaui/icons-react";
+import {
+  getItems,
+  editItem,
+  deleteItem,
+  createItem,
+} from "@/actions/item-actions"; // Add createItem
+import { Download, ChevronUpDown, FineTune, Plus } from "@mynaui/icons-react";
 import {
   Table,
   TableBody,
@@ -40,16 +42,17 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { getColumns } from "@/components/list/columns";
+import { getQueryClient } from "@/lib/query-client/get-query-client";
 
 interface DataTableProps<TData, TValue> {
   columns?: ColumnDef<TData, TValue>[];
   data?: TData[];
-  id: string;
+  projectId: string;
 }
 
 export function DataTable<TData extends Item, TValue>({
   data: initialData = [],
-  id,
+  projectId,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<
@@ -57,12 +60,12 @@ export function DataTable<TData extends Item, TValue>({
   >({ id: false });
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const queryClient = useQueryClient();
+  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false); // Add this state
+  const queryClient = getQueryClient();
 
-  const { data: fetchedData, isLoading } = useSuspenseQuery({
-    queryKey: ["items", id],
+  const { data: fetchedData, isLoading } = useQuery({
+    queryKey: ["items", projectId],
     queryFn: getItems,
   });
 
@@ -78,29 +81,39 @@ export function DataTable<TData extends Item, TValue>({
       itemId: string;
       values: Partial<Item>;
     }) => editItem(itemId, values),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["items", id] }),
-    onError: (error) => {
-      console.error("Error updating item:", error);
-      alert("Failed to update item. Please try again.");
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["items", projectId] }),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (itemId: string) => deleteItem(itemId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["items", id] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["items", projectId] }),
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (values: Partial<Item>) => createItem(values),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["items", projectId] }),
     onError: (error) => {
-      console.error("Error deleting item:", error);
-      alert("Failed to delete item. Please try again.");
+      console.error("Error creating item:", error);
+      alert("Failed to create item. Please try again.");
     },
   });
 
-  const columns = getColumns({
-    onUpdateItem: (item: Item) => {
-      setSelectedItem(item); // Set the selected item when editing
-      setIsEditModalOpen(true); // Open the modal
+  const handleUpdateItem = useCallback((item: Item) => {
+    setSelectedItem(item);
+  }, []);
+
+  const handleDeleteItem = useCallback(
+    (itemId: string) => {
+      deleteMutation.mutate(itemId);
     },
-    onDeleteItem: (itemId: string) => deleteMutation.mutate(itemId),
-    onSaveItem: (updatedItem: Item) =>
+    [deleteMutation]
+  );
+
+  const handleSaveItem = useCallback(
+    (updatedItem: Item) => {
       editMutation.mutate({
         itemId: updatedItem.id,
         values: {
@@ -108,7 +121,31 @@ export function DataTable<TData extends Item, TValue>({
           description: updatedItem.description,
           id: updatedItem.bucketId,
         },
-      }),
+      });
+    },
+    [editMutation]
+  );
+
+  const handleCreateItem = useCallback(
+    (newItem: Item) => {
+      createMutation.mutate({
+        name: newItem.name,
+        description: newItem.description,
+        bucketId: newItem.bucketId,
+        startDate: newItem.startDate,
+        dueDate: newItem.dueDate,
+        priority: newItem.priority,
+        status: newItem.status,
+        labels: newItem.labels,
+      });
+    },
+    [createMutation]
+  );
+
+  const columns = getColumns({
+    onUpdateItem: handleUpdateItem,
+    onDeleteItem: handleDeleteItem,
+    onSaveItem: handleSaveItem,
   });
 
   const {
@@ -148,12 +185,6 @@ export function DataTable<TData extends Item, TValue>({
     manualPagination: false,
   });
 
-  // Handle modal close and reset selectedItem
-  const handleModalClose = () => {
-    setIsEditModalOpen(false);
-    setSelectedItem(null); // Reset selectedItem when modal closes
-  };
-
   if (isLoading) {
     return <ListViewSkeleton />;
   }
@@ -170,9 +201,28 @@ export function DataTable<TData extends Item, TValue>({
             className="w-full sm:max-w-xs"
           />
         </div>
+
         <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-          <Button onClick={handleExport} className="w-full sm:w-auto">
-            <Download className="h-4 w-4 mr-2" />
+          <div className="w-full sm:w-auto flex items-center space-x-2">
+            <CreateItemSheet
+              onCreate={handleCreateItem}
+              isOpen={isCreateSheetOpen}
+              setIsOpen={setIsCreateSheetOpen}
+            >
+              <Button
+                onClick={() => setIsCreateSheetOpen(true)}
+                className="w-full sm:w-auto cursor-pointer"
+              >
+                <Plus className="h-4 w-4" />
+                Add
+              </Button>
+            </CreateItemSheet>
+          </div>
+          <Button
+            onClick={handleExport}
+            className="w-full sm:w-auto cursor-pointer"
+          >
+            <Download className="h-4 w-4" />
             Export
           </Button>
           <DropdownMenu>
@@ -197,7 +247,6 @@ export function DataTable<TData extends Item, TValue>({
               <DropdownMenuSeparator />
               {filteredColumns.map((column) => {
                 const columnId = column.id as string;
-
                 if (
                   !columnId ||
                   columnId === "select" ||
@@ -252,10 +301,19 @@ export function DataTable<TData extends Item, TValue>({
                       key={cell.id}
                       className="px-4 py-2 whitespace-nowrap"
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      <ItemSheet item={row.original}>
+                        <div>
+                          <div
+                            className="cursor-pointer"
+                            onClick={() => handleUpdateItem(row.original)}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        </div>
+                      </ItemSheet>
                     </TableCell>
                   ))}
                 </TableRow>
@@ -274,26 +332,10 @@ export function DataTable<TData extends Item, TValue>({
         </Table>
       </div>
       <DataTablePagination table={table} />
-      {isEditModalOpen && selectedItem && (
-        <EditItemModal
-          item={selectedItem}
-          isOpen={isEditModalOpen}
-          onClose={handleModalClose} // Use the new handler
-          onSave={async (updatedItem) =>
-            editMutation.mutate({
-              itemId: updatedItem.id,
-              values: {
-                name: updatedItem.name,
-                description: updatedItem.description,
-                id: updatedItem.bucketId,
-                startDate: updatedItem.startDate,
-                dueDate: updatedItem.dueDate,
-                priority: updatedItem.priority,
-                status: updatedItem.status,
-              },
-            })
-          }
-        />
+      {selectedItem && (
+        <ItemSheet item={selectedItem}>
+          <div />
+        </ItemSheet>
       )}
     </div>
   );

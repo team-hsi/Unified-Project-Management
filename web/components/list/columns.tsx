@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   ClockOne,
@@ -22,15 +21,14 @@ import {
   // DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EditItemModal } from "./edit-item-modal";
 
 // Define the Item type
 export type Item = {
   id: string;
   name: string;
   description: string;
-  status: "Todo" | "In-Progress" | "Done" | "Canceled";
-  priority: "Low" | "Medium" | "High";
+  status: "todo" | "in-progress" | "done" | "canceled";
+  priority: "low" | "medium" | "high";
   // assignedTo: string;
   startDate: string;
   dueDate: string;
@@ -253,8 +251,6 @@ export const getColumns = ({
     header: () => <div className="text-center font-semibold"></div>,
     cell: ({ row }) => {
       const item = row.original;
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const [isModalOpen, setIsModalOpen] = useState(false);
 
       const handleEditClick = () => {
         if (onUpdateItem) {
@@ -266,13 +262,6 @@ export const getColumns = ({
         if (onDeleteItem) {
           onDeleteItem(item.id);
         }
-      };
-
-      const handleSave = (updatedItem: Item): Promise<void> => {
-        if (onSaveItem) {
-          onSaveItem(updatedItem); // Trigger edit mutation
-        }
-        return Promise.resolve();
       };
 
       // const handleSetLabel = async (label: string | null) => {
@@ -307,8 +296,8 @@ export const getColumns = ({
         <div className="flex justify-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1 rounded-md border border-transparent hover:bg-gray-800 hover:border-2 hover:border-gray-400 focus:outline-none">
-                <Dots className="h-6 w-6 scale-125 drop-shadow-sm text-white hover:text-white" />
+              <button className="p-1 rounded-md border border-transparent bg-white hover:bg-gray-800 hover:border-2 hover:border-gray-400 focus:outline-none">
+                <Dots className="h-6 w-6 scale-125 drop-shadow-sm text-black hover:text-white" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -344,12 +333,6 @@ export const getColumns = ({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <EditItemModal
-            item={item}
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            onSave={handleSave}
-          />
         </div>
       );
     },

@@ -73,29 +73,4 @@ export const data = {
     },
   ],
 };
-
-import { Task } from "@/components/list/columns";
-
-export async function getData(): Promise<Task[]> {
-  // Fetch data from your API here, or return static data for now
-  return [
-    {
-      id: "728ed52f",
-      task: "Write documentation",
-      title: "Project Proposal",
-      status: "Todo",
-      priority: "High",
-      assignedTo: "m@example.com",
-      createdAt: "2025-02-25T21:00:00.000Z",
-    },
-    {
-      id: "489e1d42",
-      task: "Review feedback",
-      title: "Client Meeting Prep",
-      status: "In-Progress",
-      priority: "Medium",
-      assignedTo: "example@gmail.com",
-      createdAt: "2025-03-01T14:30:00.000Z",
-    },
-  ];
-}
+export type Data = typeof data;

@@ -26,7 +26,7 @@ export interface Bucket {
 export interface Item {
   id: string;
   name: string;
-  bucket: {
+  bucket?: {
     id: string;
     name: string;
     project: {
@@ -45,8 +45,8 @@ export interface Item {
   startDate: string | null;
   dueDate: string | null;
   labels: string[];
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface MoveCardParams {
