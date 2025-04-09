@@ -17,20 +17,19 @@ export const getItems = async () => {
 };
 
 export const getProjectItems = async ({ id }: PartialProject) => {
-  try {
-    const res = await fetch(`${API}/v1/projects/${id}/items`);
-    if (!res.ok) {
-      throw new Error(`Error fetching tasks: ${res.statusText}`);
-    }
-    return res.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
+  const res = await fetch(`${API}/v1/projects/${id}/items`);
+  if (!res.ok) {
+    throw new Error(`Error fetching tasks: ${res.statusText}`);
   }
+  return res.json();
 };
 
 export const updateItemInline = async (values: UpdateItemPayload) => {
   const { id, ...rest } = values;
+  //Todo: remove this when the backend is updated to accept null values
+  if ("dueDate" in rest) {
+    delete rest.dueDate;
+  }
   const res = await fetch(`${API}/v1/items/${id}`, {
     method: "PUT",
     headers: {
@@ -39,27 +38,49 @@ export const updateItemInline = async (values: UpdateItemPayload) => {
     body: JSON.stringify(rest),
   });
   if (!res.ok) {
-    throw new Error("Failed to update item");
+    const data = await res.json();
+    console.log(data);
+    console.log("check type", typeof data.error);
+    return { success: false, error: data.error };
   }
-  return res.json();
+  const data = await res.json();
+  return { success: true, data };
 };
 
-export const createItem = async (values: PartialProject) => {
+export const createItem = async (values: UpdateItemPayload) => {
+  const { id, ...rest } = values;
   const res = await fetch(`${API}/v1/items/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name: values.name,
-      description: values.description,
-      bucketId: values.id,
+      ...rest,
+      bucketId: id,
     }),
   });
   if (!res.ok) {
-    throw new Error("Failed to create project");
+    const data = await res.json();
+    return { success: false, error: data.error };
   }
-  return res.json();
+  const data = await res.json();
+  return { success: true, data };
+};
+
+export const deleteItemById = async (values: UpdateItemPayload) => {
+  const { id } = values;
+  const res = await fetch(`${API}/v1/items/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    return { success: false, error: data.error };
+  }
+
+  return { success: true };
 };
 
 export const editItem = async (itemId: string, values: PartialProject) => {

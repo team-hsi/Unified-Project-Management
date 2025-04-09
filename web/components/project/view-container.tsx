@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
+
 import { KanbanBoardSkeleton } from "@/components/kanban/skeletons";
 import { ListViewSkeleton } from "@/components/list/skeletons";
 import { ListView } from "../list/list";
@@ -36,10 +37,10 @@ const VIEWS = {
     component: ListView,
     skeleton: ListViewSkeleton,
   },
-  timeline: {
-    component: () => <div>Timeline View Component</div>,
-    skeleton: () => <div>TimelineViewSkeleton Component</div>,
-  },
+  // timeline: {
+  //   component: () => <div>Timeline View Component</div>,
+  //   skeleton: () => <div>TimelineViewSkeleton Component</div>,
+  // },
 };
 
 type ViewKey = keyof typeof VIEWS;

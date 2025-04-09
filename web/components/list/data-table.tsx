@@ -1,26 +1,17 @@
 "use client";
 
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import { useState } from "react";
 import {
-  useSuspenseQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { useTableFilter } from "@/hooks/use-table-filter";
-import { useTableActions } from "@/hooks/use-table-actions";
-import { Item } from "@/components/list/columns";
-import { EditItemModal } from "@/components/list/edit-item-modal";
-import { DataTablePagination } from "./data-table-pagination";
-import { ListViewSkeleton } from "@/components/list/skeletons";
-import { getItems, editItem, deleteItem } from "@/actions/item-actions";
-import { Download, ChevronUpDown, FineTune } from "@mynaui/icons-react";
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type SortingState,
+  getFilteredRowModel,
+  type ColumnFiltersState,
+} from "@tanstack/react-table";
 import {
   Table,
   TableBody,
@@ -29,236 +20,120 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuCheckboxItem,
-} from "@/components/ui/dropdown-menu";
-import { getColumns } from "@/components/list/columns";
+import { Input } from "@/components/ui/input";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getProjectItems } from "@/actions/item-actions";
+import { useParams } from "next/navigation";
+import { ItemSheet } from "../sheets/item-sheet";
+import { Item } from "../kanban/types";
+import { Plus } from "lucide-react";
+import { AddItemDrawer } from "./new-item-drawer";
 
 interface DataTableProps<TData, TValue> {
-  columns?: ColumnDef<TData, TValue>[];
-  data?: TData[];
-  id: string;
+  columns: ColumnDef<TData, TValue>[];
 }
 
-export function DataTable<TData extends Item, TValue>({
-  data: initialData = [],
-  id,
+export function DataTable<TData, TValue>({
+  columns,
 }: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState<
-    Record<string, boolean>
-  >({ id: false });
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const queryClient = useQueryClient();
-
-  const { data: fetchedData, isLoading } = useSuspenseQuery({
-    queryKey: ["items", id],
-    queryFn: getItems,
-  });
-
-  const { filteredData, searchQuery, handleSearchChange } = useTableFilter(
-    fetchedData || initialData
-  );
-
-  const editMutation = useMutation({
-    mutationFn: ({
-      itemId,
-      values,
-    }: {
-      itemId: string;
-      values: Partial<Item>;
-    }) => editItem(itemId, values),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["items", id] }),
-    onError: (error) => {
-      console.error("Error updating item:", error);
-      alert("Failed to update item. Please try again.");
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (itemId: string) => deleteItem(itemId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["items", id] }),
-    onError: (error) => {
-      console.error("Error deleting item:", error);
-      alert("Failed to delete item. Please try again.");
-    },
-  });
-
-  const columns = getColumns({
-    onUpdateItem: (item: Item) => {
-      setSelectedItem(item); // Set the selected item when editing
-      setIsEditModalOpen(true); // Open the modal
-    },
-    onDeleteItem: (itemId: string) => deleteMutation.mutate(itemId),
-    onSaveItem: (updatedItem: Item) =>
-      editMutation.mutate({
-        itemId: updatedItem.id,
-        values: {
-          name: updatedItem.name,
-          description: updatedItem.description,
-          id: updatedItem.bucketId,
-        },
-      }),
-  });
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const params = useParams() as { id: string };
 
   const {
-    handleExport,
-    columnSearchQuery,
-    handleColumnSearchChange,
-    filteredColumns,
-    toggleColumnVisibility,
-  } = useTableActions({
-    columns,
-    data: filteredData,
-    columnVisibility,
-    setColumnVisibility,
+    data: items = [],
+    isLoading,
+    error,
+  } = useSuspenseQuery({
+    queryKey: ["items", params.id],
+    queryFn: () => getProjectItems({ id: params.id }),
   });
 
   const table = useReactTable({
-    data: filteredData,
+    data: items as TData[],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
     state: {
-      rowSelection,
-      columnVisibility,
-      pagination: { pageIndex, pageSize },
+      sorting,
+      columnFilters,
     },
-    onRowSelectionChange: setRowSelection,
-    onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: (updater) => {
-      const newPagination =
-        typeof updater === "function"
-          ? updater({ pageIndex, pageSize })
-          : updater;
-      setPageIndex(newPagination.pageIndex);
-      setPageSize(newPagination.pageSize);
-    },
-    enableRowSelection: true,
-    manualPagination: false,
   });
 
-  // Handle modal close and reset selectedItem
-  const handleModalClose = () => {
-    setIsEditModalOpen(false);
-    setSelectedItem(null); // Reset selectedItem when modal closes
-  };
-
-  if (isLoading) {
-    return <ListViewSkeleton />;
+  if (error) {
+    return (
+      <div className="text-destructive">
+        Error loading data: {(error as Error).message}
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="w-full sm:w-auto flex items-center space-x-2">
-          <Input
-            type="text"
-            placeholder="Search by name..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="w-full sm:max-w-xs"
-          />
-        </div>
-        <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-          <Button onClick={handleExport} className="w-full sm:w-auto">
-            <Download className="h-4 w-4 mr-2" />
-            Export
+    <div>
+      <div className="flex items-center justify-between py-4">
+        <Input
+          placeholder="Filter by name..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        <AddItemDrawer>
+          <Button onClick={() => {}} className="ml-auto" variant="outline">
+            <Plus className="w-4 h-4 mr-2" /> Add Item
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full sm:w-auto">
-                <FineTune className="h-4 w-4 mr-1" />
-                View
-                <ChevronUpDown className="h-4 w-4 ml-1" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>Column Visibility</DropdownMenuLabel>
-              <div className="px-2 py-1">
-                <Input
-                  type="text"
-                  placeholder="Search columns..."
-                  value={columnSearchQuery}
-                  onChange={handleColumnSearchChange}
-                  className="w-full"
-                />
-              </div>
-              <DropdownMenuSeparator />
-              {filteredColumns.map((column) => {
-                const columnId = column.id as string;
-
-                if (
-                  !columnId ||
-                  columnId === "select" ||
-                  columnId === "actions"
-                ) {
-                  return null;
-                }
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={columnId}
-                    checked={columnVisibility[columnId] !== false}
-                    onCheckedChange={() => toggleColumnVisibility(columnId)}
-                  >
-                    {columnId.charAt(0).toUpperCase() + columnId.slice(1)}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        </AddItemDrawer>
       </div>
-      <div className="responsive-table-container rounded-md border">
-        <Table className="responsive-table">
+      <div className="rounded-md border">
+        <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    className="px-4 py-2 whitespace-nowrap"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="px-4 py-2 whitespace-nowrap"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                  Loading...
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <ItemSheet key={row.id} item={row.original as Item}>
+                  <TableRow data-state={row.getIsSelected() && "selected"}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </ItemSheet>
               ))
             ) : (
               <TableRow>
@@ -273,28 +148,24 @@ export function DataTable<TData extends Item, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
-      {isEditModalOpen && selectedItem && (
-        <EditItemModal
-          item={selectedItem}
-          isOpen={isEditModalOpen}
-          onClose={handleModalClose} // Use the new handler
-          onSave={async (updatedItem) =>
-            editMutation.mutate({
-              itemId: updatedItem.id,
-              values: {
-                name: updatedItem.name,
-                description: updatedItem.description,
-                id: updatedItem.bucketId,
-                startDate: updatedItem.startDate,
-                dueDate: updatedItem.dueDate,
-                priority: updatedItem.priority,
-                status: updatedItem.status,
-              },
-            })
-          }
-        />
-      )}
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 }

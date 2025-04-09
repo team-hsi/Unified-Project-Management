@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "../ui/card";
 import { Item } from "./types";
 import { ItemSheet } from "../sheets/item-sheet";
+import { DualButton } from "../task/dual-button";
 
 interface KanbanCardProps {
   item: Item;
@@ -74,20 +75,28 @@ export const KanbanCard = ({ item }: KanbanCardProps) => {
     <ItemSheet item={item}>
       <Card
         className={cn(
-          "relative rounded-sm bg-background p-3 shadow-sm w-full hover:cursor-grab gap-0 active:cursor-grabbing",
+          "relative rounded-lg bg-background group p-3 shadow-sm w-full hover:cursor-grab gap-0 active:cursor-grabbing",
           "bg-card hover:bg-muted",
           { "opacity-50": isDragging }
         )}
         ref={ref}
       >
         <CardContent className="p-0">
-          <h4 className="mb-1 font-medium">{item.name}</h4>
+          <h4 className="mb-1 font-medium text-sm">{item.name}</h4>
           {item.description && (
             <p className="mb-3 truncate text-sm text-muted-foreground">
               {item.description}
             </p>
           )}
         </CardContent>
+        <DualButton
+          className="bg-muted"
+          data={{
+            itemId: item.id,
+            projectId: item.bucket.project.id,
+            status: item.status,
+          }}
+        />
         {closestEdge && <DropIndicator edge={closestEdge} />}
       </Card>
     </ItemSheet>

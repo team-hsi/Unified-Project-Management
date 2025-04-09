@@ -17,7 +17,7 @@ export async function encrypt(payload: SessionPayload) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("7d")
+    .setExpirationTime("59m")
     .sign(encodedKey);
 }
 export async function decrypt(session: string | undefined = "") {
@@ -29,6 +29,7 @@ export async function decrypt(session: string | undefined = "") {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     console.log("Failed to verify session");
+    return null;
   }
 }
 export async function createSession({
@@ -40,7 +41,7 @@ export async function createSession({
   accessToken: string;
   refreshToken: string;
 }) {
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + 59 * 60 * 1000);
   const session = await encrypt({
     userId,
     accessToken,
@@ -66,7 +67,7 @@ export async function updateSession() {
     return null;
   }
 
-  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const expires = new Date(Date.now() + 59 * 60 * 1000);
 
   const cookieStore = await cookies();
   cookieStore.set(COOKIE_NAME, session, {

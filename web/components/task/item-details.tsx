@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/accordion";
 import type { Item } from "@/components/kanban/types";
 import InlineEdit from "@/components/ui/inline-edit";
-import { useItemMutation } from "@/hooks/useItemMutation";
+import { useItemAction } from "@/hooks/use-item";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -75,7 +75,7 @@ export const ItemDetails = ({
   setUnsavedForm: (value: boolean) => void;
   unsavedForm: boolean;
 }) => {
-  const { updateItemInline } = useItemMutation({
+  const { updateItemInline } = useItemAction({
     queryKey: ["items", item.bucket.project.id],
     successAction: () => {
       setUnsavedForm(false);
@@ -87,7 +87,7 @@ export const ItemDetails = ({
     resolver: zodResolver(itemFormSchema),
     defaultValues: {
       status: (item.status as "incomplete" | "complete") || "incomplete",
-      dueDate: item?.dueDate ? new Date(item.dueDate) : null,
+      dueDate: item?.dueDate ? new Date(item.dueDate) : undefined,
       priority: item?.priority || "",
       description: item?.description || "",
     },
@@ -103,7 +103,7 @@ export const ItemDetails = ({
     return updateItemInline.mutateAsync({
       id: item.id,
       ...data,
-      dueDate: data.dueDate?.toISOString() || null,
+      dueDate: data.dueDate ? data.dueDate.toISOString() : "",
     });
   };
 
@@ -144,7 +144,7 @@ export const ItemDetails = ({
                                 checked ? "complete" : "incomplete"
                               );
                             }}
-                            className="rounded-full data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600 border-white/70 cursor-pointer"
+                            className="rounded-full data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600 border-foreground cursor-pointer"
                           />
                           <span className="capitalize">{field.value}</span>
                         </div>
@@ -176,7 +176,7 @@ export const ItemDetails = ({
                               {field.value ? (
                                 format(field.value, "yyyy-MM-dd")
                               ) : (
-                                <span>Select date</span>
+                                <span className="pl-5">Set date</span>
                               )}
                             </Button>
                           </FormControl>
@@ -257,7 +257,7 @@ export const ItemDetails = ({
                       >
                         <FormControl>
                           <SelectTrigger className="w-[180px] bg-transparent border-0 p-0 h-auto text-white focus:ring-0">
-                            <SelectValue placeholder="Select priority" />
+                            <SelectValue placeholder="set priority" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="bg-[#1e1e1e] border-gray-700">

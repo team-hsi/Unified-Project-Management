@@ -1,4 +1,3 @@
-import { Metadata } from "next";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { getProjectBuckets } from "@/actions/bucket-actions";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -8,17 +7,8 @@ type Props = {
   children: React.ReactNode;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-
-  return {
-    title: id,
-  };
-}
-
 const ProjectLayout = async (props: Props) => {
   const params = await props.params;
-
   const queryClient = getQueryClient();
   queryClient.prefetchQuery({
     queryKey: ["buckets", params.id],

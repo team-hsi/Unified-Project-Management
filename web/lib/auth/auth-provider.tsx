@@ -1,14 +1,12 @@
 "use client";
 
-import {
-  loginAction,
-  logoutAction,
-  signupAction,
-} from "@/actions/auth-actions";
+import { loginAction, signupAction } from "@/actions/auth-actions";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { createContext, useContext, ReactNode } from "react";
 import { toast } from "sonner";
+
 export interface User {
   id: string;
   firstname: string;
@@ -18,11 +16,18 @@ export interface User {
   password: string;
 }
 
-export function useLogin() {
+interface AuthContextType {
+  login: (data: { email: string; password: string }) => Promise<void>;
+  signup: (userData: Omit<User, "id">) => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const queryClient = getQueryClient();
 
-  return useMutation({
+  const loginMutation = useMutation({
     mutationFn: async ({
       email,
       password,
@@ -47,15 +52,11 @@ export function useLogin() {
       toast.error(error.message);
     },
   });
-}
 
-export const useSignup = () => {
-  const router = useRouter();
-  const queryClient = getQueryClient();
-
-  return useMutation({
+  const signupMutation = useMutation({
     mutationFn: async (userData: Omit<User, "id">) => {
       const result = await signupAction(userData);
+
       if (!result.success) {
         throw new Error(result.error || "Failed to create account");
       }
@@ -71,17 +72,26 @@ export const useSignup = () => {
       toast.error(error.message);
     },
   });
+
+  const login = async (data: { email: string; password: string }) => {
+    await loginMutation.mutateAsync(data);
+  };
+
+  const signup = async (userData: Omit<User, "id">) => {
+    await signupMutation.mutateAsync(userData);
+  };
+
+  return (
+    <AuthContext.Provider value={{ login, signup }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
-export const useLogout = () => {
-  const queryClient = getQueryClient();
-  return useMutation({
-    mutationFn: logoutAction,
-    onSuccess: () => {
-      queryClient.setQueryData(["currentUser"], null);
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };
