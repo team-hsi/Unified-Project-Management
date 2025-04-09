@@ -38,6 +38,7 @@ export const useBucketAction = ({
         },
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        items: [],
       };
       console.log("OPD", optimisticBucket);
 
@@ -103,8 +104,45 @@ export const useBucketAction = ({
   const updateBucket = useMutation({
     mutationFn: updateBucketAction,
     mutationKey: ["updateBucket"],
-    onSettled: () => {
-      return queryClient.invalidateQueries({ queryKey });
+    onMutate: async (updatedBucketData) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previousBuckets = queryClient.getQueryData(queryKey);
+      queryClient.setQueryData(queryKey, (old: Bucket[] = []) => {
+        return old.map((bucket) =>
+          bucket.id === updatedBucketData.id
+            ? {
+                ...bucket,
+                ...updatedBucketData,
+                updatedAt: new Date().toISOString(),
+              }
+            : bucket
+        );
+      });
+      return { previousBuckets };
+    },
+    onError: (error, variables, context) => {
+      if (context?.previousBuckets) {
+        queryClient.setQueryData(queryKey, context.previousBuckets);
+      }
+      toast.error("something went wrong refresh the page");
+    },
+    onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(result.error.message, {
+          description: "Please refresh your page.",
+          action: {
+            label: "Refresh",
+            onClick: (event) => {
+              event.preventDefault();
+              router.refresh();
+            },
+          },
+        });
+        queryClient.invalidateQueries({ queryKey });
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey });
+      toast.success("Bucket updated!");
     },
   });
 

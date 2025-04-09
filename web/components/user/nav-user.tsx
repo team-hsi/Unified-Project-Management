@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCheck, Bell, LogOut, Sparkles } from "lucide-react";
+import { BadgeCheck, Bell, Loader, LogOut, Sparkles } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -14,6 +14,7 @@ import {
 import { ThemeSwitcher } from "../ui/theme-switch";
 import { getSessionUser, logoutAction } from "@/actions/auth-actions";
 import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "../ui/skeleton";
 
 export function NavUser({
   user,
@@ -24,11 +25,20 @@ export function NavUser({
     avatar: string;
   };
 }) {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isPending } = useQuery({
     queryKey: ["currentUser"],
     queryFn: getSessionUser,
   });
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading || isPending)
+    return (
+      <Skeleton className="w-fit rounded-lg">
+        <Avatar className="h-8 w-8 rounded-lg cursor-pointer hover:opacity-50">
+          <AvatarFallback className="rounded-lg">
+            <Loader className="animate-spin" size={16} />
+          </AvatarFallback>
+        </Avatar>
+      </Skeleton>
+    );
   if (!data) return <div>No user data found.</div>;
   return (
     <DropdownMenu>

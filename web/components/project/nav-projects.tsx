@@ -22,14 +22,11 @@ import {
 import type { Project } from "./types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-// import { getUserProjects } from "@/actions/project-actions";
-// import { useSuspenseQuery } from "@tanstack/react-query";
 import { CreateProjectDialog } from "./create-project-dialog";
 import { CustomDialogItem } from "./custom-dialog-item";
 import { DeleteProjectDialog } from "./delete-project-dialog";
 import { UpdateProjectDialog } from "./update-project-dialog";
 import { useProjectAction } from "@/hooks/use-project";
-// import { ProjectUrlSync } from "../auth/project-url-sync";
 
 export const NavProjects = () => {
   const { projects } = useProjectAction({});

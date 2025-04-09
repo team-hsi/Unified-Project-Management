@@ -5,8 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
-import { Edit, Loader, Palette, Plus, Trash2 } from "lucide-react";
+import { Loader, Palette, Plus, Trash2 } from "lucide-react";
 import { NameDescriptionForm } from "../form/name-description-form";
 import { CustomDialogItem } from "@/components/project/custom-dialog-item";
 import { useState } from "react";
@@ -63,9 +62,7 @@ export const AddBucketItem = ({
 
 /*
  * Edit bucket
- ! currently not working due to Api endpoint not being implemented for color property
  */
-//Todo: add color picker and implement this component
 
 export const EditBucket = ({
   values,
@@ -81,15 +78,11 @@ export const EditBucket = ({
   );
   const { updateBucket } = useBucketAction({
     queryKey: ["buckets", values.projectId],
-    successAction: () => {
-      toast.success("Bucket updated successfully!");
-      onOpenChange?.(false);
-    },
   });
 
   return (
     <CustomDialogItem
-      triggerChildren={<DropdownAction icon={Edit} label="Edit Bucket" />}
+      triggerChildren={<DropdownAction icon={Palette} label="Change Color" />}
       onOpenChange={onOpenChange}
       onSelect={onSelect}
     >
@@ -110,8 +103,9 @@ export const EditBucket = ({
         <ColorInput onChange={setColor} defaultValue={color} />
         <DialogFooter>
           <Button
-            onClick={() => {
-              updateBucket.mutateAsync({
+            onClick={async () => {
+              onOpenChange?.(false);
+              await updateBucket.mutateAsync({
                 id: values.id,
                 color,
               });

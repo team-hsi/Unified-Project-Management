@@ -36,7 +36,7 @@ export const NameDescriptionForm = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues || {
-      name: "New Item",
+      name: " Create New",
       description: "",
     },
   });

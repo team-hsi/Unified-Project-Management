@@ -1,6 +1,10 @@
 "use client";
 
-import { loginAction, signupAction } from "@/actions/auth-actions";
+import {
+  loginAction,
+  logoutAction,
+  signupAction,
+} from "@/actions/auth-actions";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -62,6 +66,19 @@ export const useSignup = () => {
       queryClient.setQueryData(["currentUser"], user);
       toast.success("Account created successfully!");
       router.push("/projects");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useLogout = () => {
+  const queryClient = getQueryClient();
+  return useMutation({
+    mutationFn: logoutAction,
+    onSuccess: () => {
+      queryClient.setQueryData(["currentUser"], null);
     },
     onError: (error: Error) => {
       toast.error(error.message);

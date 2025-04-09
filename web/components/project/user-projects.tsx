@@ -22,9 +22,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getUserProjects } from "@/actions/project-actions";
 import EmptyProjects from "./empty-projects";
+import { CreateProjectDialog } from "./create-project-dialog";
 
 interface Project {
   id: string;
@@ -36,6 +37,13 @@ interface Project {
 
 export default function UserProjects() {
   const [searchQuery, setSearchQuery] = useState("");
+  // Add client-side only rendering state
+  const [isClient, setIsClient] = useState(false);
+
+  // Set isClient to true after component mounts
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const {
     data: projects,
@@ -51,6 +59,11 @@ export default function UserProjects() {
     projects?.data?.filter((project: Project) =>
       project.name.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
+
+  // Only render the actual content on the client to avoid hydration mismatch
+  if (!isClient) {
+    return <ProjectsLoading />;
+  }
 
   if (isLoading) {
     return <ProjectsLoading />;
@@ -80,10 +93,12 @@ export default function UserProjects() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            New Project
-          </Button>
+          <CreateProjectDialog>
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              New Project
+            </Button>
+          </CreateProjectDialog>
         </div>
       </div>
 
@@ -162,9 +177,11 @@ function ProjectCard({ project }: { project: Project }) {
 
 function ProjectsLoading() {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="h-6 w-24 animate-pulse rounded bg-muted"></div>
+    <div className="space-y-10">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2">
+          <div className="h-6 w-24 animate-pulse rounded bg-muted"></div>
+        </div>
         <div className="h-9 w-32 animate-pulse rounded bg-muted"></div>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">

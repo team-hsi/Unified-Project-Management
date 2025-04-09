@@ -49,6 +49,7 @@ export const useItemAction = ({
           updatedAt: "",
         },
         status: newItemData.status || "incomplete",
+        position: 0,
         priority: newItemData.priority || null,
         dueDate: newItemData.dueDate || "",
         createdAt: new Date().toISOString(),

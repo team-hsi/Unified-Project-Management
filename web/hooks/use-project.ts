@@ -4,21 +4,23 @@ import { toast } from "sonner";
 import {
   createProject as createAction,
   deleteProject as deleteAction,
-  getProjects,
+  getUserProjects,
   updateProject as updateAction,
 } from "@/actions/project-actions";
 
 interface HookProps {
   queryKey?: string[];
+  successAction?: () => void;
 }
 export const useProjectAction = ({
   queryKey = ["projects", "user"],
+  successAction,
 }: HookProps) => {
   const queryClient = getQueryClient();
 
   const { data: projects } = useSuspenseQuery({
     queryKey,
-    queryFn: getProjects,
+    queryFn: getUserProjects,
   });
 
   const createProject = useMutation({
@@ -39,8 +41,8 @@ export const useProjectAction = ({
   const deleteProject = useMutation({
     mutationFn: deleteAction,
     onSuccess: () => {
-      toast.success("Project deleted successfully!");
       queryClient.invalidateQueries({ queryKey });
+      successAction?.();
     },
   });
 

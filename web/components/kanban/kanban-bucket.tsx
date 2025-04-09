@@ -64,14 +64,11 @@ export const KanbanBucket = ({ bucket, items }: KanbanBucketProps) => {
   const color = stringToColor(bucket.name + bucket.createdAt);
   return (
     <div
-      className={cn("rounded-lg p-4 h-fit flex flex-col max-w-92 border ", {})}
+      className={cn("rounded-lg p-4 h-fit flex flex-col max-w-80 border ", {
+        "border-ring": isDraggedOver,
+      })}
       style={{
-        backgroundColor: isDraggedOver
-          ? "rgba(255, 255, 255, 0.3)"
-          : `rgba(${parseInt(color.slice(1, 3), 16)}, ${parseInt(
-              color.slice(3, 5),
-              16
-            )}, ${parseInt(color.slice(5, 7), 16)}, 0.2)`, // 0.5 is 50% opacity
+        backgroundColor: bucket.color,
       }}
       ref={ref}
     >
@@ -80,10 +77,7 @@ export const KanbanBucket = ({ bucket, items }: KanbanBucketProps) => {
           "bg-muted mb-4 flex items-center justify-between rounded-md p-2"
         )}
         style={{
-          backgroundColor: `rgba(${parseInt(color.slice(1, 3), 16)}, ${parseInt(
-            color.slice(3, 5),
-            16
-          )}, ${parseInt(color.slice(5, 7), 16)}, 0.2)`, // 0.5 is 50% opacity
+          backgroundColor: bucket.color,
         }}
       >
         <div className="flex items-center justify-start gap-2 w-64">

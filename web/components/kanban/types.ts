@@ -18,6 +18,7 @@ export interface Bucket {
     createdAt: string;
     updatedAt: string;
   };
+  items: Item[];
   color: string;
   createdAt: string;
   updatedAt: string;
@@ -50,11 +51,11 @@ export interface Item {
   updatedAt: string;
 }
 
-export interface MoveCardParams {
-  movedTaskIndexInSourceColumn: number;
-  sourceColumnId: string;
-  destinationColumnId: string;
-  movedTaskIndexInDestinationColumn: number;
+export interface MoveItemParams {
+  movedItemIndexInSourceBucket: number;
+  sourceBucketId: string;
+  destinationBucketId: string;
+  movedItemIndexInDestinationBucket: number;
 }
 
 export interface ReorderBucketParams {

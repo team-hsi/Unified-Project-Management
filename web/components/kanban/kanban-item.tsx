@@ -82,18 +82,12 @@ export const KanbanCard = ({ item }: KanbanCardProps) => {
         ref={ref}
       >
         <CardContent className="p-0">
-          <h4 className="mb-1 font-medium">{item.name}</h4>
-          <p className=" select-all" onClick={(e) => e.stopPropagation()}>
-            {item.id}
-          </p>
+          <h4 className="mb-1 font-medium text-sm">{item.name}</h4>
           {item.description && (
             <p className="mb-3 truncate text-sm text-muted-foreground">
               {item.description}
             </p>
           )}
-          <p className=" absolute bottom-0 right-1 text-yellow-600">
-            {item.position}
-          </p>
         </CardContent>
         <DualButton
           className="bg-muted"
