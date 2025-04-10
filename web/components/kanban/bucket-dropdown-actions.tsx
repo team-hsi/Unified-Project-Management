@@ -11,8 +11,9 @@ import { CustomDialogItem } from "@/components/project/custom-dialog-item";
 import { useState } from "react";
 import { ColorInput } from "../ui/color-input";
 import { useBucketAction } from "@/hooks/use-bucket";
-import stringToColor from "@/lib/utils";
+import stringToColor, { cn } from "@/lib/utils";
 import { useItemAction } from "@/hooks/use-item";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 /*
  * Add Item
@@ -63,6 +64,70 @@ export const AddBucketItem = ({
 /*
  * Edit bucket
  */
+
+export const ChangeBucketColor = ({
+  values,
+  onSelect,
+  onOpenChange,
+}: {
+  values: { id: string; projectId: string; color?: string };
+  onSelect?: () => void;
+  onOpenChange?: (open: boolean) => void;
+}) => {
+  const [color, setColor] = useState<string>(
+    values.color || stringToColor(values.id)
+  );
+  const [colorPopoverOpen, setColorPopoverOpen] = useState(false);
+  const { updateBucket } = useBucketAction({
+    queryKey: ["buckets", values.projectId],
+  });
+
+  return (
+    <Popover open={colorPopoverOpen} onOpenChange={setColorPopoverOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          className="w-full justify-between px-2 py-1.5 h-auto text-sm font-normal"
+          onClick={() => setColorPopoverOpen(true)}
+        >
+          <div className="flex items-center gap-2">
+            <div
+              className={cn("h-4 w-4 rounded-full")}
+              style={{ backgroundColor: color }}
+            />
+            <span>Change Color</span>
+          </div>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        side="right"
+        align="start"
+        className="w-64 p-2"
+        onSelect={onSelect}
+      >
+        <div className="space-y-2">
+          <ColorInput onChange={setColor} defaultValue={color} />
+          <Button
+            onClick={async () => {
+              onOpenChange?.(false);
+              await updateBucket.mutateAsync({
+                id: values.id,
+                color,
+              });
+            }}
+            disabled={updateBucket.isPending || color === values.color}
+          >
+            {updateBucket.isPending ? (
+              <Loader className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Change Color"
+            )}
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 export const EditBucket = ({
   values,

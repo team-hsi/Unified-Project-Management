@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Plus } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { CreateBucket } from "./create-bucket-dialog";
 
 export const EmptyKanbanState = ({ id }: { id: string }) => {
@@ -24,7 +24,7 @@ export const EmptyKanbanState = ({ id }: { id: string }) => {
         <CardContent>
           <CreateBucket id={id}>
             <Button className="w-full">
-              <Plus className="mr-2 h-4 w-4" /> Create your first bucket
+              <PlusCircle className="mr-2 h-4 w-4" /> Create your first bucket
             </Button>
           </CreateBucket>
         </CardContent>

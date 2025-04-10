@@ -9,8 +9,8 @@ import { useState } from "react";
 import { MoreHorizontal } from "lucide-react";
 import {
   AddBucketItem,
+  ChangeBucketColor,
   DeleteBucket,
-  EditBucket,
 } from "./bucket-dropdown-actions";
 
 const BucketDropdown = ({
@@ -61,7 +61,7 @@ const BucketDropdown = ({
           onOpenChange={handleDialogOpenChange}
           onSelect={handleItemSelect}
         />
-        <EditBucket
+        <ChangeBucketColor
           values={{
             id: bucketId,
             projectId: projectId,
@@ -70,6 +70,15 @@ const BucketDropdown = ({
           onOpenChange={handleDialogOpenChange}
           onSelect={handleItemSelect}
         />
+        {/* <EditBucket
+          values={{
+            id: bucketId,
+            projectId: projectId,
+            color: color,
+          }}
+          onOpenChange={handleDialogOpenChange}
+          onSelect={handleItemSelect}
+        /> */}
         <DropdownMenuSeparator />
         <DeleteBucket
           bucketId={bucketId}
