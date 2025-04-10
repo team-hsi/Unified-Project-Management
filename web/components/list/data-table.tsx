@@ -27,7 +27,7 @@ import { getProjectItems } from "@/actions/item-actions";
 import { useParams } from "next/navigation";
 import { ItemSheet } from "../sheets/item-sheet";
 import { Item } from "../kanban/types";
-import { Plus } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { AddItemDrawer } from "./new-item-drawer";
 
 interface DataTableProps<TData, TValue> {
@@ -86,7 +86,7 @@ export function DataTable<TData, TValue>({
         />
         <AddItemDrawer>
           <Button onClick={() => {}} className="ml-auto" variant="outline">
-            <Plus className="w-4 h-4 mr-2" /> Add Item
+            <PlusCircle className="w-4 h-4 mr-2" /> Add Item
           </Button>
         </AddItemDrawer>
       </div>

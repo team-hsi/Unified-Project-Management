@@ -13,7 +13,6 @@ import { usePathname } from "next/navigation";
 import { Fragment } from "react";
 import { NavigationControls } from "./navigation-controls";
 import { NavUser } from "../user/nav-user";
-import { data } from "@/lib/data";
 import { Project } from "@/lib/stores/project-store";
 import { useProjectAction } from "@/hooks/use-project";
 
@@ -21,7 +20,6 @@ export const ProjectNavigation = () => {
   const { projects } = useProjectAction({});
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
-  // const queryClient = getQueryClient();
   return (
     <header className="flex sticky top-0 h-12 shrink-0 items-center bg-background justify-between px-4 w-full gap-2 border-b">
       <div className="flex items-center gap-2">
@@ -64,7 +62,7 @@ export const ProjectNavigation = () => {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <NavUser user={data.user} />
+      <NavUser />
     </header>
   );
 };

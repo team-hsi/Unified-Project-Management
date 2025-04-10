@@ -17,17 +17,17 @@ export const data = {
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "AASTU Tasks",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: "Personal",
     },
     {
-      name: "Acme Corp.",
+      name: "Capstone Corp.",
       logo: AudioWaveform,
       plan: "Startup",
     },
     {
-      name: "Evil Corp.",
+      name: "ASSTU Corp.",
       logo: Command,
       plan: "Free",
     },

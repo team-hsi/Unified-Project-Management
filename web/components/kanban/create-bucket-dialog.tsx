@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Columns2, Loader, Plus } from "lucide-react";
+import { Columns2, Loader, PlusCircle } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { ColorInput } from "../ui/color-input";
@@ -39,7 +39,7 @@ export const CreateBucket = ({
       <DialogTrigger asChild>
         {children || (
           <Button size="sm">
-            <Plus /> New Bucket
+            <PlusCircle /> New Bucket
           </Button>
         )}
       </DialogTrigger>

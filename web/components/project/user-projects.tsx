@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { MoreHorizontal, PlusCircle, Search } from "lucide-react";
+import { PlusCircle, Search } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 
 import { Button } from "@/components/ui/button";
@@ -13,13 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
@@ -142,7 +135,7 @@ function ProjectCard({ project }: { project: Project }) {
               Created on {formattedCreatedDate}
             </CardDescription>
           </div>
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <span className="sr-only">Open menu</span>
@@ -158,7 +151,7 @@ function ProjectCard({ project }: { project: Project }) {
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between py-2">
