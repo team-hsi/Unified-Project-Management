@@ -32,7 +32,7 @@ const Page = async (props: Props) => {
   }
 
   return (
-    <div className="p-4 flex flex-col gap-4 overflow-hidden">
+    <div className="p-4 flex flex-col gap-4 overflow-hidden h-full">
       <ProjectHeader project={project.data} />
       <ViewContainer view={view} projectId={params.id} />
     </div>
