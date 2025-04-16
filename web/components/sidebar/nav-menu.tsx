@@ -1,9 +1,4 @@
-import { ChevronRight, type LucideIcon } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Bell, Search, Settings2 } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -13,61 +8,45 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { SettingsDialog } from "../settings/settings";
 
-export const NavMain = ({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-      icon: LucideIcon;
-    }[];
-  }[];
-}) => {
+export const NavMain = () => {
   return (
-    <>
-      {items.map((item) => (
-        <Collapsible
-          key={item.title}
-          title={item.title}
-          defaultOpen
-          className="group/collapsible"
-        >
-          <SidebarGroup>
-            <SidebarGroupLabel
-              asChild
-              className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            >
-              <CollapsibleTrigger>
-                <span className=" text-muted-foreground text-xs font-bold">
-                  {item.title}
+    <SidebarGroup>
+      <SidebarGroupLabel
+        asChild
+        className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+      ></SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="#">
+                <Search className="mr-2" />
+                Search
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="#">
+                <Bell className="mr-2" />
+                Notifications
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SettingsDialog>
+              <SidebarMenuButton asChild className="cursor-pointer">
+                <span className="flex items-center gap-4">
+                  <Settings2 />
+                  Settings
                 </span>
-                <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {item.items?.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <Link href={item.url}>
-                          <item.icon className="mr-2" />
-                          {item.title}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
-      ))}
-    </>
+              </SidebarMenuButton>
+            </SettingsDialog>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
   );
 };

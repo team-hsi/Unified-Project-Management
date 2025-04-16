@@ -7,4 +7,5 @@ export const itemFormSchema = z.object({
   description: z
     .string()
     .min(10, "Description must be at least 10 characters long"),
+  labels: z.array(z.any()).optional(),
 });

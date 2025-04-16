@@ -38,4 +38,13 @@ export const hexToRgba = (hex: string, alpha: number) => {
   const b = parseInt(hex.slice(5, 7), 16);
 
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+export const generateRandomColor = () => {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
 };

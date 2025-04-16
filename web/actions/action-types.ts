@@ -13,3 +13,10 @@ export type UpdateBucketPayload = {
   name?: string;
   color?: string;
 };
+
+export type UpdateLabelPayload = {
+  name: string;
+  color: string;
+  projectId?: string;
+  id?: string;
+};

@@ -106,7 +106,7 @@ export const useItemAction = ({
     },
     onSuccess: (result) => {
       if (!result.success) {
-        toast.error(result.error);
+        toast.error(JSON.stringify(result.error));
         queryClient.invalidateQueries({ queryKey });
         return;
       }
