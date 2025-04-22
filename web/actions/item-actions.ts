@@ -28,10 +28,6 @@ export const getProjectItems = async ({ id }: PartialProject) => {
 
 export const updateItemInline = async (values: UpdateItemPayload) => {
   const { id, ...rest } = values;
-  //Todo: remove this when the backend is updated to accept null values
-  if ("status" in rest) {
-    delete rest.status;
-  }
   const res = await fetch(`${API}/v1/items/${id}`, {
     method: "PUT",
     headers: {
