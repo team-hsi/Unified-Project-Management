@@ -41,8 +41,8 @@ const BucketDropdown = ({
   return (
     <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
       <DropdownMenuTrigger>
-        <span ref={dropdownTriggerRef}>
-          <MoreHorizontal />
+        <span ref={dropdownTriggerRef} className=" hover:text-muted">
+          <MoreHorizontal size={16} />
         </span>
       </DropdownMenuTrigger>
       <DropdownMenuContent

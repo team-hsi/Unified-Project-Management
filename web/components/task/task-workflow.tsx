@@ -1,7 +1,8 @@
 "use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-export const TaskWorkflow = () => {
-  //TODO: Implement the  Subtasks, Comments and Activities tabs
+import { CheckList } from "./check-list";
+import { Item } from "../kanban/types";
+export const TaskWorkflow = ({ item }: { item: Item }) => {
   return (
     <div className=" w-4/5 mx-auto">
       <Tabs defaultValue="subtasks">
@@ -26,9 +27,7 @@ export const TaskWorkflow = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="subtasks" className="flex flex-col gap-3">
-          <p className="p-4 text-center text-xs text-muted-foreground">
-            Content for Tab 1
-          </p>
+          <CheckList lists={item.checklist} itemId={item.id} />
         </TabsContent>
         <TabsContent value="comments">
           <p className="p-4 text-center text-xs text-muted-foreground">

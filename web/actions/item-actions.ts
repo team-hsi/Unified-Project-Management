@@ -19,7 +19,9 @@ export const getItems = async () => {
 export const getProjectItems = async ({ id }: PartialProject) => {
   const res = await fetch(`${API}/v1/projects/${id}/items`);
   if (!res.ok) {
-    throw new Error(`Error fetching tasks: ${res.statusText}`);
+    const data = await res.json();
+    console.log(data);
+    throw new Error(`Error fetching tasks: ${data.error}`);
   }
   return res.json();
 };
@@ -27,8 +29,8 @@ export const getProjectItems = async ({ id }: PartialProject) => {
 export const updateItemInline = async (values: UpdateItemPayload) => {
   const { id, ...rest } = values;
   //Todo: remove this when the backend is updated to accept null values
-  if ("dueDate" in rest) {
-    delete rest.dueDate;
+  if ("status" in rest) {
+    delete rest.status;
   }
   const res = await fetch(`${API}/v1/items/${id}`, {
     method: "PUT",
@@ -40,8 +42,19 @@ export const updateItemInline = async (values: UpdateItemPayload) => {
   if (!res.ok) {
     const data = await res.json();
     console.log(data);
-    console.log("check type", typeof data.error);
-    return { success: false, error: data.error };
+
+    // Extract nested error messages if present
+    const errorMessages =
+      data.error?._errors ||
+      Object.values(data.error || {}).flatMap(
+        (field) => (field as { _errors?: string[] })._errors || []
+      );
+    console.log("Extracted error messages:", errorMessages);
+
+    return {
+      success: false,
+      error: errorMessages.length ? errorMessages : data.error,
+    };
   }
   const data = await res.json();
   return { success: true, data };

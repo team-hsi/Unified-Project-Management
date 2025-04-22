@@ -55,7 +55,8 @@ export const useItemAction = ({
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         startDate: null,
-        labels: newItemData.labels || [],
+        labels: [],
+        checklist: [],
       };
       queryClient.setQueryData(queryKey, (old: Item[] = []) => {
         return [...old, optimisticItem];
@@ -106,7 +107,7 @@ export const useItemAction = ({
     },
     onSuccess: (result) => {
       if (!result.success) {
-        toast.error(result.error);
+        toast.error(JSON.stringify(result.error));
         queryClient.invalidateQueries({ queryKey });
         return;
       }

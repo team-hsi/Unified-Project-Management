@@ -31,7 +31,7 @@ export const AppSidebar = ({
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain />
         <React.Suspense fallback={<ProjectsSkeleton />}>
           <NavProjects />
         </React.Suspense>

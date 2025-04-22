@@ -1,13 +1,10 @@
-import { Task } from "@/components/task/types";
+import { Label } from "../project/management/types";
 
 export type Edge = "top" | "right" | "bottom" | "left";
-export interface Column {
-  id: string;
-  title: string;
-  count: number;
-  type: string;
-  tasks: Task[];
-}
+export type CheckList = {
+  description: string;
+  isCompleted: boolean;
+};
 export interface Bucket {
   id: string;
   name: string;
@@ -46,7 +43,8 @@ export interface Item {
   description: string;
   startDate: string | null;
   dueDate: string | null;
-  labels: string[];
+  checklist: CheckList[] | null;
+  labels: Label[];
   createdAt: string;
   updatedAt: string;
 }

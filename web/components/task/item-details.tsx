@@ -5,8 +5,10 @@ import {
   CalendarRange,
   ChevronsUp,
   Loader,
+  Loader2,
   Newspaper,
   Plus,
+  TagIcon,
   Users,
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
@@ -47,6 +49,8 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import type { ItemFormValues } from "./types";
 import { itemFormSchema } from "@/components/form/schema";
+import MultipleSelector from "../ui/multiselect";
+import { Label, useLabels } from "@/hooks/use-labels";
 
 const MetadataField = ({
   icon: Icon,
@@ -82,6 +86,25 @@ export const ItemDetails = ({
       form.reset(form.getValues());
     },
   });
+  const { labels } = useLabels({ projectId: item.bucket.project.id });
+
+  const labelOptions = React.useMemo(() => {
+    return (
+      labels.data?.data.map((label: Label) => ({
+        value: label.id,
+        label: label.name,
+        color: label.color,
+      })) || []
+    );
+  }, [labels.data?.data]);
+
+  const initialLabels = React.useMemo(() => {
+    return (item.labels || [])
+      .map((label) =>
+        labelOptions.find((l: { value: string }) => l.value === label.id)
+      )
+      .filter(Boolean);
+  }, [item.labels, labelOptions]);
 
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemFormSchema),
@@ -90,6 +113,7 @@ export const ItemDetails = ({
       dueDate: item?.dueDate ? new Date(item.dueDate) : undefined,
       priority: item?.priority || "",
       description: item?.description || "",
+      labels: initialLabels,
     },
   });
 
@@ -100,9 +124,16 @@ export const ItemDetails = ({
 
   // Handle form submission
   const onSubmit = (data: ItemFormValues) => {
+    const labelIds = (data.labels ?? []).map((label) => label.value);
+    const payload: ItemFormValues = { ...data };
+    if (payload.priority === "") {
+      delete payload.priority;
+    }
+
     return updateItemInline.mutateAsync({
       id: item.id,
-      ...data,
+      ...payload,
+      labels: labelIds,
       dueDate: data.dueDate ? data.dueDate.toISOString() : "",
     });
   };
@@ -256,16 +287,52 @@ export const ItemDetails = ({
                         defaultValue={field.value || undefined}
                       >
                         <FormControl>
-                          <SelectTrigger className="w-[180px] bg-transparent border-0 p-0 h-auto text-white focus:ring-0">
+                          <SelectTrigger className="border-0 h-auto shadow-none">
                             <SelectValue placeholder="set priority" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent className="bg-[#1e1e1e] border-gray-700">
+                        <SelectContent className="">
                           <SelectItem value="low">Low</SelectItem>
                           <SelectItem value="medium">Medium</SelectItem>
                           <SelectItem value="high">High</SelectItem>
                         </SelectContent>
                       </Select>
+                    </FormItem>
+                  )}
+                />
+              </MetadataField>
+              {/* Labels Field */}
+              <MetadataField icon={TagIcon} label="Labels">
+                <FormField
+                  control={form.control}
+                  name="labels"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col w-full">
+                      <FormLabel className="sr-only">Labels</FormLabel>
+                      <FormControl>
+                        <MultipleSelector
+                          commandProps={{
+                            label: "Add labels",
+                          }}
+                          isPending={labels.isPending}
+                          loadingIndicator={
+                            <div className="flex w-full p-1 items-center justify-center">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            </div>
+                          }
+                          defaultOptions={labelOptions}
+                          className=" border-0"
+                          placeholder="Add Labels..."
+                          hideClearAllButton
+                          emptyIndicator={
+                            <p className="text-center text-sm">
+                              No results found
+                            </p>
+                          }
+                          value={field.value} //fix here too
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
                     </FormItem>
                   )}
                 />
