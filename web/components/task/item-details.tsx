@@ -100,8 +100,8 @@ export const ItemDetails = ({
 
   const initialLabels = React.useMemo(() => {
     return (item.labels || [])
-      .map((labelId) =>
-        labelOptions.find((label: { value: string }) => label.value === labelId)
+      .map((label) =>
+        labelOptions.find((l: { value: string }) => l.value === label.id)
       )
       .filter(Boolean);
   }, [item.labels, labelOptions]);
@@ -125,9 +125,14 @@ export const ItemDetails = ({
   // Handle form submission
   const onSubmit = (data: ItemFormValues) => {
     const labelIds = (data.labels ?? []).map((label) => label.value);
+    const payload: ItemFormValues = { ...data };
+    if (payload.priority === "") {
+      delete payload.priority;
+    }
+
     return updateItemInline.mutateAsync({
       id: item.id,
-      ...data,
+      ...payload,
       labels: labelIds,
       dueDate: data.dueDate ? data.dueDate.toISOString() : "",
     });

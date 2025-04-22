@@ -9,7 +9,10 @@ import { toast } from "sonner";
 
 export const useKanban = ({ projectId }: { projectId: string }) => {
   const queryClient = getQueryClient();
-  const [{ data: buckets }, { data: items }] = useSuspenseQueries({
+  const [
+    { data: buckets, error: bucketsError, refetch: bucketsRefetch },
+    { data: items, error: itemsError, refetch: itemsRefetch },
+  ] = useSuspenseQueries({
     queries: [
       {
         queryKey: ["buckets", projectId],
@@ -82,6 +85,9 @@ export const useKanban = ({ projectId }: { projectId: string }) => {
     moveItemMutation,
     reorderItemMutation,
     setBoard,
+    bucketsError,
+    itemsError,
+    bucketsRefetch,
+    itemsRefetch,
   };
-  // Mutations for updating data
 };

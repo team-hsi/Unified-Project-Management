@@ -2,7 +2,7 @@
 import type { Bucket } from "./types";
 import { KanbanItem } from "./kanban-item";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
-import { cn } from "@/lib/utils";
+import { cn, hexToRgba } from "@/lib/utils";
 import BucketDropdown from "./bucket-dropdown";
 import { Button } from "../ui/button";
 import InlineEdit from "../ui/inline-edit";
@@ -45,23 +45,25 @@ export const KanbanBucket = ({ bucket, index }: KanbanBucketProps) => {
           style={{
             ...provided.draggableProps.style,
             opacity: snapshot.isDragging ? 0.8 : 1,
-            backgroundColor: bucket.color,
+            backgroundColor: hexToRgba(bucket.color, 0.1),
           }}
           // className={cn("rounded-lg p-4 h-fit flex flex-col max-w-80 border ", {})}
-          className="rounded-lg shadow-sm w-[300px] h-fit max-h-full flex flex-col p-4"
+          className="rounded-lg shadow-sm w-[300px] h-fit max-h-full flex flex-col p-2 pt-3"
         >
           <div
             className={cn(
               "bg-muted mb-4 flex items-center justify-between rounded-md p-2"
             )}
             style={{
-              backgroundColor: bucket.color,
+              backgroundColor: hexToRgba(bucket.color, 0.2),
             }}
           >
             <div className="flex items-center justify-start gap-2 w-64">
               <div
-                className={cn("h-4 w-4 rounded-full border-2")}
-                style={{ borderColor: bucket.color }}
+                className={cn("rounded-full border-6")}
+                style={{
+                  borderColor: hexToRgba(bucket.color, 1),
+                }}
               />
               {updateBucket.isError ? (
                 <div className="flex items-center gap-2">
@@ -97,7 +99,9 @@ export const KanbanBucket = ({ bucket, index }: KanbanBucketProps) => {
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className={cn("p-2 flex-1 overflow-y-auto space-y-2")}
+                className={cn(
+                  "p-1 flex-1 overflow-y-auto space-y-2 scroll-container flex-col"
+                )}
                 style={{ transition: "background-color 0.2s ease" }}
               >
                 {bucket.items?.map((item, index) => (

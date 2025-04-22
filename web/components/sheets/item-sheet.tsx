@@ -10,6 +10,7 @@ import { TaskBreadcrumb } from "./task-breadcrumb";
 import { Item } from "../kanban/types";
 import { ItemDetails } from "../task/item-details";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { TaskWorkflow } from "../task/task-workflow";
 
 export const ItemSheet = ({
   children,
@@ -27,7 +28,7 @@ export const ItemSheet = ({
     <Sheet onOpenChange={setOpen}>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent
-        className={`rounded-xl ${
+        className={`rounded-xl overflow-auto ${
           isMobile ? "h-full" : "max-w-lg md:max-w-xl lg:max-w-2xl"
         }`}
         side={isMobile ? "bottom" : "right"}
@@ -47,7 +48,7 @@ export const ItemSheet = ({
           setUnsavedForm={setUnsavedForm}
           unsavedForm={unsavedForm}
         />
-        {/* <TaskWorkflow /> */}
+        <TaskWorkflow item={item} />
       </SheetContent>
     </Sheet>
   );

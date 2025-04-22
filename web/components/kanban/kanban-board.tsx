@@ -5,6 +5,8 @@ import { EmptyKanbanState } from "./empty-kanban";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import { toast } from "sonner";
 import { useKanban } from "@/hooks/use-kanban";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { Button } from "../ui/button";
 
 export const KanbanBoard = ({ projectId }: { projectId: string }) => {
   const {
@@ -14,11 +16,42 @@ export const KanbanBoard = ({ projectId }: { projectId: string }) => {
     moveItemMutation,
     reorderItemMutation,
     setBoard,
+    bucketsError,
+    itemsError,
+    bucketsRefetch,
+    itemsRefetch,
   } = useKanban({ projectId });
+
+  // Error state
+  if (bucketsError || itemsError) {
+    toast.error(`Failed to load data`);
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 h-64">
+        <div className="w-full max-w-md">
+          <ExclamationTriangleIcon className="h-4 w-4" />
+          <p>Error loading data</p>
+          <p>{bucketsError?.message || itemsError?.message}</p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              bucketsRefetch();
+              itemsRefetch();
+            }}
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   // Empty state
   if (buckets.length === 0) {
     return <EmptyKanbanState id={projectId} />;
   }
+
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId, type } = result;
 

@@ -55,7 +55,8 @@ export const useItemAction = ({
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         startDate: null,
-        labels: newItemData.labels || [],
+        labels: [],
+        checklist: [],
       };
       queryClient.setQueryData(queryKey, (old: Item[] = []) => {
         return [...old, optimisticItem];
