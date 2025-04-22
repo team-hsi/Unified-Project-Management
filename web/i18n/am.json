@@ -1,0 +1,40 @@
+{
+  "Sidebar": {
+    "search": "ፈልግ",
+    "notifications": "ማስታወቂያዎች",
+    "settings": "ቅንብሮች"
+  },
+  "Preferences": {
+    "title": "ምርጫዎች",
+    "description": "የእርስዎን ተሞክሮ ያብጁ።",
+    "appearance": {
+      "title": "መልክ",
+      "description": "መተግበሪያው በመሣሪያዎ ላይ እንዴት እንደሚታይ ያብጁ።"
+    },
+    "theme": {
+      "title": "ገጽታ",
+      "light": "ብርሃን",
+      "dark": "ጨለማ",
+      "system": "የስርዓት ነባሪ"
+    },
+    "language&time": {
+      "title": "ቋንቋ እና ሰዓት",
+      "language": {
+        "title": "ቋንቋ",
+        "description": "በይነገጹ ላይ ጥቅም ላይ የሚውለውን ቋንቋ ይቀይሩ።"
+      },
+      "timezone": {
+        "title": "የሰዓት ክልል",
+        "description": "የእርስዎን የሰዓት ክልል ይምረጡ።"
+      },
+      "weekStart": {
+        "title": "ሳምንቱ በሰኞ ይጀምር",
+        "description": "ይህ በእርስዎ መተግበሪያ ውስጥ ያሉትን ሁሉንም የቀን መቁጠሪያዎች እንዴት እንደሚታዩ ይለውጣል።"
+      },
+      "automaticTimeZone": {
+        "title": "የአካባቢዎን በመጠቀም የሰዓት ክልልን በራስ-ሰር ያቀናብሩ",
+        "description": "ማሳሰቢያዎች፣ ማሳወቂያዎች እና ኢሜይሎች በእርስዎ የሰዓት ክልል ላይ ተመስርተው ይደርሳሉ።"
+      }
+    }
+  }
+}
