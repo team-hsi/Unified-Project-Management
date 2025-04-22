@@ -1,3 +1,4 @@
+"use client";
 import { Bell, Search, Settings2 } from "lucide-react";
 import {
   SidebarGroup,
@@ -9,8 +10,10 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { SettingsDialog } from "../settings/settings";
+import { useTranslations } from "next-intl";
 
 export const NavMain = () => {
+  const t = useTranslations("Sidebar");
   return (
     <SidebarGroup>
       <SidebarGroupLabel
@@ -23,7 +26,7 @@ export const NavMain = () => {
             <SidebarMenuButton asChild>
               <Link href="#">
                 <Search className="mr-2" />
-                Search
+                {t("search")}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -31,7 +34,7 @@ export const NavMain = () => {
             <SidebarMenuButton asChild>
               <Link href="#">
                 <Bell className="mr-2" />
-                Notifications
+                {t("notifications")}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -40,7 +43,7 @@ export const NavMain = () => {
               <SidebarMenuButton asChild className="cursor-pointer">
                 <span className="flex items-center gap-4">
                   <Settings2 />
-                  Settings
+                  {t("settings")}
                 </span>
               </SidebarMenuButton>
             </SettingsDialog>

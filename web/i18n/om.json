@@ -1,0 +1,40 @@
+{
+  "Sidebar": {
+    "search": "Barbaadi",
+    "notifications": "Beeksisa",
+    "settings": "Qajeelfama"
+  },
+  "Preferences": {
+    "title": "Filannoo",
+    "description": "Muuxannoo keessan fooyyessaa.",
+    "appearance": {
+      "title": "Bifa",
+      "description": "Akka applikeeshiniin keessan meeshaa keessan irratti mul'atu fooyyessaa."
+    },
+    "theme": {
+      "title": "Mata duree",
+      "light": "Ifaa",
+      "dark": "Dukkanaawaa",
+      "system": "Filannoo Sirnaa"
+    },
+    "language&time": {
+      "title": "Afaan fi Yeroo",
+      "language": {
+        "title": "Afaan",
+        "description": "Afaan itti fayyadamtootaaf dhihaatu jijjiiraa."
+      },
+      "timezone": {
+        "title": "Godina Yeroo",
+        "description": "Godina yeroo keessanii filadhaa."
+      },
+      "weekStart": {
+        "title": "Torbaan Wiixata irraa haa jalqabu",
+        "description": "Kun kalandaroota appii keessan keessa jiran hunda akka jijjiiramu godha."
+      },
+      "automaticTimeZone": {
+        "title": "Godina yeroo keessanii bakka jireenya keessaniin অটোmatikii godhaa",
+        "description": " Yaadachiisni, beeksisonnii fi iimeeloonni godinuma yeroo keessaniin isiniif dhihaatu."
+      }
+    }
+  }
+}
