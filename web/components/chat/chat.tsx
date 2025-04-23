@@ -8,22 +8,21 @@ import { ChatSidebar } from "@/components/chat/chat-sidebar";
 import React from "react";
 
 export const Chat = () => {
-  const { messages, sendMessage, isLoading } = useChat();
+  const { messages, sendMessage, isTyping } = useChat();
 
   const handleSendMessage = (content: string, mentions: string[] = []) => {
     sendMessage(content, mentions);
   };
   return (
-    <>
-      {/* <Sidebar /> */}
+    <div className="flex h-screen bg-background">
       <ChatSidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <ChatHeader />
         <div className="flex-1 overflow-y-auto p-4 bg-chat-bg">
-          <ChatMessages messages={messages} isLoading={isLoading} />
+          <ChatMessages messages={messages} isTyping={isTyping} />
         </div>
         <ChatInput onSendMessage={handleSendMessage} />
       </div>
-    </>
+    </div>
   );
 };

@@ -9,9 +9,7 @@ export const metadata: Metadata = {
 const page = () => {
   return (
     <ChatProvider>
-      <div className="flex h-screen bg-background">
-        <Chat />
-      </div>
+      <Chat />
     </ChatProvider>
   );
 };

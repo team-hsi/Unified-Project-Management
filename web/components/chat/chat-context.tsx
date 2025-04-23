@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
-interface Contact {
+export interface Contact {
   id: number;
   name: string;
   avatar: string;
@@ -9,8 +9,8 @@ interface Contact {
   status?: "online" | "offline" | "away";
 }
 
-interface Message {
-  id: number;
+export interface Message {
+  id: string;
   content: string;
   sender: string;
   timestamp: string;
@@ -23,8 +23,8 @@ interface ChatContextType {
   messages: Message[];
   contacts: Contact[];
   activeChat: string;
-  isLoading: boolean;
-  setIsLoading: (loading: boolean) => void;
+  isTyping: boolean;
+  setIsTyping: (loading: boolean) => void;
   setActiveChat: (chat: string) => void;
   sendMessage: (content: string, mentions?: string[]) => void;
 }
@@ -33,15 +33,21 @@ const defaultContext: ChatContextType = {
   messages: [],
   contacts: [],
   activeChat: "Capstone Team",
-  isLoading: false,
-  setIsLoading: () => {},
+  isTyping: false,
+  setIsTyping: () => {},
   setActiveChat: () => {},
   sendMessage: () => {},
 };
 
 const ChatContext = createContext<ChatContextType>(defaultContext);
 
-export const useChat = () => useContext(ChatContext);
+export const useChat = () => {
+  const context = useContext(ChatContext);
+  if (!context) {
+    throw new Error("useChat must be used within a ChatProvider");
+  }
+  return context;
+};
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [contacts] = useState<Contact[]>([
@@ -52,7 +58,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: 1,
+      id: "1",
       content: "Hi team, how's the progress on the Capstone project?",
       sender: "Sarah Miller",
       timestamp: "10:24 AM",
@@ -61,7 +67,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       mentions: [],
     },
     {
-      id: 2,
+      id: "2",
       content:
         "We've completed the UI design and started on the backend implementation.",
       sender: "You",
@@ -71,7 +77,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       mentions: [],
     },
     {
-      id: 3,
+      id: "3",
       content:
         "Great! I've just pushed some updates to the documentation. Can everyone review it by tomorrow?",
       sender: "Alex Johnson",
@@ -81,7 +87,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       mentions: [],
     },
     {
-      id: 4,
+      id: "4",
       content:
         "Sure, I'll take a look after I finish the current feature I'm working on.",
       sender: "You",
@@ -93,13 +99,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   ]);
 
   const [activeChat, setActiveChat] = useState("Capstone Team");
-  const [isLoading, setIsLoading] = useState(false); // Add isLoading state
+  const [isTyping, setIsTyping] = useState(false); // Add isTyping state
 
   const sendMessage = (content: string, mentions: string[] = []) => {
     if (!content.trim()) return;
 
     const newMessage = {
-      id: messages.length + 1,
+      id: `${messages.length}-${content.length}`, // Generate a unique ID for the message
       content,
       sender: "You",
       timestamp: new Date().toLocaleTimeString([], {
@@ -115,9 +121,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     // Simulate a response after a short delay (for demo purposes)
     if (activeChat === "Capstone Team") {
+      setIsTyping(true); // Set typing state to true
       setTimeout(() => {
         const responseMessage = {
-          id: messages.length + 2,
+          id: `${messages.length}-${content.length + 1}`, // Generate a unique ID for the response message
           content:
             "Thanks for the update! Let's discuss this more in the next meeting.",
           sender: "Sarah Miller",
@@ -130,6 +137,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           mentions: [],
         };
         setMessages((prev) => [...prev, responseMessage]);
+        setIsTyping(false);
       }, 3000);
     }
   };
@@ -142,8 +150,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         activeChat,
         setActiveChat,
         sendMessage,
-        isLoading,
-        setIsLoading,
+        isTyping,
+        setIsTyping,
       }}
     >
       {children}

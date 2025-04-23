@@ -8,23 +8,14 @@ import {
   ChatBubbleMessage,
 } from "@/components/chat/chat-bubble";
 import { ChatMessageList } from "@/components/ui/chat-message-list";
-
-interface Message {
-  id: number;
-  content: string;
-  sender: string;
-  timestamp: string;
-  isCurrentUser: boolean;
-  avatar: string;
-  mentions: string[];
-}
+import { Message } from "./chat-context";
 
 interface ChatMessagesProps {
   messages: Message[];
-  isLoading: boolean;
+  isTyping: boolean;
 }
 
-export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
+export function ChatMessages({ messages, isTyping }: ChatMessagesProps) {
   return (
     <div className="h-full flex-1 overflow-hidden">
       <ChatMessageList>
@@ -50,7 +41,7 @@ export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
           </ChatBubble>
         ))}
 
-        {isLoading && (
+        {isTyping && (
           <ChatBubble variant="received">
             <ChatBubbleAvatar
               className="h-8 w-8 shrink-0"

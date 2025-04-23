@@ -1,8 +1,7 @@
 "use client";
 import { useState, KeyboardEvent, useRef } from "react";
-import { Send, Paperclip, Smile, AtSign } from "lucide-react";
+import { Send } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useChat } from "./chat-context";
 
 interface ChatInputProps {
   onSendMessage: (content: string, mentions: string[]) => void;
@@ -10,104 +9,29 @@ interface ChatInputProps {
 
 export function ChatInput({ onSendMessage }: ChatInputProps) {
   const [message, setMessage] = useState("");
-  const [showMentionsList, setShowMentionsList] = useState(false);
-  const [mentionQuery, setMentionQuery] = useState("");
-  const [cursorPosition, setCursorPosition] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { contacts } = useChat();
-
-  const filteredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(mentionQuery.toLowerCase())
-  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
-      // Extract mentions from the message
-      const mentions = extractMentions(message);
-      onSendMessage(message, mentions);
+      onSendMessage(message, []);
       setMessage("");
     }
-  };
-
-  const extractMentions = (text: string): string[] => {
-    const mentionRegex = /@(\w+)/g;
-    const mentions: string[] = [];
-    let match;
-
-    while ((match = mentionRegex.exec(text)) !== null) {
-      mentions.push(match[1]);
-    }
-
-    return mentions;
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (message.trim()) {
-        const mentions = extractMentions(message);
-        onSendMessage(message, mentions);
+        onSendMessage(message, []);
         setMessage("");
-        setShowMentionsList(false);
       }
-    } else if (e.key === "@") {
-      setShowMentionsList(true);
-      setMentionQuery("");
-      setCursorPosition(e.currentTarget.selectionStart || 0);
-    } else if (showMentionsList && e.key === "Escape") {
-      setShowMentionsList(false);
-    } else if (showMentionsList && e.key === "ArrowDown") {
-      e.preventDefault();
-      // Handle arrow down in mentions list
-    } else if (showMentionsList && e.key === "ArrowUp") {
-      e.preventDefault();
-      // Handle arrow up in mentions list
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setMessage(value);
-
-    // Check if we're in a mention
-    const cursorPos = e.target.selectionStart || 0;
-    const textBeforeCursor = value.substring(0, cursorPos);
-    const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
-
-    if (mentionMatch) {
-      setShowMentionsList(true);
-      setMentionQuery(mentionMatch[1]);
-      setCursorPosition(cursorPos);
-    } else {
-      setShowMentionsList(false);
-    }
-  };
-
-  const insertMention = (contactName: string) => {
-    const beforeMention = message.substring(
-      0,
-      cursorPosition - mentionQuery.length - 1
-    );
-    const afterMention = message.substring(cursorPosition);
-    const newMessage = `${beforeMention}@${contactName} ${afterMention}`;
-
-    setMessage(newMessage);
-    setShowMentionsList(false);
-
-    // Focus back on input and place cursor after the inserted mention
-    if (inputRef.current) {
-      inputRef.current.focus();
-      const newCursorPosition = beforeMention.length + contactName.length + 2; // +2 for @ and space
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition
-          );
-        }
-      }, 0);
-    }
   };
 
   return (
