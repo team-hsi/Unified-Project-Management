@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Users } from "lucide-react";
+import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useChat } from "@/components/chat/chat-context";
 import { NewRoom } from "./new-room";
