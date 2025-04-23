@@ -1,7 +1,4 @@
 "use client";
-// import { useRef, useEffect } from "react";
-// import { cn } from "@/lib/utils";
-// import { useChat } from "./chat-context";
 import {
   ChatBubble,
   ChatBubbleAvatar,

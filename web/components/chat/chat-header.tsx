@@ -1,4 +1,4 @@
-import { Search, Phone, Video, MoreVertical } from "lucide-react";
+import { Search, MoreVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useChat } from "./chat-context";
 
