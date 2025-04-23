@@ -1,5 +1,5 @@
 "use client";
-import { Bell, Search, Settings2 } from "lucide-react";
+import { Bell, MessageCircle, Search, Settings2 } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -35,6 +35,15 @@ export const NavMain = () => {
               <Link href="#">
                 <Bell className="mr-2" />
                 {t("notifications")}
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/chat" prefetch={true}>
+                <MessageCircle className="mr-2" />
+                Chat
+                {/* {t("notifications")} */}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
