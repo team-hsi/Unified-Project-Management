@@ -79,7 +79,9 @@ export const NavProjects = () => {
         {projects.data.map((project: Project) => (
           <SidebarMenuItem key={project.id}>
             <SidebarMenuButton asChild isActive={segments.includes(project.id)}>
-              <Link href={`/projects/${project.id}`}>{project.name}</Link>
+              <Link href={`/projects/${project.id}`} prefetch={true}>
+                {project.name}
+              </Link>
             </SidebarMenuButton>
             <DropdownMenu
               open={openDropdowns[project.id]}

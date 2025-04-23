@@ -18,7 +18,11 @@ export const useProjectAction = ({
 }: HookProps) => {
   const queryClient = getQueryClient();
 
-  const { data: projects } = useSuspenseQuery({
+  const {
+    data: projects,
+    isPending,
+    error,
+  } = useSuspenseQuery({
     queryKey,
     queryFn: getUserProjects,
   });
@@ -48,6 +52,8 @@ export const useProjectAction = ({
 
   return {
     projects,
+    isPending,
+    error,
     createProject,
     updateProject,
     deleteProject,
