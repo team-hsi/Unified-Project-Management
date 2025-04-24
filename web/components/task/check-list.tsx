@@ -8,9 +8,10 @@ import { Plus } from "lucide-react";
 import type { CheckList as Check } from "../kanban/types";
 import { Button } from "../ui/button";
 import { CreateCheckList } from "./create-check-list";
-// import { useItemAction } from "@/hooks/use-item";
-// import { toast } from "sonner";
+import { useItemAction } from "@/hooks/use-item";
+import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { useParams } from "next/navigation";
 
 export const CheckList = ({
   lists,
@@ -19,21 +20,30 @@ export const CheckList = ({
   lists: Check[] | null;
   itemId: string;
 }) => {
-  // const [checklist, setChecklist] = React.useState(lists || []);
-  // const { updateItemInline } = useItemAction({
-  //   queryKey: ["items", itemId],
-  //   successAction: () => {
-  //     toast.success("Update", {
-  //       description: "Checklist updated successfully!",
-  //     });
-  //   },
-  // });
+  const [checklist, setChecklist] = React.useState(lists || []);
+  const { id } = useParams() as { id: string };
+  const { updateItemInline } = useItemAction({
+    queryKey: ["items", id],
+    successAction: () => {
+      toast.success("Update", {
+        description: "Checklist updated successfully!",
+      });
+    },
+  });
 
+  const handleToggle = async (index: number) => {
+    setChecklist((prev) =>
+      prev.map((item, idx) =>
+        idx === index ? { ...item, isCompleted: !item.isCompleted } : item
+      )
+    );
+    await updateItemInline.mutateAsync({ checklist, id: itemId });
+  };
   if (!lists || lists.length === 0) {
     return (
       <div className="p-5 w-full text-center">
         <p className="mb-4 text-muted-foreground">No checklist available</p>
-        <CreateCheckList itemId={itemId}>
+        <CreateCheckList itemId={itemId} currentList={lists}>
           <Button className="px-4 py-2">Create One</Button>
         </CreateCheckList>
       </div>
@@ -51,22 +61,23 @@ export const CheckList = ({
             Completed {completed}/{total}
           </span>
         </div>
-        <CreateCheckList itemId={itemId}>
-          <Tooltip>
-            <TooltipTrigger>
+        <Tooltip>
+          <TooltipTrigger>
+            <CreateCheckList itemId={itemId} currentList={lists}>
               <Plus className="hover:cursor-pointer" />
-            </TooltipTrigger>
-            <TooltipContent>Hello</TooltipContent>
-          </Tooltip>
-        </CreateCheckList>
+            </CreateCheckList>
+          </TooltipTrigger>
+          <TooltipContent>Add New</TooltipContent>
+        </Tooltip>
       </div>
 
       <CardContent className="space-y-4 p-0">
-        {lists.map((list, index) => (
+        {checklist.map((list, index) => (
           <div key={index} className="space-y-2">
             <label className="flex items-start gap-2 cursor-pointer">
               <Checkbox
-                // checked={list.isCompleted}
+                checked={list.isCompleted}
+                onCheckedChange={() => handleToggle(index)}
                 className="mt-1 border-white"
               />
               <span

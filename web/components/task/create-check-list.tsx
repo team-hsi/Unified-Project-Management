@@ -16,8 +16,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label"; // Import Label for better accessibility
 import { useItemAction } from "@/hooks/use-item";
 import { toast } from "sonner";
+import { useParams } from "next/navigation";
+import { CheckList } from "../kanban/types";
 
-// Define the Zod schema
 const checkListSchema = z.object({
   description: z
     .string()
@@ -25,56 +26,55 @@ const checkListSchema = z.object({
   isCompleted: z.boolean(),
 });
 
-// Infer the type from the schema
 type FormValues = z.infer<typeof checkListSchema>;
 
 export const CreateCheckList = ({
   itemId,
   children,
+  currentList,
 }: {
   children: React.ReactNode;
   itemId: string;
+  currentList: CheckList[] | null;
 }) => {
-  const [isOpen, setIsOpen] = useState(false); // State to control dialog visibility
+  const [isOpen, setIsOpen] = useState(false);
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(checkListSchema), // Use the Zod resolver
+    resolver: zodResolver(checkListSchema),
     defaultValues: {
       description: "",
       isCompleted: false,
     },
   });
+  const { id } = useParams() as { id: string };
   const { updateItemInline } = useItemAction({
-    queryKey: ["items", itemId],
+    queryKey: ["items", id],
     successAction: () => {
       toast.success("Create", {
         description: "Your checklist has been created.",
       });
-      setIsOpen(false); // Close dialog on success
-      reset(); // Reset form after successful submission and closing
+      setIsOpen(false);
+      reset();
     },
   });
 
   const onSubmit = async (data: FormValues) => {
-    const checklist = [data];
+    const checklist = [...(currentList ?? []), data]; // Changed {} to [] for correct type
     try {
       await updateItemInline.mutateAsync({ checklist, id: itemId });
-      // Success handled by successAction in useItemAction hook
     } catch (error) {
-      // Error handled by errorAction in useItemAction hook
       console.error("Submission failed:", error);
     }
   };
 
-  // Function to handle dialog open/close changes
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
-      reset(); // Reset form when dialog is closed manually
+      reset();
     }
   };
 
@@ -110,7 +110,7 @@ export const CreateCheckList = ({
                 <Checkbox
                   id="isCompleted"
                   checked={field.value}
-                  onCheckedChange={(checked) => field.onChange(!!checked)} // Ensure boolean value
+                  onCheckedChange={(checked) => field.onChange(!!checked)}
                 />
               )}
             />
