@@ -52,7 +52,6 @@ export const TaskBreadcrumb = ({
         <BreadcrumbList>
           {segments.map((segment, index) => {
             const isLast = index === segments.length - 1;
-            console.log(segment, index, isLast);
             return (
               <Fragment key={index}>
                 <BreadcrumbItem className="hidden md:block">

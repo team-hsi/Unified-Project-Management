@@ -2,11 +2,10 @@
 
 import React from "react";
 
-import { Edit, MoreHorizontal, Plus, Share, Trash2 } from "lucide-react";
+import { Edit, MoreHorizontal, Plus, Settings2, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -27,6 +26,7 @@ import { CustomDialogItem } from "./custom-dialog-item";
 import { DeleteProjectDialog } from "./delete-project-dialog";
 import { UpdateProjectDialog } from "./update-project-dialog";
 import { useProjectAction } from "@/hooks/use-project";
+import { Management } from "./management/management";
 
 export const NavProjects = () => {
   const { projects } = useProjectAction({});
@@ -79,7 +79,9 @@ export const NavProjects = () => {
         {projects.data.map((project: Project) => (
           <SidebarMenuItem key={project.id}>
             <SidebarMenuButton asChild isActive={segments.includes(project.id)}>
-              <Link href={`/projects/${project.id}`}>{project.name}</Link>
+              <Link href={`/projects/${project.id}`} prefetch={true}>
+                {project.name}
+              </Link>
             </SidebarMenuButton>
             <DropdownMenu
               open={openDropdowns[project.id]}
@@ -132,10 +134,20 @@ export const NavProjects = () => {
                   />
                 </CustomDialogItem>
 
-                <DropdownMenuItem>
-                  <Share className="mr-2 h-4 w-4 text-muted-foreground" />
-                  <span>Share Project</span>
-                </DropdownMenuItem>
+                <CustomDialogItem
+                  triggerChildren={
+                    <>
+                      <Settings2 className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <span>Management</span>
+                    </>
+                  }
+                  onSelect={() => handleDialogItemSelect(project.id)}
+                  onOpenChange={(open) =>
+                    handleDialogItemOpenChange(project.id, open)
+                  }
+                >
+                  <Management project={project} />
+                </CustomDialogItem>
 
                 <DropdownMenuSeparator />
 

@@ -21,10 +21,10 @@ import { useSignup } from "@/hooks/auth-hooks";
 const signupSchema = z.object({
   firstname: z
     .string()
-    .min(2, { message: "First name must be at least 3 characters" }),
+    .min(3, { message: "First name must be at least 3 characters" }),
   lastname: z
     .string()
-    .min(2, { message: "Last name must be at least 3 characters" }),
+    .min(3, { message: "Last name must be at least 3 characters" }),
   username: z
     .string()
     .min(3, { message: "Username must be at least 3 characters" }),

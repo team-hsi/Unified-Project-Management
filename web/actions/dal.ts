@@ -6,6 +6,9 @@ import { redirect } from "next/navigation";
 
 export const verifySession = cache(async () => {
   const cookie = (await cookies()).get(COOKIE_NAME)?.value;
+  if (!cookie) {
+    redirect("/sign-in");
+  }
   const session = await decrypt(cookie);
 
   if (!session?.userId) {

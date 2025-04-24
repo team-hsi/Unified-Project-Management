@@ -1,0 +1,29 @@
+"use client";
+import type React from "react";
+
+import { ManagementsView } from "./types";
+import { LabelsView } from "./labels/labels";
+import { PeopleView } from "./people";
+import { NotificationsView } from "./notifications";
+import { GeneralView } from "./general";
+import { Project } from "../types";
+
+interface ManagementContentProps {
+  currentView: ManagementsView;
+  project: Project;
+}
+
+export const ManagementsContent = ({
+  currentView,
+  project,
+}: ManagementContentProps) => {
+  // Map views to components
+  const viewComponents: Record<ManagementsView, React.ReactNode> = {
+    general: <GeneralView project={project} />,
+    notifications: <NotificationsView />,
+    people: <PeopleView />,
+    labels: <LabelsView project={project} />,
+  };
+
+  return viewComponents[currentView || "general"];
+};

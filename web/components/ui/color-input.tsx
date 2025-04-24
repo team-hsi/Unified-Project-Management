@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
-import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
+import { cn, generateRandomColor } from "@/lib/utils";
+import { CheckIcon } from "@radix-ui/react-icons";
+import { RefreshCcw } from "lucide-react";
 
 interface ColorInputProps {
   onChange?: (color: string) => void; // Callback for final color
@@ -44,30 +44,25 @@ function ColorInput({
   showOpacity = true,
   label = "Color",
 }: ColorInputProps) {
-  const [color, setColor] = useState(defaultValue); // Base color without opacity
-  const [opacity, setOpacity] = useState(100); // Opacity (0-100)
-  const [copiedText, copy] = useCopyToClipboard();
+  const [color, setColor] = useState(defaultValue);
+  const [opacity, setOpacity] = useState(100);
 
-  const finalColor = generateFinalColor(color, opacity); // Calculate the final color
+  const finalColor = generateFinalColor(color, opacity);
 
   // Trigger the onChange callback whenever color or opacity changes
   const updateFinalColor = (newColor: string, newOpacity = opacity) => {
     const updatedColor = generateFinalColor(newColor, newOpacity);
     setColor(newColor);
-    onChange?.(updatedColor); // Pass final color to parent
+    onChange?.(updatedColor);
   };
 
   const updateOpacity = (newOpacity: number) => {
     setOpacity(newOpacity);
-    onChange?.(generateFinalColor(color, newOpacity)); // Pass final color to parent
-  };
-
-  const handleCopy = async () => {
-    await copy(finalColor);
+    onChange?.(generateFinalColor(color, newOpacity));
   };
 
   return (
-    <div className="w-full  space-y-2 relative z-10 min-h-[200px]">
+    <div className="w-full space-y-2 relative z-10 min-h-[200px]">
       {label && (
         <label
           htmlFor="color-input"
@@ -78,19 +73,19 @@ function ColorInput({
       )}
 
       {/* Color Picker */}
-      <div className="p-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg">
+      <div className="p-3 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg">
         {/* Color Preview & Input */}
         <div className="flex gap-2 items-center">
           <div
             className="w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-700"
-            style={{ backgroundColor: finalColor }} // Display final color
+            style={{ backgroundColor: finalColor }}
           />
           <input
             id="color-input"
             type="text"
-            value={finalColor.toUpperCase()} // Show final color
+            value={finalColor.toUpperCase()}
             onChange={(e) => {
-              const value = e.target.value.slice(0, 7); // Extract base color
+              const value = e.target.value.slice(0, 7);
               if (/^#[0-9A-F]{6}$/i.test(value)) {
                 updateFinalColor(value);
               }
@@ -103,14 +98,10 @@ function ColorInput({
           />
           <button
             type="button"
-            onClick={handleCopy}
+            onClick={() => updateFinalColor(generateRandomColor())}
             className="ml-2 hover:opacity-70"
           >
-            {copiedText === finalColor ? (
-              <CheckIcon className="w-4 h-4 text-green-500" />
-            ) : (
-              <CopyIcon className="w-4 h-4 text-zinc-500" />
-            )}
+            <RefreshCcw className="w-4 h-4 text-zinc-500" />
           </button>
         </div>
 

@@ -55,7 +55,8 @@ export const useItemAction = ({
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         startDate: null,
-        labels: newItemData.labels || [],
+        labels: [],
+        checklist: [],
       };
       queryClient.setQueryData(queryKey, (old: Item[] = []) => {
         return [...old, optimisticItem];
@@ -84,6 +85,17 @@ export const useItemAction = ({
     onMutate: async (updatedItemData) => {
       await queryClient.cancelQueries({ queryKey });
       const previousItems = queryClient.getQueryData(queryKey);
+      console.log("previousItems", previousItems);
+      console.log("updatedItemData", updatedItemData);
+      // const newItemData = previousItems.map((item: { id: string }) => {
+      //   return item.id === updatedItemData.id
+      //     ? {
+      //         ...item,
+      //         ...updatedItemData,
+      //       }
+      //     : item;
+      // });
+      // console.log("newItemData", newItemData);
       queryClient.setQueryData(queryKey, (old: Item[] = []) => {
         return old.map((item) =>
           item.id === updatedItemData.id
@@ -106,7 +118,7 @@ export const useItemAction = ({
     },
     onSuccess: (result) => {
       if (!result.success) {
-        toast.error(result.error);
+        toast.error(JSON.stringify(result.error));
         queryClient.invalidateQueries({ queryKey });
         return;
       }

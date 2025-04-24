@@ -11,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ThemeSwitcher } from "../ui/theme-switch";
 import { getSessionUser, logoutAction } from "@/actions/auth-actions";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "../ui/skeleton";
@@ -35,9 +34,9 @@ export function NavUser() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="h-8 w-8 rounded-lg cursor-pointer hover:opacity-50">
+        <Avatar className="h-8 w-8 rounded-lg cursor-pointer hover:bg-muted border hover:ring-1 hover:ring-ring ">
           <AvatarImage
-            src={`https://api.dicebear.com/9.x/lorelei/svg?backgroundColor=b6e3f4&eyes=variant02&seed=${data.username}`}
+            src={`https://api.dicebear.com/9.x/identicon/svg?scale=50&radius=50&seed=${data.username}`}
             alt={`user ${data.username} avatar`}
           />
           <AvatarFallback className="rounded-lg">CN</AvatarFallback>
@@ -50,9 +49,9 @@ export function NavUser() {
       >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-            <Avatar className="h-8 w-8 rounded-lg">
+            <Avatar className="h-8 w-8 rounded-lg border">
               <AvatarImage
-                src={`https://api.dicebear.com/9.x/lorelei/svg?backgroundColor=b6e3f4&eyes=variant02&seed=${data.username}`}
+                src={`https://api.dicebear.com/9.x/identicon/svg?scale=50&radius=50&seed=${data.username}`}
                 alt={`user ${data.username} avatar`}
               />
               <AvatarFallback className="rounded-lg">CN</AvatarFallback>
@@ -87,9 +86,6 @@ export function NavUser() {
             <LogOut />
             Log out
           </DropdownMenuItem>
-          <div className="w-full p-1 mt-2">
-            <ThemeSwitcher className=" w-fit m-auto" />
-          </div>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

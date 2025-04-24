@@ -1,0 +1,40 @@
+{
+  "Sidebar": {
+    "search": "ድለ",
+    "notifications": "ኣፍልጦታት",
+    "settings": "ቅንብራት"
+  },
+  "Preferences": {
+    "title": "ምርጫታት",
+    "description": "ተመክሮኻ ኣመሓይሽ።",
+    "appearance": {
+      "title": "መልክዕ",
+      "description": "ኣፕሊኬሽንካ ኣብ መሳርያኻ ከመይ ከም ዝረአ ይምረጽ።"
+    },
+    "theme": {
+      "title": "ፍርያ",
+      "light": "ብርሃን",
+      "dark": "ጸልማት",
+      "system": "ነባሪ ስርዓት"
+    },
+    "language&time": {
+      "title": "ቋንቋን ሰዓትን",
+      "language": {
+        "title": "ቋንቋ",
+        "description": "ነቲ ኣብ በይነገጽ ተጠቃሚ ዝጥቀም ቋንቋ ቀይር።"
+      },
+      "timezone": {
+        "title": "ዞባ ሰዓት",
+        "description": "ዞባ ሰዓትካ ምረጽ።"
+      },
+      "weekStart": {
+        "title": "ሰሙን ብሰኑይ ይጅምር",
+        "description": "እዚ ኣብ መተግበሪኻ ዘለዉ ኩሎም ዓውደኣዋርሕ ከመይ ከም ዝረኣዩ ይቕይር።"
+      },
+      "automaticTimeZone": {
+        "title": "ኣካባቢኻ ብምጥቃም ዞባ ሰዓት ብኣውቶማቲክ ኣቐምጥ",
+        "description": "መዘኻኸርታትን ኣፍልጦታትን ኢሜይላትን ብመሰረት ዞባ ሰዓትካ እዮም ዝመጹ።"
+      }
+    }
+  }
+}

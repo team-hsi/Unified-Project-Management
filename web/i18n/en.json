@@ -1,0 +1,40 @@
+{
+  "Sidebar": {
+    "search": "Search",
+    "notifications": "Notifications",
+    "settings": "Settings"
+  },
+  "Preferences": {
+    "title": "Preferences",
+    "description": "Customize your experience.",
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize how the application looks on your device."
+    },
+    "theme": {
+      "title": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System Default"
+    },
+    "language&time": {
+      "title": "Language & Time",
+      "language": {
+        "title": "Language",
+        "description": "Change the language used in the user interface."
+      },
+      "timezone": {
+        "title": "Time Zone",
+        "description": "Select your time zone."
+      },
+      "weekStart": {
+        "title": "Start week on Monday",
+        "description": "This will change how all calendars in your app look."
+      },
+      "automaticTimeZone": {
+        "title": "Set timezone automatically using your location",
+        "description": "Reminders, notifications and emails are delivered based on your time zone."
+      }
+    }
+  }
+}

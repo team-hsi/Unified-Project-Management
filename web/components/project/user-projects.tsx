@@ -1,6 +1,5 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { PlusCircle, Search } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
@@ -15,10 +14,10 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect } from "react";
-import { getUserProjects } from "@/actions/project-actions";
+import { useState } from "react";
 import EmptyProjects from "./empty-projects";
 import { CreateProjectDialog } from "./create-project-dialog";
+import { useProjectAction } from "@/hooks/use-project";
 
 interface Project {
   id: string;
@@ -30,22 +29,7 @@ interface Project {
 
 export default function UserProjects() {
   const [searchQuery, setSearchQuery] = useState("");
-  // Add client-side only rendering state
-  const [isClient, setIsClient] = useState(false);
-
-  // Set isClient to true after component mounts
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const {
-    data: projects,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["projects", "user"],
-    queryFn: getUserProjects,
-  });
+  const { projects, isPending, error } = useProjectAction({}); // Updated to include error
 
   // Filter projects based on search query
   const filteredProjects =
@@ -53,12 +37,7 @@ export default function UserProjects() {
       project.name.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
-  // Only render the actual content on the client to avoid hydration mismatch
-  if (!isClient) {
-    return <ProjectsLoading />;
-  }
-
-  if (isLoading) {
+  if (isPending) {
     return <ProjectsLoading />;
   }
 

@@ -79,6 +79,7 @@ export const useLogout = () => {
     mutationFn: logoutAction,
     onSuccess: () => {
       queryClient.setQueryData(["currentUser"], null);
+      queryClient.clear();
     },
     onError: (error: Error) => {
       toast.error(error.message);

@@ -5,6 +5,8 @@ import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme/next-theme";
 import { Toaster } from "sonner";
+import { getLocale } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,13 +23,14 @@ export const metadata: Metadata = {
   description: "A comprehensive platform for managing projects and tasks.",
 };
 
-const RootLayout = ({
+const RootLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  const locale = await getLocale();
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -44,7 +47,7 @@ const RootLayout = ({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <NextIntlClientProvider>{children}</NextIntlClientProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>
