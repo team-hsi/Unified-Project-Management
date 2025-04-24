@@ -1,8 +1,8 @@
 "use server";
 
 import type { PartialProject } from "@/components/project/types";
-import { notFound } from "next/navigation";
-import { verifySession } from "./dal";
+import { notFound, redirect } from "next/navigation";
+import { getSession } from "./dal";
 import { cache } from "react";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
@@ -25,7 +25,7 @@ export const getProject = cache(async (id: string) => {
   return { success: true, data };
 });
 export const getUserProjects = async () => {
-  const session = await verifySession();
+  const session = await getSession();
   const res = await fetch(`${API}/v1/users/${session.userId}/projects`);
   if (!res.ok) {
     const data = await res.json();
@@ -36,9 +36,10 @@ export const getUserProjects = async () => {
 };
 
 export const createProject = async (values: PartialProject) => {
-  const session = await verifySession();
-  console.log(session);
-  console.log(values);
+  const session = await getSession();
+  if (!session) {
+    redirect("/sign-in");
+  }
   const res = await fetch(`${API}/v1/projects/create`, {
     method: "POST",
     headers: {

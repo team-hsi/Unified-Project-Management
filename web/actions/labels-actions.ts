@@ -1,6 +1,6 @@
 "use server";
 
-import type { UpdateLabelPayload } from "@/actions/action-types";
+import type { LabelPayload } from "@/actions/action-types";
 const API = process.env.NEXT_PUBLIC_API_URL;
 export const getLabels = async () => {
   try {
@@ -16,7 +16,7 @@ export const getLabels = async () => {
 };
 
 export const getLabelsByProjectId = async (
-  values: Pick<UpdateLabelPayload, "projectId">
+  values: Pick<LabelPayload, "projectId">
 ) => {
   const { projectId } = values;
   const res = await fetch(`${API}/v1/projects/${projectId}/labels`);
@@ -29,7 +29,7 @@ export const getLabelsByProjectId = async (
   return { success: true, data };
 };
 
-export const getLabelById = async (values: Pick<UpdateLabelPayload, "id">) => {
+export const getLabelById = async (values: Pick<LabelPayload, "id">) => {
   const { id } = values;
   const res = await fetch(`${API}/v1/labels/${id}`);
 
@@ -41,7 +41,7 @@ export const getLabelById = async (values: Pick<UpdateLabelPayload, "id">) => {
   return { success: true, data };
 };
 
-export const createLabel = async (values: UpdateLabelPayload) => {
+export const createLabel = async (values: LabelPayload) => {
   const res = await fetch(`${API}/v1/labels/create`, {
     method: "POST",
     headers: {
@@ -57,7 +57,7 @@ export const createLabel = async (values: UpdateLabelPayload) => {
   return { success: true, data };
 };
 
-export const deleteLabel = async (values: Pick<UpdateLabelPayload, "id">) => {
+export const deleteLabel = async (values: Pick<LabelPayload, "id">) => {
   const { id } = values;
   const res = await fetch(`${API}/v1/labels/${id}`, {
     method: "DELETE",
@@ -73,7 +73,7 @@ export const deleteLabel = async (values: Pick<UpdateLabelPayload, "id">) => {
   return { success: true };
 };
 
-export const updateLabel = async (values: UpdateLabelPayload) => {
+export const updateLabel = async (values: LabelPayload) => {
   const { id, ...rest } = values;
   const res = await fetch(`${API}/v1/labels/${id}`, {
     method: "PUT",

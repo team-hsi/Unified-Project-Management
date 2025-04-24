@@ -1,5 +1,6 @@
 import { verifySession } from "@/actions/dal";
 import { getUserProjects } from "@/actions/project-actions";
+import { getUserWorkspaces } from "@/actions/workspace-actions";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AuthProvider } from "@/lib/auth/auth-provider";
@@ -14,6 +15,10 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
   queryClient.prefetchQuery({
     queryKey: ["projects", "user"],
     queryFn: getUserProjects,
+  });
+  queryClient.prefetchQuery({
+    queryKey: ["workspaces", "user"],
+    queryFn: getUserWorkspaces,
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

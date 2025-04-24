@@ -1,7 +1,7 @@
 "use server";
 
 import { PartialProject } from "@/components/project/types";
-import type { UpdateItemPayload } from "@/actions/action-types";
+import type { ItemPayload } from "@/actions/action-types";
 const API = process.env.NEXT_PUBLIC_API_URL;
 export const getItems = async () => {
   try {
@@ -26,7 +26,7 @@ export const getProjectItems = async ({ id }: PartialProject) => {
   return res.json();
 };
 
-export const updateItemInline = async (values: UpdateItemPayload) => {
+export const updateItemInline = async (values: ItemPayload) => {
   const { id, ...rest } = values;
   const res = await fetch(`${API}/v1/items/${id}`, {
     method: "PUT",
@@ -56,7 +56,7 @@ export const updateItemInline = async (values: UpdateItemPayload) => {
   return { success: true, data };
 };
 
-export const createItem = async (values: UpdateItemPayload) => {
+export const createItem = async (values: ItemPayload) => {
   const { id, ...rest } = values;
   const res = await fetch(`${API}/v1/items/create`, {
     method: "POST",
@@ -76,7 +76,7 @@ export const createItem = async (values: UpdateItemPayload) => {
   return { success: true, data };
 };
 
-export const deleteItemById = async (values: UpdateItemPayload) => {
+export const deleteItemById = async (values: ItemPayload) => {
   const { id } = values;
   const res = await fetch(`${API}/v1/items/${id}`, {
     method: "DELETE",

@@ -1,7 +1,7 @@
 "use server";
 
 import { PartialProject } from "@/components/project/types";
-import { UpdateBucketPayload } from "./action-types";
+import { BucketPayload } from "./action-types";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 export const getBuckets = async () => {
@@ -45,7 +45,7 @@ export const createBucket = async ({
   return { success: true, data };
 };
 
-export const updateBucket = async (payload: UpdateBucketPayload) => {
+export const updateBucket = async (payload: BucketPayload) => {
   const { id, ...rest } = payload;
   const res = await fetch(`${API}/v1/buckets/${id}`, {
     method: "PUT",
