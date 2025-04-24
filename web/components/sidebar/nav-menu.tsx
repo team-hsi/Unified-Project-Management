@@ -1,5 +1,5 @@
 "use client";
-import { Bell, MessageCircle, Search, Settings2 } from "lucide-react";
+import { Bell, MessageCircle, Search, Settings } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -51,7 +51,7 @@ export const NavMain = () => {
             <SettingsDialog>
               <SidebarMenuButton asChild className="cursor-pointer">
                 <span className="flex items-center gap-4">
-                  <Settings2 />
+                  <Settings />
                   {t("settings")}
                 </span>
               </SidebarMenuButton>

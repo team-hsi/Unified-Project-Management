@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label"; // Import Label for better accessibility
+import { Label } from "@/components/ui/label";
 import { useItemAction } from "@/hooks/use-item";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
@@ -63,7 +63,7 @@ export const CreateCheckList = ({
   });
 
   const onSubmit = async (data: FormValues) => {
-    const checklist = [...(currentList ?? []), data]; // Changed {} to [] for correct type
+    const checklist = [...(currentList ?? []), data];
     try {
       await updateItemInline.mutateAsync({ checklist, id: itemId });
     } catch (error) {
