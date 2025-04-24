@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import InlineEdit from "../ui/inline-edit";
 import { useBucketAction } from "@/hooks/use-bucket";
 import React from "react";
+import { Plus } from "lucide-react";
 
 interface KanbanBucketProps {
   bucket: Bucket;
@@ -111,6 +112,13 @@ export const KanbanBucket = ({ bucket, index }: KanbanBucketProps) => {
               </div>
             )}
           </Droppable>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full mt-2 text-muted-foreground"
+          >
+            <Plus size={16} className="mr-1" /> Add a card
+          </Button>
         </div>
       )}
     </Draggable>

@@ -75,7 +75,9 @@ export const KanbanBoard = ({ projectId }: { projectId: string }) => {
         })
       );
 
-      toast.success(`Column "${items[0].name}" reordered`);
+      toast.success("Reordered buckets", {
+        description: "Buckets have been reordered.",
+      });
       setBoard(items);
       //Todo: trigger server action
       return;
@@ -128,10 +130,9 @@ export const KanbanBoard = ({ projectId }: { projectId: string }) => {
           reorderedItems,
           destination.index + 1
         );
-        toast.success(`
-          draggedItem: ${draggableId}
-          prevItemId: ${prevItemId}
-          nextItemId: ${nextItemId}`);
+        toast.success("Reordered", {
+          description: "Item has been reordered.",
+        });
         setBoard(newState);
         reorderItemMutation.mutateAsync({
           itemId: draggableId,
@@ -160,12 +161,9 @@ export const KanbanBoard = ({ projectId }: { projectId: string }) => {
           destBucket,
           destination.index + 1
         );
-        toast.success(`
-          movedBucket: ${srcBucket.name}
-          movedItem: ${movedItem.id}
-          destBucket: ${destBucket.name}
-          prevItemIdDest: ${prevItemIdDest}
-          nextItemIdDest: ${nextItemIdDest}`);
+        toast.success("Moved", {
+          description: "Item moved to another bucket.",
+        });
         setBoard(newState);
         moveItemMutation.mutateAsync({
           itemId: movedItem.id,
