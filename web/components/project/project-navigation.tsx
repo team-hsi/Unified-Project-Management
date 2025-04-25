@@ -14,10 +14,10 @@ import { Fragment } from "react";
 import { NavigationControls } from "./navigation-controls";
 import { NavUser } from "../user/nav-user";
 import { Project } from "@/lib/stores/project-store";
-import { useProjectAction } from "@/hooks/use-project";
+import { useProject } from "@/hooks/use-project";
 
 export const ProjectNavigation = () => {
-  const { projects } = useProjectAction({});
+  const { projects } = useProject();
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
   return (

@@ -15,9 +15,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import EmptyProjects from "./empty-projects";
-import { CreateProjectDialog } from "./create-project-dialog";
-import { useProjectAction } from "@/hooks/use-project";
+import { useProject } from "@/hooks/use-project";
+import { CreateProjectDialog } from "../project/create-project-dialog";
+import EmptyProjects from "../project/empty-projects";
+import { useParams } from "next/navigation";
 
 interface Project {
   id: string;
@@ -27,9 +28,10 @@ interface Project {
   updatedAt: string;
 }
 
-export default function UserProjects() {
+export const WorkspaceProjects = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { projects, isPending, error } = useProjectAction({}); // Updated to include error
+  const { projects, isPending, error } = useProject();
+  // Updated to include error
 
   // Filter projects based on search query
   const filteredProjects =
@@ -94,18 +96,19 @@ export default function UserProjects() {
       )}
     </div>
   );
-}
+};
 
 function ProjectCard({ project }: { project: Project }) {
   // Format dates using date-fns
   const createdDate = new Date(project.createdAt);
   const updatedDate = new Date(project.updatedAt);
+  const { workspaceId } = useParams<{ workspaceId: string }>();
 
   const timeAgo = formatDistanceToNow(updatedDate, { addSuffix: true });
   const formattedCreatedDate = format(createdDate, "MMM d, yyyy");
 
   return (
-    <Link href={`/projects/${project.id}`} className="block">
+    <Link href={`/${workspaceId}/${project.id}`} className="block">
       <Card className="overflow-hidden transition-all hover:shadow-md">
         <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
           <div className="space-y-1">

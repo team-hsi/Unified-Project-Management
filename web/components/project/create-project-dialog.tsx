@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { FolderPlus } from "lucide-react";
 import { NameDescriptionForm } from "../form/name-description-form";
-import { useProjectAction } from "@/hooks/use-project";
+import { useProject } from "@/hooks/use-project";
 
 export function CreateProjectDialog({
   children,
@@ -18,9 +18,9 @@ export function CreateProjectDialog({
 }) {
   const [open, setOpen] = React.useState(false);
 
-  const { createProject } = useProjectAction({});
+  const { createProject } = useProject();
 
-  const handleCreate = async (data: { name: string; description?: string }) => {
+  const handleCreate = async (data: { name: string }) => {
     await createProject.mutateAsync(data);
     setOpen(false);
   };

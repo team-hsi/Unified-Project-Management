@@ -2,24 +2,18 @@ import {
   createLabel,
   updateLabel as updateAction,
   deleteLabel as deleteAction,
-  getLabelsByProjectId,
 } from "@/actions/labels-actions";
+import { getProjectLabels } from "@/actions/project-actions";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-export type Label = {
-  name: string;
-  color: string;
-  projectId: string;
-  id: string;
-};
 
 export const useLabels = ({ projectId }: { projectId: string }) => {
   const queryClient = getQueryClient();
 
   const labels = useQuery({
     queryKey: ["labels", projectId],
-    queryFn: () => getLabelsByProjectId({ projectId }),
+    queryFn: () => getProjectLabels({ id: projectId }),
   });
 
   const addLabel = useMutation({

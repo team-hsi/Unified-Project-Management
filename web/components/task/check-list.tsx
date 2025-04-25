@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
-import type { CheckList as Check } from "../kanban/types";
+import type { CheckList as Check } from "@/@types/check-list";
 import { Button } from "../ui/button";
 import { CreateCheckList } from "./create-check-list";
 // import { useItemAction } from "@/hooks/use-item";

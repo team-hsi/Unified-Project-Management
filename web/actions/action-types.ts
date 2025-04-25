@@ -1,6 +1,6 @@
-import { CheckList } from "@/components/kanban/types";
+import { CheckList } from "@/@types/check-list";
 
-export type UpdateItemPayload = {
+export type ItemPayload = {
   name?: string;
   description?: string;
   labels?: string[];
@@ -10,16 +10,4 @@ export type UpdateItemPayload = {
   priority?: "low" | "medium" | "high" | "";
   status?: "complete" | "incomplete";
   id: string;
-};
-export type UpdateBucketPayload = {
-  id: string;
-  name?: string;
-  color?: string;
-};
-
-export type UpdateLabelPayload = {
-  name: string;
-  color: string;
-  projectId?: string;
-  id?: string;
 };

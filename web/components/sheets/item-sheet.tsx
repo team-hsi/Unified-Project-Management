@@ -6,11 +6,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { TaskBreadcrumb } from "./task-breadcrumb";
-// import { TaskWorkflow } from "../task/task-workflow";
-import { Item } from "../kanban/types";
 import { ItemDetails } from "../task/item-details";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TaskWorkflow } from "../task/task-workflow";
+import { Item } from "@/@types/item";
 
 export const ItemSheet = ({
   children,

@@ -1,6 +1,5 @@
 import { cn, hexToRgba } from "@/lib/utils";
 import { Card, CardContent } from "../ui/card";
-import { Item } from "./types";
 import { ItemSheet } from "../sheets/item-sheet";
 import { DualButton } from "../task/dual-button";
 import { Draggable } from "@hello-pangea/dnd";
@@ -8,6 +7,7 @@ import { Checkbox } from "../ui/checkbox";
 import { AnimatePresence, motion } from "framer-motion";
 import { Badge } from "../ui/badge";
 import { useLabels } from "@/hooks/use-labels";
+import { Item } from "@/@types/item";
 
 interface KanbanCardProps {
   item: Item;

@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { getPriorityColor } from "../kanban/utils";
 import { memo } from "react";
-import { Item } from "../kanban/types";
+import { Item } from "@/@types/item";
 
 interface TaskPriorityBadgeProps {
   priority: Item["priority"];

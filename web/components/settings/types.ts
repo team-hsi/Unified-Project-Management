@@ -2,9 +2,9 @@ export type SettingsView =
   | "preferences"
   | "notifications"
   | "general"
-  | "people";
+  | "people"
+  | "space";
 
-// | "connections"
 // | "sites"
 // | "emoji"
 // | "import"

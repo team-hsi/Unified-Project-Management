@@ -21,7 +21,7 @@ import type { ProjectDialogProps } from "./types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useProjectAction } from "@/hooks/use-project";
+import { useProject } from "@/hooks/use-project";
 
 export const DeleteProjectDialog = ({
   project,
@@ -43,7 +43,7 @@ export const DeleteProjectDialog = ({
     },
   });
 
-  const { deleteProject } = useProjectAction({
+  const { deleteProject } = useProject({
     successAction: () => {
       form.reset();
       onOpenChange?.(false);

@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { generateRandomColor } from "@/lib/utils";
-import type { ProjectLabel } from "../types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,24 +15,22 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { ColorInput } from "@/components/ui/color-input";
+import { LabelPayload } from "@/@types/label";
 
-// Define the validation schema with Zod
 const formSchema = z.object({
   name: z.string().min(3, "Label name is required"),
   color: z.string().min(3, "Color is required"),
 });
 
-// Define the form values type from the schema
 type FormValues = z.infer<typeof formSchema>;
-
+type LabelProps = Pick<LabelPayload, "name" | "color">;
 interface LabelFormProps {
-  initialData: ProjectLabel;
-  onSave: (data: ProjectLabel) => void;
+  initialData: LabelProps;
+  onSave: (data: LabelProps) => void;
   onCancel: () => void;
 }
 
 export function LabelForm({ initialData, onCancel, onSave }: LabelFormProps) {
-  // Initialize form with react-hook-form and zod validation
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,13 +38,9 @@ export function LabelForm({ initialData, onCancel, onSave }: LabelFormProps) {
       color: initialData.color || generateRandomColor(),
     },
   });
-
-  // Get current form values for the preview
   const watchedValues = form.watch();
-
-  // Handle form submission
   const onSubmit = (values: FormValues) => {
-    onSave(values as ProjectLabel);
+    onSave(values);
   };
 
   return (

@@ -5,9 +5,11 @@ import { SignJWT, jwtVerify } from "jose";
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 export const COOKIE_NAME = "unifiedSession";
+export const ACTIVE_WS = "unified_active_ws";
 
 export type SessionPayload = {
   userId: string;
+  activeSpace: string;
   accessToken: string;
   refreshToken: string;
   expiresAt: Date;
@@ -31,22 +33,11 @@ export async function decrypt(session: string | undefined = "") {
     return null;
   }
 }
-export async function createSession({
-  userId,
-  accessToken,
-  refreshToken,
-}: {
-  userId: string;
-  accessToken: string;
-  refreshToken: string;
-}) {
+export async function createSession(
+  payload: Omit<SessionPayload, "expiresAt">
+) {
   const expiresAt = new Date(Date.now() + 59 * 60 * 1000);
-  const session = await encrypt({
-    userId,
-    accessToken,
-    refreshToken,
-    expiresAt,
-  });
+  const session = await encrypt({ ...payload, expiresAt });
   const cookieStore = await cookies();
 
   cookieStore.set(COOKIE_NAME, session, {
@@ -55,6 +46,11 @@ export async function createSession({
     expires: expiresAt,
     sameSite: "lax",
     path: "/",
+  });
+  // Set active workspace cookie
+  cookieStore.set({
+    name: ACTIVE_WS,
+    value: payload.activeSpace,
   });
 }
 

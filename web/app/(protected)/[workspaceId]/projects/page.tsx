@@ -1,4 +1,4 @@
-import UserProjects from "@/components/project/user-projects";
+import { WorkspaceProjects } from "@/components/space/workspace-projects";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 const Page = async () => {
   return (
     <div className="max-h-full overflow-hidden p-5">
-      <UserProjects />
+      <WorkspaceProjects />
     </div>
   );
 };

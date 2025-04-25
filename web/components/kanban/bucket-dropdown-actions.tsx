@@ -11,26 +11,25 @@ import { CustomDialogItem } from "@/components/project/custom-dialog-item";
 import { useState } from "react";
 import { ColorInput } from "../ui/color-input";
 import { useBucketAction } from "@/hooks/use-bucket";
-import stringToColor, { cn } from "@/lib/utils";
+import { stringToColor, cn } from "@/lib/utils";
 import { useItemAction } from "@/hooks/use-item";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Bucket } from "@/@types/bucket";
 
 /*
  * Add Item
  */
 export const AddBucketItem = ({
-  bucketId,
-  projectId,
+  bucket,
   onSelect,
   onOpenChange,
 }: {
-  bucketId: string;
-  projectId: string;
+  bucket: Bucket;
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
   const { createItem } = useItemAction({
-    queryKey: ["items", projectId],
+    queryKey: [bucket.project.id, "items"],
   });
 
   const handleSubmit = async (values: {
@@ -38,7 +37,7 @@ export const AddBucketItem = ({
     description?: string;
   }) => {
     onOpenChange?.(false);
-    await createItem.mutateAsync({ ...values, id: bucketId });
+    await createItem.mutateAsync({ ...values, bucketId: bucket.id });
   };
 
   return (
@@ -66,20 +65,20 @@ export const AddBucketItem = ({
  */
 
 export const ChangeBucketColor = ({
-  values,
+  bucket,
   onSelect,
   onOpenChange,
 }: {
-  values: { id: string; projectId: string; color?: string };
+  bucket: Bucket;
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
   const [color, setColor] = useState<string>(
-    values.color || stringToColor(values.id)
+    bucket.color || stringToColor(bucket.id)
   );
   const [colorPopoverOpen, setColorPopoverOpen] = useState(false);
   const { updateBucket } = useBucketAction({
-    queryKey: ["buckets", values.projectId],
+    queryKey: [bucket.project.id, "buckets"],
   });
 
   return (
@@ -111,11 +110,12 @@ export const ChangeBucketColor = ({
             onClick={async () => {
               onOpenChange?.(false);
               await updateBucket.mutateAsync({
-                id: values.id,
+                id: bucket.id,
+                name: bucket.name,
                 color,
               });
             }}
-            disabled={updateBucket.isPending || color === values.color}
+            disabled={updateBucket.isPending || color === bucket.color}
           >
             {updateBucket.isPending ? (
               <Loader className="mr-2 h-4 w-4 animate-spin" />
@@ -130,19 +130,19 @@ export const ChangeBucketColor = ({
 };
 
 export const EditBucket = ({
-  values,
+  bucket,
   onSelect,
   onOpenChange,
 }: {
-  values: { id: string; projectId: string; color?: string };
+  bucket: Bucket;
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
   const [color, setColor] = useState<string>(
-    values.color || stringToColor(values.id)
+    bucket.color || stringToColor(bucket.id)
   );
   const { updateBucket } = useBucketAction({
-    queryKey: ["buckets", values.projectId],
+    queryKey: [bucket.project.id, "buckets"],
   });
 
   return (
@@ -171,11 +171,12 @@ export const EditBucket = ({
             onClick={async () => {
               onOpenChange?.(false);
               await updateBucket.mutateAsync({
-                id: values.id,
+                id: bucket.id,
+                name: bucket.name,
                 color,
               });
             }}
-            disabled={updateBucket.isPending || color === values.color}
+            disabled={updateBucket.isPending || color === bucket.color}
           >
             {updateBucket.isPending ? (
               <Loader className="mr-2 h-4 w-4 animate-spin" />
@@ -196,20 +197,18 @@ export const EditBucket = ({
 export const DeleteBucket = ({
   onSelect,
   onOpenChange,
-  bucketId,
-  projectId,
+  bucket,
 }: {
-  bucketId: string;
-  projectId: string;
+  bucket: Bucket;
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
   const { deleteBucket } = useBucketAction({
-    queryKey: ["buckets", projectId],
+    queryKey: [bucket.project.id, "buckets"],
   });
   const handleDeleteBucket = async () => {
-    // onOpenChange?.(false);
-    await deleteBucket.mutateAsync({ id: bucketId });
+    onOpenChange?.(false);
+    await deleteBucket.mutateAsync({ id: bucket.id });
   };
 
   return (
@@ -245,7 +244,7 @@ export const DeleteBucket = ({
   );
 };
 
-const DropdownAction = ({
+export const DropdownAction = ({
   icon: Icon,
   label,
 }: {

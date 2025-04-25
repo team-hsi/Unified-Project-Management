@@ -32,9 +32,9 @@ import {
 } from "@/components/ui/select";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { getProjectBuckets } from "@/actions/bucket-actions";
 import { useItemAction } from "@/hooks/use-item";
-import { Bucket } from "../kanban/types";
+import { getProjectBuckets } from "@/actions/project-actions";
+import { Bucket } from "@/@types/bucket";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -49,7 +49,7 @@ interface AddItemDrawerProps {
 
 export function AddItemDrawer({ children }: AddItemDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const params = useParams() as { id: string };
+  const params = useParams() as { projectId: string };
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -58,15 +58,15 @@ export function AddItemDrawer({ children }: AddItemDrawerProps) {
     },
   });
   const { data } = useSuspenseQuery({
-    queryKey: ["buckets", params.id],
-    queryFn: () => getProjectBuckets({ id: params.id }),
+    queryKey: [params.projectId, "buckets"],
+    queryFn: () => getProjectBuckets({ id: params.projectId }),
   });
   const { createItem } = useItemAction({
-    queryKey: ["items", params.id],
+    queryKey: [params.projectId, "items"],
   });
   const handleSubmit = async (values: FormValues) => {
-    await createItem.mutateAsync({ name: values.name, id: values.bucketId });
-    setIsOpen(false); // Close the drawer after submission
+    await createItem.mutateAsync(values);
+    setIsOpen(false);
   };
 
   return (

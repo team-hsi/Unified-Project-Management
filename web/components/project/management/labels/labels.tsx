@@ -14,7 +14,7 @@ import type { Project } from "../../types";
 import { LabelForm } from "./label-form";
 import React from "react";
 import { LabelItem } from "./label-item";
-import type { Label } from "../types";
+import { Label } from "@/@types/label";
 
 export const LabelsView = ({ project }: { project: Project }) => {
   const { labels } = useLabels({

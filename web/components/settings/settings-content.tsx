@@ -6,6 +6,7 @@ import { NotificationsView } from "@/components/settings/notifications";
 import { GeneralView } from "@/components/settings/general";
 import { SettingsView } from "./types";
 import { PeopleView } from "./people";
+import { SpaceView } from "@/components/settings/space-view";
 // import { PeopleView } from "@/components/settings/views/people-view";
 // import { BillingView } from "@/components/settings/views/billing-view";
 
@@ -19,6 +20,7 @@ export function SettingsContent({ currentView }: SettingsContentProps) {
     preferences: <PreferencesView />,
     notifications: <NotificationsView />,
     general: <GeneralView />,
+    space: <SpaceView />,
     people: <PeopleView />, // Placeholder for PeopleView
   };
 
