@@ -1,80 +1,60 @@
 "use server";
-
-import type { LabelPayload } from "@/actions/action-types";
+import { LabelPayload } from "@/@types/label";
+import { extractErrors } from "@/lib/utils";
 const API = process.env.NEXT_PUBLIC_API_URL;
-export const getLabels = async () => {
-  try {
-    const res = await fetch(`${API}/v1/labels/getall`);
-    if (!res.ok) {
-      throw new Error(`Error fetching tasks: ${res.statusText}`);
-    }
-    return res.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
 
-export const getLabelsByProjectId = async (
-  values: Pick<LabelPayload, "projectId">
-) => {
-  const { projectId } = values;
-  const res = await fetch(`${API}/v1/projects/${projectId}/labels`);
-
+/*
+ * get all labels
+ */
+export const getAllLabels = async () => {
+  const res = await fetch(`${API}/v1/labels/getall`);
   if (!res.ok) {
     const data = await res.json();
-    return { success: false, error: data.error };
+    return { success: false, error: extractErrors(data.error) };
   }
   const data = await res.json();
   return { success: true, data };
 };
 
-export const getLabelById = async (values: Pick<LabelPayload, "id">) => {
-  const { id } = values;
+/*
+ * get label by id
+ */
+export const getLabelById = async (payload: Pick<LabelPayload, "id">) => {
+  const { id } = payload;
   const res = await fetch(`${API}/v1/labels/${id}`);
 
   if (!res.ok) {
     const data = await res.json();
-    return { success: false, error: data.error };
+    return { success: false, error: extractErrors(data.error) };
   }
   const data = await res.json();
   return { success: true, data };
 };
 
-export const createLabel = async (values: LabelPayload) => {
+/*
+ * create label
+ */
+export const createLabel = async (payload: Omit<LabelPayload, "id">) => {
   const res = await fetch(`${API}/v1/labels/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(values),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     const data = await res.json();
-    return { success: false, error: data.error };
+    return { success: false, error: extractErrors(data.error) };
   }
   const data = await res.json();
   return { success: true, data };
 };
 
-export const deleteLabel = async (values: Pick<LabelPayload, "id">) => {
-  const { id } = values;
-  const res = await fetch(`${API}/v1/labels/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (!res.ok) {
-    const data = await res.json();
-    return { success: false, error: data.error };
-  }
-
-  return { success: true };
-};
-
-export const updateLabel = async (values: LabelPayload) => {
-  const { id, ...rest } = values;
+/*
+ * update label
+ */
+export const updateLabel = async (payload: Omit<LabelPayload, "projectId">) => {
+  const { id, ...rest } = payload;
   const res = await fetch(`${API}/v1/labels/${id}`, {
     method: "PUT",
     headers: {
@@ -85,9 +65,24 @@ export const updateLabel = async (values: LabelPayload) => {
 
   if (!res.ok) {
     const data = await res.json();
-    return { success: false, error: data.error };
+    return { success: false, error: extractErrors(data.error) };
   }
-
   const data = await res.json();
   return { success: true, data };
+};
+
+/*
+ * delete label
+ */
+export const deleteLabel = async (payload: Pick<LabelPayload, "id">) => {
+  const { id } = payload;
+  const res = await fetch(`${API}/v1/labels/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    return { success: false, error: extractErrors(data.error) };
+  }
+
+  return { success: true };
 };

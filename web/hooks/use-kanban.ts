@@ -1,13 +1,16 @@
-import { getProjectBuckets } from "@/actions/bucket-actions";
-import { getProjectItems } from "@/actions/item-actions";
-import { moveItem, reorderItem } from "@/actions/kanban-actions";
-import { Bucket, Item } from "@/components/kanban/types";
+import { Bucket } from "@/@types/bucket";
+import { Item } from "@/@types/item";
+import { moveItem, reorderItem } from "@/actions/item-actions";
+import { getProjectBuckets, getProjectItems } from "@/actions/project-actions";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation, useSuspenseQueries } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 
-export const useKanban = ({ projectId }: { projectId: string }) => {
+export const useKanban = () => {
+  const { projectId } = useParams<{ projectId: string }>();
+
   const queryClient = getQueryClient();
   const [
     { data: buckets, error: bucketsError, refetch: bucketsRefetch },
@@ -15,7 +18,7 @@ export const useKanban = ({ projectId }: { projectId: string }) => {
   ] = useSuspenseQueries({
     queries: [
       {
-        queryKey: ["buckets", projectId],
+        queryKey: [projectId, "buckets"],
         queryFn: () => getProjectBuckets({ id: projectId }),
         select: (data: Bucket[]) =>
           data.sort(
@@ -24,7 +27,7 @@ export const useKanban = ({ projectId }: { projectId: string }) => {
           ),
       },
       {
-        queryKey: ["items", projectId],
+        queryKey: [projectId, "items"],
         queryFn: () => getProjectItems({ id: projectId }),
       },
     ],
@@ -40,8 +43,8 @@ export const useKanban = ({ projectId }: { projectId: string }) => {
   const moveItemMutation = useMutation({
     mutationFn: moveItem,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["buckets", projectId] });
-      queryClient.invalidateQueries({ queryKey: ["items", projectId] });
+      queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
+      queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
     },
     onError: (error) => {
       toast.error(
@@ -55,8 +58,8 @@ export const useKanban = ({ projectId }: { projectId: string }) => {
   const reorderItemMutation = useMutation({
     mutationFn: reorderItem,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["buckets", projectId] });
-      queryClient.invalidateQueries({ queryKey: ["items", projectId] });
+      queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
+      queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
     },
     onError: (error) => {
       toast.error(

@@ -1,10 +1,5 @@
 "use client";
-
-import {
-  loginAction,
-  logoutAction,
-  signupAction,
-} from "@/actions/auth-actions";
+import { userCreate, userLogin, userLogout } from "@/actions/user-actions";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -30,7 +25,7 @@ export function useLogin() {
       email: string;
       password: string;
     }) => {
-      const result = await loginAction({ email, password });
+      const result = await userLogin({ email, password });
 
       if (!result.success) {
         throw new Error(result.error || "Failed to login");
@@ -39,9 +34,11 @@ export function useLogin() {
       return result.user;
     },
     onSuccess: (user) => {
-      queryClient.setQueryData(["currentUser"], user);
-      toast.success("Logged in successfully!");
-      router.push("/projects");
+      queryClient.setQueryData(["user"], user);
+      toast.success("Auth", {
+        description: "Logged in successfully!",
+      });
+      router.push(`/${user.activeSpace.id}/projects`);
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -55,7 +52,7 @@ export const useSignup = () => {
 
   return useMutation({
     mutationFn: async (userData: Omit<User, "id">) => {
-      const result = await signupAction(userData);
+      const result = await userCreate(userData);
       if (!result.success) {
         throw new Error(result.error || "Failed to create account");
       }
@@ -63,9 +60,9 @@ export const useSignup = () => {
       return result.user;
     },
     onSuccess: (user) => {
-      queryClient.setQueryData(["currentUser"], user);
+      queryClient.setQueryData(["user"], user);
       toast.success("Account created successfully!");
-      router.push("/projects");
+      router.push(`/${user.activeSpace.id}/projects`);
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -76,7 +73,7 @@ export const useSignup = () => {
 export const useLogout = () => {
   const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: logoutAction,
+    mutationFn: userLogout,
     onSuccess: () => {
       queryClient.setQueryData(["currentUser"], null);
       queryClient.clear();

@@ -12,16 +12,9 @@ import {
   ChangeBucketColor,
   DeleteBucket,
 } from "./bucket-dropdown-actions";
+import { Bucket } from "@/@types/bucket";
 
-const BucketDropdown = ({
-  bucketId,
-  projectId,
-  color,
-}: {
-  bucketId: string;
-  projectId: string;
-  color: string;
-}) => {
+const BucketDropdown = ({ bucket }: { bucket: Bucket }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [hasOpenDialog, setHasOpenDialog] = useState(false);
   const dropdownTriggerRef = useRef<HTMLButtonElement | null>(null);
@@ -56,35 +49,25 @@ const BucketDropdown = ({
         }}
       >
         <AddBucketItem
-          bucketId={bucketId}
-          projectId={projectId}
+          bucket={bucket}
           onOpenChange={handleDialogOpenChange}
           onSelect={handleItemSelect}
         />
         <ChangeBucketColor
-          values={{
-            id: bucketId,
-            projectId: projectId,
-            color: color,
-          }}
+          bucket={bucket}
           onOpenChange={handleDialogOpenChange}
           onSelect={handleItemSelect}
         />
         {/* <EditBucket
-          values={{
-            id: bucketId,
-            projectId: projectId,
-            color: color,
-          }}
+          bucket={bucket}
           onOpenChange={handleDialogOpenChange}
           onSelect={handleItemSelect}
         /> */}
         <DropdownMenuSeparator />
         <DeleteBucket
-          bucketId={bucketId}
+          bucket={bucket}
           onOpenChange={handleDialogOpenChange}
           onSelect={handleItemSelect}
-          projectId={projectId}
         />
       </DropdownMenuContent>
     </DropdownMenu>

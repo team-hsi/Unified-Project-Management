@@ -1,16 +1,29 @@
 "use server";
 
-import type { PartialProject } from "@/components/project/types";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getSession } from "./dal";
 import { cache } from "react";
+import { ProjectPayload } from "@/@types/projects";
+import { extractErrors } from "@/lib/utils";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
-export const getProjects = async () => {
+/*
+ * get all projects
+ */
+export const getAllProjects = async () => {
   const res = await fetch(`${API}/v1/projects/getall`);
-  return { data: await res.json() };
+  if (!res.ok) {
+    const data = await res.json();
+    return { success: false, error: extractErrors(data.error) };
+  }
+  const data = await res.json();
+  return { success: true, data };
 };
+
+/*
+ * get project by id
+ */
 export const getProject = cache(async (id: string) => {
   const res = await fetch(`${API}/v1/projects/${id}`);
   if (!res.ok) {
@@ -18,68 +31,118 @@ export const getProject = cache(async (id: string) => {
       notFound();
     } else {
       const data = await res.json();
-      return { success: false, error: data.error };
+      return { success: false, error: extractErrors(data.error) };
     }
   }
   const data = await res.json();
   return { success: true, data };
 });
-export const getUserProjects = async () => {
-  const session = await getSession();
-  const res = await fetch(`${API}/v1/users/${session.userId}/projects`);
-  if (!res.ok) {
-    const data = await res.json();
-    return { success: false, error: data.error };
-  }
-  const data = await res.json();
-  return { success: true, data };
-};
 
-export const createProject = async (values: PartialProject) => {
+/*
+ * create new project
+ */
+export const createProject = async (payload: Omit<ProjectPayload, "id">) => {
   const session = await getSession();
-  if (!session) {
-    redirect("/sign-in");
-  }
   const res = await fetch(`${API}/v1/projects/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${session.tokens.accessToken}`,
     },
-    body: JSON.stringify({ name: values.name }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
-    console.log(await res.json());
-    throw new Error("Failed to create project");
+    const data = await res.json();
+    return { success: false, error: extractErrors(data.error) };
   }
-  return res.json();
+  const data = await res.json();
+  return { success: true, data };
 };
 
-export const updateProject = async (values: PartialProject) => {
-  const res = await fetch(`${API}/v1/projects/${values.id}`, {
+/*
+ * update project
+ */
+//todo: improve error handling
+export const updateProject = async (
+  payload: Omit<ProjectPayload, "spaceId">
+) => {
+  const { id, name } = payload;
+  const res = await fetch(`${API}/v1/projects/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      name: values.name,
-    }),
+    body: JSON.stringify({ name }),
   });
   if (!res.ok) {
     throw new Error("Failed to update project");
+    // const data = await res.json();
+    // return { success: false, error: extractErrors(data.error) };
+  }
+  // const data = await res.json();
+  // return { success: true, data };
+  return res.json();
+};
+
+/*
+ * delete project
+ */
+export const deleteProject = async (payload: Pick<ProjectPayload, "id">) => {
+  const { id } = payload;
+  const res = await fetch(`${API}/v1/projects/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    return { success: false, error: extractErrors(data.error) };
+  }
+  return { success: true };
+};
+
+/*
+ * get project buckets by project id
+ */
+//todo: fix error handling when board route is setup
+export const getProjectBuckets = async (
+  payload: Pick<ProjectPayload, "id">
+) => {
+  const { id } = payload;
+  const res = await fetch(`${API}/v1/projects/${id}/buckets`);
+  if (!res.ok) {
+    // const data = await res.json();
+    // return { success: false, error: extractErrors(data.error) };
+    throw new Error(`Error fetching tasks: ${res.statusText}`);
+  }
+  // const data = await res.json();
+  // return { success: true, data };
+  return res.json();
+};
+
+/*
+ * get project items by project id
+ */
+export const getProjectItems = async (payload: Pick<ProjectPayload, "id">) => {
+  const { id } = payload;
+  const res = await fetch(`${API}/v1/projects/${id}/items`);
+  if (!res.ok) {
+    const data = await res.json();
+    console.log(data);
+    throw new Error(`Error fetching tasks: ${data.error}`);
   }
   return res.json();
 };
 
-export const deleteProject = async (values: PartialProject) => {
-  const res = await fetch(`${API}/v1/projects/${values.id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (res.status === 204) {
-    return null;
+/*
+ * get project labels by project id
+ */
+export const getProjectLabels = async (payload: Pick<ProjectPayload, "id">) => {
+  const { id } = payload;
+  const res = await fetch(`${API}/v1/projects/${id}/labels`);
+
+  if (!res.ok) {
+    const data = await res.json();
+    return { success: false, error: extractErrors(data.error) };
   }
-  return res.json();
+  const data = await res.json();
+  return { success: true, data };
 };

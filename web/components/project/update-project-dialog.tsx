@@ -10,7 +10,7 @@ import { projectSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ProjectDialogProps } from "./types";
 import { z } from "zod";
-import { useProjectAction } from "@/hooks/use-project";
+import { useProject } from "@/hooks/use-project";
 import { NameDescriptionForm } from "../form/name-description-form";
 
 export const UpdateProjectDialog = ({
@@ -19,19 +19,24 @@ export const UpdateProjectDialog = ({
 }: ProjectDialogProps) => {
   const defaultValues = {
     name: project.name,
-    description: project.description || "",
-    id: project.id,
   };
   const form = useForm<z.infer<typeof projectSchema>>({
     resolver: zodResolver(projectSchema),
     defaultValues,
   });
-  const { updateProject } = useProjectAction({
+  const { updateProject } = useProject({
     successAction: () => {
       form.reset();
       onOpenChange?.(false);
     },
   });
+  const handleSubmit = async (values: {
+    name: string;
+    description?: string;
+  }) => {
+    onOpenChange?.(false);
+    await updateProject.mutateAsync({ name: values.name, id: project.id });
+  };
   return (
     <DialogContent>
       <div className="flex flex-col items-center gap-2">
@@ -49,7 +54,7 @@ export const UpdateProjectDialog = ({
         </DialogHeader>
       </div>
       <NameDescriptionForm
-        onSubmit={updateProject.mutateAsync}
+        onSubmit={handleSubmit}
         isPending={updateProject.isPending}
         label="Update"
         defaultValues={defaultValues}

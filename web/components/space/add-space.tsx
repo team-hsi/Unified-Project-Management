@@ -4,13 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -22,6 +20,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { CustomDialogItem } from "../project/custom-dialog-item";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { useWorkspace } from "@/hooks/use-workspace";
 
 // Define the validation schema using Zod
 const spaceFormSchema = z.object({
@@ -35,13 +36,16 @@ const spaceFormSchema = z.object({
 type SpaceFormValues = z.infer<typeof spaceFormSchema>;
 
 interface AddSpaceDialogProps {
-  children: React.ReactNode; // Accept children for the trigger
+  children: React.ReactNode;
+  onSelect?: () => void;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function AddSpaceDialog({ children }: AddSpaceDialogProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
-
-  // Initialize react-hook-form
+export function AddSpaceDialog({
+  children,
+  onSelect,
+  onOpenChange,
+}: AddSpaceDialogProps) {
   const form = useForm<SpaceFormValues>({
     resolver: zodResolver(spaceFormSchema),
     defaultValues: {
@@ -50,22 +54,20 @@ export function AddSpaceDialog({ children }: AddSpaceDialogProps) {
     },
   });
 
-  // Handle form submission
-  async function onSubmit(values: SpaceFormValues) {
-    // Replace with your actual logic to create the space
-    console.log("Creating space:", values);
-    // Example: await createSpaceApiCall(values);
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const { createWorkspace } = useWorkspace();
 
-    form.reset(); // Reset form fields
-    setIsOpen(false); // Close the dialog
+  async function onSubmit(values: SpaceFormValues) {
+    await createWorkspace.mutateAsync(values);
+    form.reset();
+    onOpenChange?.(false);
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      {/* Add custom class for positioning: top-[40%] translate-y-[-40%] */}
+    <CustomDialogItem
+      triggerChildren={children}
+      onOpenChange={onOpenChange}
+      onSelect={onSelect}
+    >
       <DialogContent className="sm:max-w-[425px] top-[40%] translate-y-[-40%]">
         <DialogHeader>
           <DialogTitle>Create New Space</DialogTitle>
@@ -106,13 +108,7 @@ export function AddSpaceDialog({ children }: AddSpaceDialogProps) {
               )}
             />
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsOpen(false)}
-              >
-                Cancel
-              </Button>
+              <DialogClose>Cancel</DialogClose>
               <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Saving..." : "Save Space"}
               </Button>
@@ -120,6 +116,6 @@ export function AddSpaceDialog({ children }: AddSpaceDialogProps) {
           </form>
         </Form>
       </DialogContent>
-    </Dialog>
+    </CustomDialogItem>
   );
 }

@@ -2,11 +2,12 @@ import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation } from "@tanstack/react-query";
 import {
   createItem as createItemAction,
-  deleteItemById,
-  updateItemInline as updateItemInlineAction,
+  deleteItem as deleteItemAction,
+  updateItem as updateItemAction,
 } from "@/actions/item-actions";
 import { toast } from "sonner";
-import { Bucket, Item } from "@/components/kanban/types";
+import { Item } from "@/@types/item";
+import { Bucket } from "@/@types/bucket";
 
 export const useItemAction = ({
   queryKey,
@@ -22,11 +23,11 @@ export const useItemAction = ({
     onMutate: async (newItemData) => {
       await queryClient.cancelQueries({ queryKey });
       const previousItems = queryClient.getQueryData(queryKey);
-      const bucketsQueryKey = ["buckets", queryKey[1]];
+      const bucketsQueryKey = [queryKey[1], "buckets"];
 
       const buckets =
         (queryClient.getQueryData(bucketsQueryKey) as Bucket[]) || [];
-      const bucket = buckets.find((b) => b.id === newItemData.id);
+      const bucket = buckets.find((b) => b.id === newItemData.bucketId);
       if (!bucket) {
         return { previousItems };
       }
@@ -81,7 +82,7 @@ export const useItemAction = ({
   });
 
   const updateItemInline = useMutation({
-    mutationFn: updateItemInlineAction,
+    mutationFn: updateItemAction,
     onMutate: async (updatedItemData) => {
       await queryClient.cancelQueries({ queryKey });
       const previousItems = queryClient.getQueryData(queryKey);
@@ -116,7 +117,7 @@ export const useItemAction = ({
     },
   });
   const deleteItem = useMutation({
-    mutationFn: deleteItemById,
+    mutationFn: deleteItemAction,
     onMutate: async (deleteItem) => {
       await queryClient.cancelQueries({ queryKey });
       const previousItems = queryClient.getQueryData(queryKey);

@@ -4,13 +4,13 @@ import { getProject } from "@/actions/project-actions";
 import { Metadata } from "next";
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ projectId: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
+  const { projectId } = await params;
 
-  const project = await getProject(id);
+  const project = await getProject(projectId);
   if (!project.success) {
     return {
       title: "Project Not Found",
@@ -18,14 +18,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: project.data.name || id,
+    title: project.data.name || projectId,
   };
 }
 const Page = async (props: Props) => {
   const params = await props.params;
   const searchParams = await props.searchParams;
   const view = (searchParams.view as string) || "kanban";
-  const project = await getProject(params.id);
+  const project = await getProject(params.projectId);
 
   if (!project.success) {
     return <div>Project Not Found</div>;
@@ -34,7 +34,7 @@ const Page = async (props: Props) => {
   return (
     <div className="p-4 flex flex-col gap-4 overflow-hidden h-full">
       <ProjectHeader project={project.data} />
-      <ViewContainer view={view} projectId={params.id} />
+      <ViewContainer view={view} />
     </div>
   );
 };

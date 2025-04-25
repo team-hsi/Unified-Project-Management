@@ -1,8 +1,6 @@
 "use client";
-
 import * as React from "react";
 import { ChevronsUpDown, GalleryVerticalEnd, Plus } from "lucide-react";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,16 +18,35 @@ import {
 } from "@/components/ui/sidebar";
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { Workspace } from "@/@types/space";
+import { AddSpaceDialog } from "./add-space";
+import { useParams } from "next/navigation";
 
 export const SpaceSwitcher = () => {
   const { isMobile } = useSidebar();
-  const { workspaces } = useWorkspace();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const { workspaces, setActive } = useWorkspace();
+  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+  const [hasOpenDialog, setHasOpenDialog] = React.useState(false);
+  const focusRef = React.useRef<HTMLElement | null>(null);
+  const dropdownTriggerRef = React.useRef<HTMLButtonElement | null>(null);
 
+  const handleDialogOpenChange = (open: boolean) => {
+    setHasOpenDialog(open);
+    if (!open) {
+      setIsDropdownOpen(false);
+    }
+  };
+  const activeWorkspace = workspaces.data?.find(
+    (space: Workspace) => space.id === workspaceId
+  );
+  const handleMenuItemSelect = () => {
+    focusRef.current = dropdownTriggerRef.current;
+  };
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+          <DropdownMenuTrigger asChild ref={dropdownTriggerRef}>
             <SidebarMenuButton
               size="lg"
               className="bg-background data-[state=open]:text-sidebar-accent-foreground"
@@ -39,16 +56,24 @@ export const SpaceSwitcher = () => {
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {workspaces[0].name}
+                  {activeWorkspace.name}
                 </span>
                 <span className="truncate text-xs">
-                  {workspaces[0].visibility}
+                  {activeWorkspace.visibility}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
+            hidden={hasOpenDialog}
+            onCloseAutoFocus={(event) => {
+              if (focusRef.current) {
+                focusRef.current.focus();
+                focusRef.current = null;
+                event.preventDefault();
+              }
+            }}
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             align="start"
             side={isMobile ? "bottom" : "right"}
@@ -57,11 +82,11 @@ export const SpaceSwitcher = () => {
             <DropdownMenuLabel className="text-xs text-muted-foreground">
               Workspace
             </DropdownMenuLabel>
-            {workspaces.map((space: Workspace, index: number) => {
+            {workspaces.data?.map((space: Workspace, index: number) => {
               return (
                 <DropdownMenuItem
-                  key={space.name}
-                  // onClick={() => setActiveTeam(space)}
+                  key={space.id}
+                  onClick={() => setActive.mutate({ activeSpace: space.id })}
                   className="gap-2 p-2"
                 >
                   <div className="flex size-6 items-center justify-center rounded-sm border">
@@ -73,14 +98,17 @@ export const SpaceSwitcher = () => {
               );
             })}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
+            <AddSpaceDialog
+              onOpenChange={handleDialogOpenChange}
+              onSelect={handleMenuItemSelect}
+            >
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                 <Plus className="size-4" />
               </div>
               <div className="font-medium text-muted-foreground">
                 Add Workspace
               </div>
-            </DropdownMenuItem>
+            </AddSpaceDialog>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

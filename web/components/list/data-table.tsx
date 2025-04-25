@@ -23,12 +23,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getProjectItems } from "@/actions/item-actions";
 import { useParams } from "next/navigation";
 import { ItemSheet } from "../sheets/item-sheet";
-import { Item } from "../kanban/types";
 import { PlusCircle } from "lucide-react";
 import { AddItemDrawer } from "./new-item-drawer";
+import { getProjectItems } from "@/actions/project-actions";
+import { Item } from "@/@types/item";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -39,15 +39,15 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const params = useParams() as { id: string };
+  const params = useParams() as { projectId: string };
 
   const {
     data: items = [],
     isLoading,
     error,
   } = useSuspenseQuery({
-    queryKey: ["items", params.id],
-    queryFn: () => getProjectItems({ id: params.id }),
+    queryKey: [params.projectId, "items"],
+    queryFn: () => getProjectItems({ id: params.projectId }),
   });
 
   const table = useReactTable({

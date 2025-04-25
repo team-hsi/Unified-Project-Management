@@ -20,17 +20,19 @@ import {
 } from "@/components/ui/sidebar";
 import type { Project } from "./types";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { CreateProjectDialog } from "./create-project-dialog";
 import { CustomDialogItem } from "./custom-dialog-item";
 import { DeleteProjectDialog } from "./delete-project-dialog";
 import { UpdateProjectDialog } from "./update-project-dialog";
-import { useProjectAction } from "@/hooks/use-project";
 import { Management } from "./management/management";
+import { useProject } from "@/hooks/use-project";
 
 export const NavProjects = () => {
-  const { projects } = useProjectAction({});
+  const { projects } = useProject();
   const { isMobile } = useSidebar();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
+
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
@@ -79,7 +81,7 @@ export const NavProjects = () => {
         {projects.data.map((project: Project) => (
           <SidebarMenuItem key={project.id}>
             <SidebarMenuButton asChild isActive={segments.includes(project.id)}>
-              <Link href={`/projects/${project.id}`} prefetch={true}>
+              <Link href={`/${workspaceId}/${project.id}`} prefetch={true}>
                 {project.name}
               </Link>
             </SidebarMenuButton>

@@ -1,5 +1,4 @@
 "use client";
-import type { Bucket } from "./types";
 import { KanbanItem } from "./kanban-item";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { cn, hexToRgba } from "@/lib/utils";
@@ -8,6 +7,8 @@ import { Button } from "../ui/button";
 import InlineEdit from "../ui/inline-edit";
 import { useBucketAction } from "@/hooks/use-bucket";
 import React from "react";
+import { Plus } from "lucide-react";
+import { Bucket } from "@/@types/bucket";
 
 interface KanbanBucketProps {
   bucket: Bucket;
@@ -19,7 +20,7 @@ export const KanbanBucket = ({ bucket, index }: KanbanBucketProps) => {
     string | null
   >(null);
   const { updateBucket } = useBucketAction({
-    queryKey: ["buckets", bucket.project.id],
+    queryKey: [bucket.project.id, "buckets"],
   });
   const displayName = updateBucket.isPending
     ? updateBucket.variables?.name
@@ -88,11 +89,7 @@ export const KanbanBucket = ({ bucket, index }: KanbanBucketProps) => {
                 />
               )}
             </div>
-            <BucketDropdown
-              bucketId={bucket.id}
-              projectId={bucket.project.id}
-              color={bucket.color}
-            />
+            <BucketDropdown bucket={bucket} />
           </div>
           <Droppable droppableId={bucket.id} type="item">
             {(provided) => (
@@ -111,6 +108,13 @@ export const KanbanBucket = ({ bucket, index }: KanbanBucketProps) => {
               </div>
             )}
           </Droppable>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full mt-2 text-muted-foreground"
+          >
+            <Plus size={16} className="mr-1" /> Add a card
+          </Button>
         </div>
       )}
     </Draggable>

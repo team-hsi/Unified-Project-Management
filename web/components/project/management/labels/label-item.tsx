@@ -2,12 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { LabelForm } from "./label-form";
-import type { Label } from "../types";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { useLabels } from "@/hooks/use-labels";
 import { Edit2, Trash2 } from "lucide-react";
 import { DeleteLabel } from "./delete-label";
+import { Label } from "@/@types/label";
 
 interface LabelItemProps {
   label: Label;
