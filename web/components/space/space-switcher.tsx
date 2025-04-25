@@ -86,7 +86,9 @@ export const SpaceSwitcher = () => {
               return (
                 <DropdownMenuItem
                   key={space.id}
-                  onClick={() => setActive.mutate({ activeSpace: space.id })}
+                  onClick={() =>
+                    setActive.mutateAsync({ activeSpace: space.id })
+                  }
                   className="gap-2 p-2"
                 >
                   <div className="flex size-6 items-center justify-center rounded-sm border">

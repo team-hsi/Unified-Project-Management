@@ -2,7 +2,7 @@
 
 import { User } from "@/@types/user";
 import { getCurrentSession, getSessionUser } from "@/actions/auth-actions";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createContext, useContext, ReactNode } from "react";
 
 interface Session {
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     staleTime: 1000 * 60 * 10, // 10 minutes
   });
 
-  const { data: session } = useQuery({
+  const { data: session } = useSuspenseQuery({
     queryKey: ["session"],
     queryFn: getCurrentSession,
     staleTime: 1000 * 60 * 30, // 30 minutes

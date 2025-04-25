@@ -315,7 +315,7 @@ export const ItemDetails = ({
                           commandProps={{
                             label: "Add labels",
                           }}
-                          isPending={labels.isPending}
+                          // isPending={labels.isPending}
                           loadingIndicator={
                             <div className="flex w-full p-1 items-center justify-center">
                               <Loader2 className="h-4 w-4 animate-spin" />

@@ -2,7 +2,8 @@
 import { getSession, getUser } from "./dal";
 
 export async function getCurrentSession() {
-  return await getSession();
+  const session = await getSession();
+  return session;
 }
 export async function getSessionUser() {
   const user = await getUser();

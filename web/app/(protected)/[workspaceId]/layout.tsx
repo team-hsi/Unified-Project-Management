@@ -8,8 +8,8 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AuthProvider } from "@/lib/auth/auth-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// export const dynamic = "force-dynamic";
+// export const revalidate = 0;
 
 const WorkspaceLayout = async ({
   children,
@@ -22,6 +22,7 @@ const WorkspaceLayout = async ({
   const { workspaceId } = await params;
   const queryClient = getQueryClient();
 
+  queryClient.setQueryData(["session"], session);
   queryClient.prefetchQuery({
     queryKey: [workspaceId, "projects"],
     queryFn: getWorkspaceProjects,
@@ -31,7 +32,7 @@ const WorkspaceLayout = async ({
     queryFn: getSessionUser,
   });
   queryClient.prefetchQuery({
-    queryKey: [session.userId, "workspaces"],
+    queryKey: [session?.userId, "workspaces"],
     queryFn: getUserWorkspaces,
   });
   return (
