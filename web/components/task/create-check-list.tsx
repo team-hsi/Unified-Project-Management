@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"; // Import useState
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -16,6 +16,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useItemAction } from "@/hooks/use-item";
 import { toast } from "sonner";
+import { useParams } from "next/navigation";
+import type { CheckList } from "@/@types/check-list";
 
 const checkListSchema = z.object({
   description: z
@@ -29,9 +31,13 @@ type FormValues = z.infer<typeof checkListSchema>;
 export const CreateCheckList = ({
   itemId,
   children,
+  currentList,
+  setCheckList,
 }: {
   children: React.ReactNode;
   itemId: string;
+  currentList: CheckList[] | null;
+  setCheckList: (list: CheckList[]) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -46,20 +52,26 @@ export const CreateCheckList = ({
       isCompleted: false,
     },
   });
+  const { projectId } = useParams<{ projectId: string }>();
   const { updateItemInline } = useItemAction({
-    queryKey: [itemId, "items"],
+    queryKey: [projectId, "items"],
     successAction: () => {
       toast.success("Create", {
         description: "Your checklist has been created.",
       });
-      setIsOpen(false);
       reset();
     },
   });
 
   const onSubmit = async (data: FormValues) => {
-    const checklist = [data];
-    await updateItemInline.mutateAsync({ checklist, id: itemId });
+    const checklist = [...(currentList ?? []), data];
+    try {
+      setCheckList(checklist);
+      setIsOpen(false);
+      await updateItemInline.mutateAsync({ checklist, id: itemId });
+    } catch (error) {
+      console.error("Submission failed:", error);
+    }
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -101,7 +113,7 @@ export const CreateCheckList = ({
                 <Checkbox
                   id="isCompleted"
                   checked={field.value}
-                  onCheckedChange={(checked) => field.onChange(!!checked)} // Ensure boolean value
+                  onCheckedChange={(checked) => field.onChange(!!checked)}
                 />
               )}
             />

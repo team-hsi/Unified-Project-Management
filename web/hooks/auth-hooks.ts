@@ -28,7 +28,7 @@ export function useLogin() {
       const result = await userLogin({ email, password });
 
       if (!result.success) {
-        throw new Error(result.error || "Failed to login");
+        throw new Error("Failed to login");
       }
 
       return result.user;
@@ -41,7 +41,9 @@ export function useLogin() {
       router.push(`/${user.activeSpace.id}/projects`);
     },
     onError: (error: Error) => {
-      toast.error(error.message);
+      toast.error("Auth", {
+        description: error.message,
+      });
     },
   });
 }

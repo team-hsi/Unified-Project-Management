@@ -19,7 +19,7 @@ import {
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { Workspace } from "@/@types/space";
 import { AddSpaceDialog } from "./add-space";
-import { useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 
 export const SpaceSwitcher = () => {
   const { isMobile } = useSidebar();
@@ -39,6 +39,9 @@ export const SpaceSwitcher = () => {
   const activeWorkspace = workspaces.data?.find(
     (space: Workspace) => space.id === workspaceId
   );
+  if (!activeWorkspace) {
+    return notFound();
+  }
   const handleMenuItemSelect = () => {
     focusRef.current = dropdownTriggerRef.current;
   };

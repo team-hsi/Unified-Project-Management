@@ -5,12 +5,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
-import type { CheckList as Check } from "@/@types/check-list";
 import { Button } from "../ui/button";
 import { CreateCheckList } from "./create-check-list";
-// import { useItemAction } from "@/hooks/use-item";
-// import { toast } from "sonner";
+import { useItemAction } from "@/hooks/use-item";
+import type { CheckList as Check } from "@/@types/check-list";
+import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { useParams } from "next/navigation";
 
 export const CheckList = ({
   lists,
@@ -19,29 +20,48 @@ export const CheckList = ({
   lists: Check[] | null;
   itemId: string;
 }) => {
-  // const [checklist, setChecklist] = React.useState(lists || []);
-  // const { updateItemInline } = useItemAction({
-  //   queryKey: ["items", itemId],
-  //   successAction: () => {
-  //     toast.success("Update", {
-  //       description: "Checklist updated successfully!",
-  //     });
-  //   },
-  // });
+  const [checklist, setCheckList] = React.useState(lists || []);
+  const { projectId } = useParams() as { projectId: string };
+  const { updateItemInline } = useItemAction({
+    queryKey: [projectId, "items"],
+    successAction: () => {
+      toast.success("Update", {
+        description: "Checklist updated successfully!",
+      });
+    },
+  });
 
-  if (!lists || lists.length === 0) {
+  React.useEffect(() => {
+    setCheckList(lists || []);
+  }, [lists]);
+
+  const handleToggle = async (index: number) => {
+    setCheckList((prev) =>
+      prev.map((item, idx) =>
+        idx === index ? { ...item, isCompleted: !item.isCompleted } : item
+      )
+    );
+    await updateItemInline.mutateAsync({ checklist, id: itemId });
+  };
+  if (!checklist || checklist.length === 0) {
     return (
       <div className="p-5 w-full text-center">
         <p className="mb-4 text-muted-foreground">No checklist available</p>
-        <CreateCheckList itemId={itemId}>
+        <CreateCheckList
+          itemId={itemId}
+          currentList={checklist}
+          setCheckList={(value) => setCheckList(value)}
+        >
           <Button className="px-4 py-2">Create One</Button>
         </CreateCheckList>
       </div>
     );
   }
 
-  const total = lists.length;
-  const completed = lists.filter((task) => task.isCompleted === true).length;
+  const total = checklist.length;
+  const completed = checklist.filter(
+    (task) => task.isCompleted === true
+  ).length;
 
   return (
     <Card className="w-full max-w-xl rounded-xl border p-6 pt-3 mb-2 shadow-md">
@@ -51,22 +71,27 @@ export const CheckList = ({
             Completed {completed}/{total}
           </span>
         </div>
-        <CreateCheckList itemId={itemId}>
-          <Tooltip>
-            <TooltipTrigger>
+        <Tooltip>
+          <TooltipTrigger>
+            <CreateCheckList
+              itemId={itemId}
+              currentList={checklist}
+              setCheckList={(value) => setCheckList(value)}
+            >
               <Plus className="hover:cursor-pointer" />
-            </TooltipTrigger>
-            <TooltipContent>Hello</TooltipContent>
-          </Tooltip>
-        </CreateCheckList>
+            </CreateCheckList>
+          </TooltipTrigger>
+          <TooltipContent>Add New</TooltipContent>
+        </Tooltip>
       </div>
 
       <CardContent className="space-y-4 p-0">
-        {lists.map((list, index) => (
+        {checklist.map((list, index) => (
           <div key={index} className="space-y-2">
             <label className="flex items-start gap-2 cursor-pointer">
               <Checkbox
-                // checked={list.isCompleted}
+                checked={list.isCompleted}
+                onCheckedChange={() => handleToggle(index)}
                 className="mt-1 border-white"
               />
               <span

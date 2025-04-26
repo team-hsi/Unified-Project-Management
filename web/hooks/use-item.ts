@@ -23,7 +23,7 @@ export const useItemAction = ({
     onMutate: async (newItemData) => {
       await queryClient.cancelQueries({ queryKey });
       const previousItems = queryClient.getQueryData(queryKey);
-      const bucketsQueryKey = [queryKey[1], "buckets"];
+      const bucketsQueryKey = [queryKey[0], "buckets"];
 
       const buckets =
         (queryClient.getQueryData(bucketsQueryKey) as Bucket[]) || [];
@@ -86,7 +86,19 @@ export const useItemAction = ({
     onMutate: async (updatedItemData) => {
       await queryClient.cancelQueries({ queryKey });
       const previousItems = queryClient.getQueryData(queryKey);
+      console.log("previousItems", previousItems);
+      console.log("updatedItemData", updatedItemData);
+      // const newItemData = previousItems.map((item: { id: string }) => {
+      //   return item.id === updatedItemData.id
+      //     ? {
+      //         ...item,
+      //         ...updatedItemData,
+      //       }
+      //     : item;
+      // });
+      // console.log("newItemData", newItemData);
       queryClient.setQueryData(queryKey, (old: Item[] = []) => {
+        console.log("item-old", old);
         return old.map((item) =>
           item.id === updatedItemData.id
             ? {
