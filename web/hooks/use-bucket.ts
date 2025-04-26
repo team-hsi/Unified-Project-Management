@@ -7,7 +7,7 @@ import {
   updateBucket as updateBucketAction,
 } from "@/actions/bucket-actions";
 import { useRouter } from "next/navigation";
-import { Bucket } from "@/components/kanban/types";
+import { Bucket } from "@/@types/bucket";
 
 export const useBucketAction = ({
   queryKey,
@@ -22,13 +22,12 @@ export const useBucketAction = ({
   const createBucket = useMutation({
     mutationFn: createBucketAction,
     onMutate: async (newBucketData) => {
-      console.log("new BD", newBucketData);
       await queryClient.cancelQueries({ queryKey });
       const previousBuckets = queryClient.getQueryData(queryKey);
       const optimisticBucket: Bucket = {
         id: `temp-${Date.now()}`,
         name: newBucketData.name,
-        color: newBucketData.color,
+        color: newBucketData.color || "#1f1f8",
         project: {
           id: queryKey[1],
           name: "New project for Bucket",
@@ -40,8 +39,6 @@ export const useBucketAction = ({
         updatedAt: new Date().toISOString(),
         items: [],
       };
-      console.log("OPD", optimisticBucket);
-
       queryClient.setQueryData(queryKey, (old: Bucket[] = []) => {
         return [...old, optimisticBucket];
       });
@@ -51,13 +48,11 @@ export const useBucketAction = ({
       if (context?.previousBuckets) {
         queryClient.setQueryData(queryKey, context.previousBuckets);
       }
-      console.log("error", error);
       toast.error(JSON.stringify(error));
-      toast.error("something went wrong");
     },
     onSuccess: (result) => {
       if (!result.success) {
-        toast.error(result.error.message);
+        toast.error(result.error);
         queryClient.invalidateQueries({ queryKey });
         return;
       }
@@ -128,7 +123,7 @@ export const useBucketAction = ({
     },
     onSuccess: (result) => {
       if (!result.success) {
-        toast.error(result.error.message, {
+        toast.error(result.error, {
           description: "Please refresh your page.",
           action: {
             label: "Refresh",

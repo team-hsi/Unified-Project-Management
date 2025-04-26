@@ -17,21 +17,21 @@ import { Button } from "../ui/button";
 import { useBucketAction } from "@/hooks/use-bucket";
 
 export const CreateBucket = ({
-  id,
+  projectId,
   children,
 }: {
-  id: string;
+  projectId: string;
   children?: React.ReactNode;
 }) => {
   const [open, setOpen] = React.useState(false);
   const [bucketData, setBucketData] = React.useState({
     name: "",
-    id,
+    projectId,
   });
   const [color, setColor] = React.useState<string>("#f5f5f4");
 
   const { createBucket } = useBucketAction({
-    queryKey: ["buckets", id],
+    queryKey: [projectId, "buckets"],
   });
 
   return (
@@ -73,9 +73,8 @@ export const CreateBucket = ({
             onClick={async () => {
               setOpen(false);
               await createBucket.mutateAsync({
-                name: bucketData.name,
+                ...bucketData,
                 color,
-                id,
               });
             }}
             disabled={!bucketData.name.trim() || bucketData.name.length < 3}

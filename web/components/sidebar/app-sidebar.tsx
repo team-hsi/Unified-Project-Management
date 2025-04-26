@@ -12,8 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { TeamSwitcher } from "../user/team-switcher";
-import { data } from "@/lib/data";
+import { SpaceSwitcher } from "@/components/space/space-switcher";
 import { ProjectsSkeleton } from "../project/skeletons";
 
 export const AppSidebar = ({
@@ -25,7 +24,7 @@ export const AppSidebar = ({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <TeamSwitcher teams={data.teams} />
+              <SpaceSwitcher />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

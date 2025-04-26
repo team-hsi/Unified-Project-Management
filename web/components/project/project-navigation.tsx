@@ -2,7 +2,7 @@
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
+  // BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -14,10 +14,13 @@ import { Fragment } from "react";
 import { NavigationControls } from "./navigation-controls";
 import { NavUser } from "../user/nav-user";
 import { Project } from "@/lib/stores/project-store";
-import { useProjectAction } from "@/hooks/use-project";
+import { useProject } from "@/hooks/use-project";
+import { useWorkspace } from "@/hooks/use-workspace";
+import { Workspace } from "@/@types/space";
 
 export const ProjectNavigation = () => {
-  const { projects } = useProjectAction({});
+  const { projects } = useProject();
+  const { workspaces } = useWorkspace();
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
   return (
@@ -37,7 +40,7 @@ export const ProjectNavigation = () => {
           <BreadcrumbList>
             {segments.map((segment, index) => {
               const isLast = index === segments.length - 1;
-              const href = `/${segments.slice(0, index + 1).join("/")}`;
+              // const href = `/${segments.slice(0, index + 1).join("/")}`;
 
               return (
                 <Fragment key={index}>
@@ -48,9 +51,11 @@ export const ProjectNavigation = () => {
                           ?.name || segment}
                       </BreadcrumbPage>
                     ) : (
-                      <BreadcrumbLink href={href} className=" capitalize">
-                        {segment}
-                      </BreadcrumbLink>
+                      <BreadcrumbPage className=" capitalize">
+                        {workspaces.data.find(
+                          (w: Workspace) => w.id === segment
+                        )?.name || segment}
+                      </BreadcrumbPage>
                     )}
                   </BreadcrumbItem>
                   {!isLast && (

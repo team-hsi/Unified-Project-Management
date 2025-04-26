@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { COOKIE_NAME, decrypt } from "@/actions/session";
+import {
+  ACTIVE_WS,
+  COOKIE_NAME as SESSION_COOKIE,
+  decrypt,
+} from "@/actions/session";
 import { cookies } from "next/headers";
 
-const protectedRoutes = ["/projects"];
+const protectedRoutes = ["/projects", "/chat", "/workspace", "/settings"];
 const publicRoutes = ["/sign-in", "/sign-up", "/"];
 
 export default async function middleware(req: NextRequest) {
@@ -10,9 +14,11 @@ export default async function middleware(req: NextRequest) {
   const isProtectedRoute = protectedRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
 
-  const cookie = (await cookies()).get(COOKIE_NAME)?.value;
+  const cookie = (await cookies()).get(SESSION_COOKIE)?.value;
+  const ws_cookie = (await cookies()).get(ACTIVE_WS)?.value;
   const session = await decrypt(cookie);
 
+  // 🔐 Redirect to /sign-in if trying to access protected route without session
   if (isProtectedRoute && !session?.userId) {
     return NextResponse.redirect(new URL("/sign-in", req.nextUrl));
   }
@@ -22,7 +28,12 @@ export default async function middleware(req: NextRequest) {
     session?.userId &&
     !req.nextUrl.pathname.startsWith("/projects")
   ) {
-    return NextResponse.redirect(new URL("/projects", req.nextUrl));
+    if (ws_cookie) {
+      return NextResponse.redirect(
+        new URL(`/${ws_cookie}/projects`, req.nextUrl)
+      );
+    }
+    return NextResponse.redirect(new URL("/select-workspace", req.nextUrl));
   }
 
   return NextResponse.next();

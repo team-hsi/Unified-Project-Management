@@ -30,7 +30,7 @@ export const TaskBreadcrumb = ({
   unsavedForm: boolean;
 }) => {
   const { deleteItem } = useItemAction({
-    queryKey: ["items", item.projectId],
+    queryKey: [item.projectId, "items"],
   });
   const isMobile = useIsMobile();
   const Icon = isMobile ? ChevronsDown : ChevronsRight;

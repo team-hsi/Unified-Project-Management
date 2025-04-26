@@ -1,7 +1,7 @@
 "use client";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
-import { Bucket } from "../kanban/types";
+import { Bucket } from "@/@types/bucket";
 
 // Define the data type to match the API response
 export type Item = {

@@ -1,7 +1,7 @@
 "use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckList } from "./check-list";
-import { Item } from "../kanban/types";
+import { Item } from "@/@types/item";
 export const TaskWorkflow = ({ item }: { item: Item }) => {
   return (
     <div className=" w-4/5 mx-auto">

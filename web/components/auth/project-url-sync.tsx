@@ -7,12 +7,12 @@ import { Project } from "@/lib/stores/project-store";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 
 export function ProjectUrlSync() {
-  const { id } = useParams<{ id: string }>();
+  const { projectId } = useParams<{ projectId: string }>();
   const queryClient = getQueryClient();
   const setActiveProject = useProjectStore((store) => store.setActiveProject);
 
   useEffect(() => {
-    if (!id) {
+    if (!projectId) {
       setActiveProject(null);
       return;
     }
@@ -20,7 +20,9 @@ export function ProjectUrlSync() {
     const projects = queryClient.getQueryData<Project[]>(["projects"]);
 
     if (projects && projects.length > 0) {
-      const activeProject = projects.find((project) => project.id === id);
+      const activeProject = projects.find(
+        (project) => project.id === projectId
+      );
 
       if (!activeProject) {
         notFound();
@@ -28,7 +30,7 @@ export function ProjectUrlSync() {
         setActiveProject(activeProject);
       }
     }
-  }, [id, queryClient, setActiveProject]);
+  }, [projectId, queryClient, setActiveProject]);
 
   return null;
 }

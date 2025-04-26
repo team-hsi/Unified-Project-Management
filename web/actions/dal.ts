@@ -1,7 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { cache } from "react";
-import { COOKIE_NAME, decrypt } from "./session";
+import { ACTIVE_WS, COOKIE_NAME, decrypt } from "./session";
 import { redirect } from "next/navigation";
 
 export const verifySession = cache(async () => {
@@ -17,6 +17,7 @@ export const verifySession = cache(async () => {
   //TODO: check if session is expired and refresh it
   return {
     isAuth: true,
+    activeSpace: session.activeSpace,
     userId: session.userId,
     tokens: {
       accessToken: session.accessToken,
@@ -31,6 +32,19 @@ export const getSession = cache(async () => {
   if (!session) return redirect("/sign-in");
   return session;
 });
+
+export const getActiveWS = cache(async () => {
+  const cookie = (await cookies()).get(ACTIVE_WS)?.value;
+  if (!cookie) {
+    redirect("/select-workspace");
+  }
+  return cookie;
+});
+
+export const deleteActiveWS = async () => {
+  const cookieStore = await cookies();
+  cookieStore.delete(ACTIVE_WS);
+};
 
 export const getUser = cache(async () => {
   const session = await getSession();

@@ -15,7 +15,7 @@ export const DualButton = ({
   };
 }) => {
   const { deleteItem, updateItemInline } = useItemAction({
-    queryKey: ["items", data.projectId],
+    queryKey: [data.projectId, "items"],
   });
   return (
     <div

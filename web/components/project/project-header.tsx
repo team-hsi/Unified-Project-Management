@@ -22,7 +22,7 @@ export const ProjectHeader = ({ project }: { project: Project }) => {
       <div className="flex flex-col sm:flex-row max-w-7xl justify-between items-start sm:items-center p-4 pt-3 gap-4">
         <ProjectTabs />
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <CreateBucket id={project?.id || ""} />
+          <CreateBucket projectId={project?.id || ""} />
         </div>
       </div>
     </div>

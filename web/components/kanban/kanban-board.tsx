@@ -1,5 +1,4 @@
 "use client";
-import type { Bucket, Item } from "./types";
 import { KanbanBucket } from "./kanban-bucket";
 import { EmptyKanbanState } from "./empty-kanban";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
@@ -7,8 +6,10 @@ import { toast } from "sonner";
 import { useKanban } from "@/hooks/use-kanban";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
+import { Item } from "@/@types/item";
+import { Bucket } from "@/@types/bucket";
 
-export const KanbanBoard = ({ projectId }: { projectId: string }) => {
+export const KanbanBoard = () => {
   const {
     buckets,
     board,
@@ -20,7 +21,7 @@ export const KanbanBoard = ({ projectId }: { projectId: string }) => {
     itemsError,
     bucketsRefetch,
     itemsRefetch,
-  } = useKanban({ projectId });
+  } = useKanban();
 
   // Error state
   if (bucketsError || itemsError) {
@@ -49,7 +50,7 @@ export const KanbanBoard = ({ projectId }: { projectId: string }) => {
 
   // Empty state
   if (buckets.length === 0) {
-    return <EmptyKanbanState id={projectId} />;
+    return <EmptyKanbanState />;
   }
 
   const onDragEnd = (result: DropResult) => {
@@ -134,7 +135,7 @@ export const KanbanBoard = ({ projectId }: { projectId: string }) => {
           nextItemId: ${nextItemId}`);
         setBoard(newState);
         reorderItemMutation.mutateAsync({
-          itemId: draggableId,
+          id: draggableId,
           prevItemId,
           nextItemId,
         });
@@ -168,7 +169,7 @@ export const KanbanBoard = ({ projectId }: { projectId: string }) => {
           nextItemIdDest: ${nextItemIdDest}`);
         setBoard(newState);
         moveItemMutation.mutateAsync({
-          itemId: movedItem.id,
+          id: movedItem.id,
           bucketId: destBucket.id,
           prevItemId: prevItemIdDest,
           nextItemId: nextItemIdDest,

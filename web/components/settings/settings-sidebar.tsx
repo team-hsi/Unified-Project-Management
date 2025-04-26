@@ -54,6 +54,11 @@ export function SettingsSidebar({
           icon: <Settings className="h-4 w-4" />,
         },
         {
+          id: "space",
+          label: "Space",
+          icon: <Settings className="h-4 w-4" />,
+        },
+        {
           id: "people",
           label: "People",
           icon: <Users className="h-4 w-4" />,

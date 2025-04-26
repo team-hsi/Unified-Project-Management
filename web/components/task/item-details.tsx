@@ -18,7 +18,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import type { Item } from "@/components/kanban/types";
 import InlineEdit from "@/components/ui/inline-edit";
 import { useItemAction } from "@/hooks/use-item";
 import { useForm } from "react-hook-form";
@@ -50,7 +49,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import type { ItemFormValues } from "./types";
 import { itemFormSchema } from "@/components/form/schema";
 import MultipleSelector from "../ui/multiselect";
-import { Label, useLabels } from "@/hooks/use-labels";
+import { useLabels } from "@/hooks/use-labels";
+import { Item } from "@/@types/item";
+import { Label } from "@/@types/label";
 
 const MetadataField = ({
   icon: Icon,
@@ -80,7 +81,7 @@ export const ItemDetails = ({
   unsavedForm: boolean;
 }) => {
   const { updateItemInline } = useItemAction({
-    queryKey: ["items", item.bucket.project.id],
+    queryKey: [item.bucket.project.id, "items"],
     successAction: () => {
       setUnsavedForm(false);
       form.reset(form.getValues());
@@ -314,7 +315,7 @@ export const ItemDetails = ({
                           commandProps={{
                             label: "Add labels",
                           }}
-                          isPending={labels.isPending}
+                          // isPending={labels.isPending}
                           loadingIndicator={
                             <div className="flex w-full p-1 items-center justify-center">
                               <Loader2 className="h-4 w-4 animate-spin" />
