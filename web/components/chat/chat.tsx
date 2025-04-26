@@ -1,27 +1,24 @@
-"use client";
+// "use client";
 
-import { useChat } from "@/components/chat/chat-context";
+// import { useChat } from "@/components/chat/chat-context";
 import { ChatHeader } from "@/components/chat/chat-header";
-import { ChatInput } from "@/components/chat/chat-input";
+// import { ChatInput } from "@/components/chat/chat-input";
 import { ChatMessages } from "@/components/chat/chat-message";
 import { ChatSidebar } from "@/components/chat/chat-sidebar";
-import React from "react";
+import React, { Suspense } from "react";
 
 export const Chat = () => {
-  const { messages, sendMessage, isTyping } = useChat();
-
-  const handleSendMessage = (content: string, mentions: string[] = []) => {
-    sendMessage(content, mentions);
-  };
   return (
     <div className="flex h-screen bg-background">
-      <ChatSidebar />
+      <Suspense fallback={<div className="p-4">Loading rooms...</div>}>
+        <ChatSidebar />
+      </Suspense>
       <div className="flex-1 flex flex-col overflow-hidden">
         <ChatHeader />
         <div className="flex-1 overflow-y-auto p-4 bg-chat-bg">
-          <ChatMessages messages={messages} isTyping={isTyping} />
+          <ChatMessages />
         </div>
-        <ChatInput onSendMessage={handleSendMessage} />
+        {/* <ChatInput onSendMessage={handleSendMessage} /> */}
       </div>
     </div>
   );

@@ -69,11 +69,10 @@ export const userLogin = async (
 export const getUserWorkspaces = async () => {
   const session = await getSession();
   const res = await fetch(`${API}/v1/users/${session.userId}/spaces`);
+  const data = await res.json();
   if (!res.ok) {
-    const data = await res.json();
     return { success: false, error: extractErrors(data.error) };
   }
-  const data = await res.json();
   return { success: true, data };
 };
 

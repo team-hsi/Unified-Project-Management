@@ -13,15 +13,17 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Plus } from "lucide-react";
+import { useRoom } from "@/hooks/use-room";
 
 export const NewRoom = () => {
-  const [roomName, setRoomName] = React.useState("");
+  const { createRoom } = useRoom();
+  const [name, setName] = React.useState("");
 
   const handleCreateRoom = () => {
-    // Add logic to create the new chat room here
-    console.log("Creating room:", roomName);
+    createRoom.mutate({ name }); // Call the createRoom function with the name
+    console.log("Creating room:", name);
     // Reset room name after creation (optional)
-    setRoomName("");
+    setName("");
     // Close the drawer programmatically if needed, though DrawerClose button handles it
   };
 
@@ -45,14 +47,14 @@ export const NewRoom = () => {
               <Label htmlFor="room-name">Room Name</Label>
               <Input
                 id="room-name"
-                value={roomName}
-                onChange={(e) => setRoomName(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Project Alpha Discussion"
               />
             </div>
           </div>
           <DrawerFooter>
-            <Button onClick={handleCreateRoom} disabled={!roomName.trim()}>
+            <Button onClick={handleCreateRoom} disabled={!name.trim()}>
               Create
             </Button>
             <DrawerClose asChild>

@@ -5,14 +5,24 @@ import {
   ChatBubbleMessage,
 } from "@/components/chat/chat-bubble";
 import { ChatMessageList } from "@/components/ui/chat-message-list";
-import { Message } from "./chat-context";
+// import { Message } from "./chat-context";
+import { useChat } from "@/lib/stores/chat-provider";
 
-interface ChatMessagesProps {
-  messages: Message[];
-  isTyping: boolean;
-}
+// interface ChatMessagesProps {
+//   messages: Message[];
+//   isTyping: boolean;
+// }
 
-export function ChatMessages({ messages, isTyping }: ChatMessagesProps) {
+export function ChatMessages() {
+  const { messages, isLoading } = useChat();
+  console.log("messages", messages);
+  if (isLoading) {
+    return <div className="p-4">Loading messages...</div>;
+  }
+
+  if (!messages || messages.length === 0) {
+    return <div className="p-4">No messages yet.</div>;
+  }
   return (
     <div className="h-full flex-1 overflow-hidden">
       <ChatMessageList>
@@ -38,7 +48,7 @@ export function ChatMessages({ messages, isTyping }: ChatMessagesProps) {
           </ChatBubble>
         ))}
 
-        {isTyping && (
+        {/* {isTyping && (
           <ChatBubble variant="received">
             <ChatBubbleAvatar
               className="h-8 w-8 shrink-0"
@@ -47,7 +57,7 @@ export function ChatMessages({ messages, isTyping }: ChatMessagesProps) {
             />
             <ChatBubbleMessage isLoading />
           </ChatBubble>
-        )}
+        )} */}
       </ChatMessageList>
     </div>
   );

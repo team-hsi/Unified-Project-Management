@@ -29,7 +29,7 @@ import { Management } from "./management/management";
 import { useProject } from "@/hooks/use-project";
 
 export const NavProjects = () => {
-  const { projects } = useProject();
+  const { projects, isPending } = useProject();
   const { isMobile } = useSidebar();
   const { workspaceId } = useParams<{ workspaceId: string }>();
 
@@ -76,7 +76,7 @@ export const NavProjects = () => {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       {/* <ProjectUrlSync /> */}
-      <SidebarGroupLabel>Projects</SidebarGroupLabel>
+      <SidebarGroupLabel>Projects {isPending}</SidebarGroupLabel>
       <SidebarMenu>
         {projects.data.map((project: Project) => (
           <SidebarMenuItem key={project.id}>

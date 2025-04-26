@@ -11,9 +11,11 @@ import {
 import Link from "next/link";
 import { SettingsDialog } from "../settings/settings";
 import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
 
 export const NavMain = () => {
   const t = useTranslations("Sidebar");
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   return (
     <SidebarGroup>
       <SidebarGroupLabel
@@ -40,7 +42,7 @@ export const NavMain = () => {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href="/chat" prefetch={true}>
+              <Link href={`/${workspaceId}/chat`} prefetch={true}>
                 <MessageCircle className="mr-2" />
                 Chat
                 {/* {t("notifications")} */}

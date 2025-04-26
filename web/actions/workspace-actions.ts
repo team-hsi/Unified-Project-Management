@@ -77,9 +77,12 @@ export const getWorkspaceRooms = async (
     });
     if (!res.ok) {
       const data = await res.json();
+      console.log("error-rm", data.error);
       return { success: false, error: extractErrors(data.error) };
     }
-    return res.json();
+    const data = await res.json();
+    console.log("room-sr", data);
+    return data;
   } catch (error) {
     console.error(error);
     throw error;
