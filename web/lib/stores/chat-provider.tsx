@@ -4,53 +4,88 @@ import { type ReactNode, createContext, useContext } from "react";
 import { useChatStore } from "@/lib/stores/chat-store";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getQueryClient } from "../query-client/get-query-client";
+import { getRoomMessages } from "@/actions/room-actions";
+import { sendMessage as sendMsg } from "@/actions/message-actions";
+import { toast } from "sonner";
+import { Message } from "@/@types/message";
+import { useUser } from "../auth/auth-provider";
 
 // --- Types
 type ChatContextType = {
-  messages: Message[] | undefined;
+  messages: Message[] | [];
   isLoading: boolean;
-  sendMessageToChat: (content: string) => Promise<void>;
+  sendMessage: (content: string) => Promise<void>;
   selectedChatId: string | null;
-  selectChat: (id: string) => void;
+  selectChat: (id: string | null) => void;
 };
-
-export interface Message {
-  id: string;
-  content: string;
-  sender: string;
-  timestamp: string;
-  isCurrentUser: boolean;
-  avatar: string;
-  mentions: string[];
-}
 
 const ChatStoreContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = getQueryClient();
   const { selectedChatId, selectChat } = useChatStore();
+  const { user } = useUser();
 
   const { data: messages, isLoading } = useQuery({
-    queryKey: ["messages", selectedChatId],
+    queryKey: [selectedChatId, "messages"],
     queryFn: () => {
       if (!selectedChatId) return Promise.resolve([]);
-      return getMessages(selectedChatId);
+      return getRoomMessages({ id: selectedChatId });
     },
     enabled: !!selectedChatId, // only fetch if a chat is selected
   });
 
-  const sendMessageMutation = useMutation({
+  const sendAction = useMutation({
     mutationFn: (content: string) => {
       if (!selectedChatId) throw new Error("No chat selected");
-      return sendMessage(selectedChatId, content);
+      return sendMsg({ roomId: selectedChatId, content });
+    },
+    onMutate: async (content: string) => {
+      await queryClient.cancelQueries({
+        queryKey: [selectedChatId, "messages"],
+      });
+      const previousMessages = queryClient.getQueryData([
+        selectedChatId,
+        "messages",
+      ]);
+
+      // Optimistically update the message list by adding the new message
+      queryClient.setQueryData(
+        [selectedChatId, "messages"],
+        (oldMessages: Message[] | []) => {
+          return [
+            ...oldMessages,
+            {
+              id: "temp-id", // Temporary ID before server response
+              content,
+              roomId: selectedChatId,
+              senderId: user?.id, // You can replace this with actual user data
+              createdAt: new Date().toISOString(),
+            },
+          ];
+        }
+      );
+      // Return a rollback function in case of error
+      return { previousMessages };
+    },
+    onError: (error, content, context) => {
+      if (context?.previousMessages) {
+        queryClient.setQueryData(
+          [selectedChatId, "messages"],
+          context.previousMessages
+        );
+      }
+      toast.error(JSON.stringify(error));
+      toast.error("Failed to send message. Please try again later.");
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["messages", selectedChatId] });
+      queryClient.invalidateQueries({ queryKey: [selectedChatId, "messages"] });
+      toast.success("Message sent successfully!");
     },
   });
 
-  const sendMessageToChat = async (content: string) => {
-    await sendMessageMutation.mutateAsync(content);
+  const sendMessage = async (content: string) => {
+    await sendAction.mutateAsync(content);
   };
 
   return (
@@ -58,7 +93,7 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
       value={{
         messages,
         isLoading,
-        sendMessageToChat,
+        sendMessage,
         selectedChatId,
         selectChat,
       }}
@@ -74,52 +109,4 @@ export const useChat = () => {
     throw new Error("useChat must be used inside ChatStoreProvider");
   }
   return context;
-};
-
-// --- Mocked API functions for now:
-
-export const getMessages = async (chatId: string) => {
-  return new Promise<Message[]>((resolve) => {
-    setTimeout(() => {
-      resolve([
-        {
-          id: "1",
-          content: "Hi team, how's the progress on the Capstone project?",
-          sender: "Sarah Miller",
-          timestamp: "10:24 AM",
-          isCurrentUser: false,
-          avatar: "SM",
-          mentions: [],
-        },
-        {
-          id: "2",
-          content: "We are on track to finish the project by the deadline.",
-          sender: "You",
-          timestamp: "10:24 AM",
-          isCurrentUser: false,
-          avatar: "SM",
-          mentions: [],
-        },
-      ]);
-    }, 800); // simulate 800ms network delay
-  });
-};
-
-export const sendMessage = async (chatId: string, content: string) => {
-  return new Promise<Message>((resolve) => {
-    setTimeout(() => {
-      resolve({
-        id: Date.now().toString(),
-        content,
-        sender: "You", // Assuming 'You' represents the current user
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }), // Use timestamp and format it
-        isCurrentUser: true, // Mark as current user
-        avatar: "U", // Placeholder avatar
-        mentions: [], // Default mentions
-      });
-    }, 400); // simulate 400ms delay for sending
-  });
 };

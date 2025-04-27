@@ -10,18 +10,16 @@ export function ChatHeader() {
   const { selectedChatId } = useChat();
   const { rooms } = useRoom();
   const activeChat = useMemo(() => {
-    // Find the room where the room's id matches the selectedChatId
     const room = rooms.find((r: Room) => r.id === selectedChatId);
-    // Return the room's name, or a default string if no room is found or selected
     return room?.name || "Select a Chat";
   }, [selectedChatId, rooms]);
 
   return (
-    <div className="border-b border-chat-border bg-chat-header p-4 shadow-sm">
+    <div className="border-b border-chat-border bg-chat-header p-2 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <div className="relative">
-            <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
+            <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
               <span>{activeChat.substring(0, 2) || "AT"}</span>
             </div>
           </div>

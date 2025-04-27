@@ -15,7 +15,7 @@ import {
 import { Plus } from "lucide-react";
 import { useRoom } from "@/hooks/use-room";
 
-export const NewRoom = () => {
+export const NewChat = () => {
   const { createRoom } = useRoom();
   const [name, setName] = React.useState("");
 

@@ -175,6 +175,31 @@
 }
 
 @layer base {
+  /* Custom Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(var(--backgound), 0.2);
+    border-radius: 3px;
+    transition: background 0.2s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Firefox Scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--backgound), 0.2) var(--background);
+  }
   * {
     @apply border-border outline-ring/50;
   }

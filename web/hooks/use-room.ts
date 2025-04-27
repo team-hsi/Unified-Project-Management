@@ -1,5 +1,5 @@
 import { getQueryClient } from "@/lib/query-client/get-query-client";
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { getWorkspaceRooms } from "@/actions/workspace-actions";
 import {
   createRoom as createAction,
@@ -21,8 +21,6 @@ export const useRoom = (payload?: HookProps) => {
   const {
     data: rooms,
     isPending,
-    isFetching,
-    isError,
     error,
   } = useSuspenseQuery({
     queryKey: [workspaceId, "rooms"],
@@ -61,8 +59,6 @@ export const useRoom = (payload?: HookProps) => {
   return {
     rooms,
     isPending,
-    isFetching,
-    isError,
     error,
     createRoom,
     updateRoom,

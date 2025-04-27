@@ -1,6 +1,5 @@
 import { Chat } from "@/components/chat/chat";
 import React from "react";
-import { ChatProvider } from "@/components/chat/chat-context";
 import { Metadata } from "next";
 import { ChatStoreProvider } from "@/lib/stores/chat-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
@@ -24,11 +23,9 @@ const page = async ({
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <ChatProvider>
-        <ChatStoreProvider>
-          <Chat />
-        </ChatStoreProvider>
-      </ChatProvider>
+      <ChatStoreProvider>
+        <Chat />
+      </ChatStoreProvider>
     </HydrationBoundary>
   );
 };

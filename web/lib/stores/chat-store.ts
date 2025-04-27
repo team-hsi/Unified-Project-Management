@@ -5,7 +5,7 @@ export type ChatState = {
 };
 
 export type ChatActions = {
-  selectChat: (id: string) => void;
+  selectChat: (id: string | null) => void;
 };
 
 export type ChatStore = ChatState & ChatActions;
