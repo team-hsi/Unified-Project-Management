@@ -5,40 +5,45 @@ import {
   ChatBubbleMessage,
 } from "@/components/chat/chat-bubble";
 import { ChatMessageList } from "@/components/ui/chat-message-list";
-import { Message } from "./chat-context";
+import { useChat } from "@/lib/stores/chat-provider";
 
-interface ChatMessagesProps {
-  messages: Message[];
-  isTyping: boolean;
-}
+import { useUser } from "@/lib/auth/auth-provider";
+import { EmptyChat } from "./empty-chat";
+export function ChatMessages() {
+  const { messages, isLoading } = useChat();
+  const { user } = useUser();
 
-export function ChatMessages({ messages, isTyping }: ChatMessagesProps) {
+  if (isLoading) {
+    return <div className="p-4">Loading messages...</div>;
+  }
+
+  if (!messages || messages.length === 0) {
+    return <EmptyChat />;
+  }
   return (
     <div className="h-full flex-1 overflow-hidden">
       <ChatMessageList>
         {messages.map((message) => (
           <ChatBubble
             key={message.id}
-            variant={message.sender === "You" ? "sent" : "received"}
+            variant={message.senderId === user?.id ? "sent" : "received"}
           >
-            <ChatBubbleAvatar
-              className="h-8 w-8 shrink-0"
-              src={
-                message.sender === "You"
-                  ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&h=64&q=80&crop=faces&fit=crop"
-                  : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&q=80&crop=faces&fit=crop"
-              }
-              fallback={message.sender === "You" ? "US" : "AI"}
-            />
+            {message.senderId !== user?.id && (
+              <ChatBubbleAvatar
+                className="h-8 w-8 shrink-0"
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&q=80&crop=faces&fit=crop"
+                fallback="Av"
+              />
+            )}
             <ChatBubbleMessage
-              variant={message.sender === "You" ? "sent" : "received"}
+              variant={message.senderId === user?.id ? "sent" : "received"}
             >
               {message.content}
             </ChatBubbleMessage>
           </ChatBubble>
         ))}
 
-        {isTyping && (
+        {/* {isTyping && (
           <ChatBubble variant="received">
             <ChatBubbleAvatar
               className="h-8 w-8 shrink-0"
@@ -47,7 +52,7 @@ export function ChatMessages({ messages, isTyping }: ChatMessagesProps) {
             />
             <ChatBubbleMessage isLoading />
           </ChatBubble>
-        )}
+        )} */}
       </ChatMessageList>
     </div>
   );

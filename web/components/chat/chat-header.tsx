@@ -1,16 +1,25 @@
+"use client";
 import { Search, MoreVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useChat } from "./chat-context";
+import { useRoom } from "@/hooks/use-room";
+import { useChat } from "@/lib/stores/chat-provider";
+import { useMemo } from "react";
+import { Room } from "@/@types/room";
 
 export function ChatHeader() {
-  const { activeChat } = useChat();
+  const { selectedChatId } = useChat();
+  const { rooms } = useRoom();
+  const activeChat = useMemo(() => {
+    const room = rooms.find((r: Room) => r.id === selectedChatId);
+    return room?.name || "Select a Chat";
+  }, [selectedChatId, rooms]);
 
   return (
-    <header className="border-b border-chat-border bg-chat-header p-4 shadow-sm">
+    <div className="border-b border-chat-border bg-chat-header p-2 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <div className="relative">
-            <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
+            <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
               <span>{activeChat.substring(0, 2) || "AT"}</span>
             </div>
           </div>
@@ -46,6 +55,6 @@ export function ChatHeader() {
           </button>
         </div>
       </div>
-    </header>
+    </div>
   );
 }

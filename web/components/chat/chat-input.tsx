@@ -2,19 +2,18 @@
 import { useState, KeyboardEvent, useRef } from "react";
 import { Send } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useChat } from "@/lib/stores/chat-provider";
 
-interface ChatInputProps {
-  onSendMessage: (content: string, mentions: string[]) => void;
-}
-
-export function ChatInput({ onSendMessage }: ChatInputProps) {
+export function ChatInput() {
+  const { sendMessage } = useChat(); // Assuming you have a sendMessage function in your context
   const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
-      onSendMessage(message, []);
+      // onSendMessage(message, []);
+      await sendMessage(message); // Call the sendMessage function from context
       setMessage("");
     }
   };
@@ -23,7 +22,8 @@ export function ChatInput({ onSendMessage }: ChatInputProps) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (message.trim()) {
-        onSendMessage(message, []);
+        // onSendMessage(message, []);
+        sendMessage(message); // Call the sendMessage function from context
         setMessage("");
       }
     }

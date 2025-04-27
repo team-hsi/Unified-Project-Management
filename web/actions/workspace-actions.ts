@@ -79,7 +79,8 @@ export const getWorkspaceRooms = async (
       const data = await res.json();
       return { success: false, error: extractErrors(data.error) };
     }
-    return res.json();
+    const data = await res.json();
+    return data;
   } catch (error) {
     console.error(error);
     throw error;
