@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Loader, Palette, Plus, Trash2 } from "lucide-react";
 import { NameDescriptionForm } from "../form/name-description-form";
-import { CustomDialogItem } from "@/components/project/custom-dialog-item";
+import { CustomDialog } from "@/components/ui/custom-dialog";
 import { useState } from "react";
 import { ColorInput } from "../ui/color-input";
 import { useBucketAction } from "@/hooks/use-bucket";
@@ -41,7 +41,7 @@ export const AddBucketItem = ({
   };
 
   return (
-    <CustomDialogItem
+    <CustomDialog
       triggerChildren={<DropdownAction icon={Plus} label="Add item" />}
       onOpenChange={onOpenChange}
       onSelect={onSelect}
@@ -56,7 +56,7 @@ export const AddBucketItem = ({
           label="Add"
         />
       </DialogContent>
-    </CustomDialogItem>
+    </CustomDialog>
   );
 };
 
@@ -146,7 +146,7 @@ export const EditBucket = ({
   });
 
   return (
-    <CustomDialogItem
+    <CustomDialog
       triggerChildren={<DropdownAction icon={Palette} label="Change Color" />}
       onOpenChange={onOpenChange}
       onSelect={onSelect}
@@ -186,7 +186,7 @@ export const EditBucket = ({
           </Button>
         </DialogFooter>
       </DialogContent>
-    </CustomDialogItem>
+    </CustomDialog>
   );
 };
 
@@ -212,7 +212,7 @@ export const DeleteBucket = ({
   };
 
   return (
-    <CustomDialogItem
+    <CustomDialog
       triggerChildren={<DropdownAction icon={Trash2} label="Delete Bucket" />}
       onOpenChange={onOpenChange}
       onSelect={onSelect}
@@ -240,7 +240,7 @@ export const DeleteBucket = ({
           </Button>
         </DialogFooter>
       </DialogContent>
-    </CustomDialogItem>
+    </CustomDialog>
   );
 };
 

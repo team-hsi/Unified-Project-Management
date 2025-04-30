@@ -22,7 +22,7 @@ import type { Project } from "./types";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { CreateProjectDialog } from "./create-project-dialog";
-import { CustomDialogItem } from "./custom-dialog-item";
+import { CustomDialog } from "../ui/custom-dialog";
 import { DeleteProjectDialog } from "./delete-project-dialog";
 import { UpdateProjectDialog } from "./update-project-dialog";
 import { Management } from "./management/management";
@@ -116,7 +116,7 @@ export const NavProjects = () => {
                   }
                 }}
               >
-                <CustomDialogItem
+                <CustomDialog
                   triggerChildren={
                     <>
                       <Edit className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -134,9 +134,9 @@ export const NavProjects = () => {
                       handleDialogItemOpenChange(project.id, open)
                     }
                   />
-                </CustomDialogItem>
+                </CustomDialog>
 
-                <CustomDialogItem
+                <CustomDialog
                   triggerChildren={
                     <>
                       <Settings2 className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -149,11 +149,11 @@ export const NavProjects = () => {
                   }
                 >
                   <Management project={project} />
-                </CustomDialogItem>
+                </CustomDialog>
 
                 <DropdownMenuSeparator />
 
-                <CustomDialogItem
+                <CustomDialog
                   triggerChildren={
                     <>
                       <Trash2 className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -171,7 +171,7 @@ export const NavProjects = () => {
                       handleDialogItemOpenChange(project.id, open)
                     }
                   />
-                </CustomDialogItem>
+                </CustomDialog>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

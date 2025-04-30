@@ -4,30 +4,34 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowRight, Plus } from "lucide-react";
 import { Workspace } from "@/@types/space";
-import { useWorkspace } from "@/hooks/use-workspace";
 import { toast } from "sonner";
-// import { useEffect } from "react";
+import { getQueryClient } from "@/lib/query-client/get-query-client";
+import { useMutation } from "@tanstack/react-query";
+import { updateActiveWorkspace } from "@/actions/workspace-actions";
+import { useRouter } from "next/navigation";
+import { Session } from "@/lib/auth/auth-provider";
 
 const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {
-  // const navigate = useNavigate();
-  const { setActive } = useWorkspace();
+  const queryClient = getQueryClient();
+  const router = useRouter();
 
-  // useEffect(() => {
-  //   const selectedWorkspace = document.cookie
-  //     .split("; ")
-  //     .find((row) => row.startsWith("selectedWorkspace="));
-
-  //   if (selectedWorkspace) {
-  //     // navigate("/");
-  //   }
-  // }, [navigate]);
-
-  // const selectWorkspace = (workspaceId: string) => {
-  //   document.cookie = `selectedWorkspace=${workspaceId}; max-age=${
-  //     60 * 60 * 24 * 30
-  //   }; path=/`;
-  //   // navigate("/");
-  // };
+  const setActive = useMutation({
+    mutationFn: updateActiveWorkspace,
+    onMutate: async (payload: { activeSpace: string }) => {
+      router.push(`/${payload.activeSpace}/projects`);
+      await queryClient.cancelQueries({ queryKey: ["session"] });
+      queryClient.setQueryData(["session"], (old: Session) => ({
+        ...old,
+        activeSpace: payload.activeSpace,
+      }));
+    },
+    onError: (error) => {
+      toast.warning(error.message);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["session"] });
+    },
+  });
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">

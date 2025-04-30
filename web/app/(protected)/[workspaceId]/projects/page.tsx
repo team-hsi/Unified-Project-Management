@@ -1,10 +1,25 @@
+import { getWorkspaceById } from "@/actions/workspace-actions";
 import { WorkspaceProjects } from "@/components/space/workspace-projects";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Projects",
-  description: "Projects page",
+type Props = {
+  params: Promise<{ workspaceId: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { workspaceId } = await params;
+
+  const workspace = await getWorkspaceById(workspaceId);
+  if (!workspace.success) {
+    return {
+      title: "Workspace Not Found",
+    };
+  }
+
+  return {
+    title: workspace.data.name || workspaceId,
+  };
+}
 
 const Page = async () => {
   return (

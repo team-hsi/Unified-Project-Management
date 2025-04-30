@@ -15,7 +15,7 @@ export function ChatSidebar() {
   }
 
   return (
-    <div className="w-72 border-r border-chat-border h-full flex flex-col bg-sidebar-background">
+    <div className="w-72 h-full flex flex-col bg-sidebar-background border-r overflow-hidden">
       <div className="p-4 border-b border-chat-border">
         <div className="flex items-center mb-4 justify-between">
           <h2 className="text-lg font-semibold">Chats</h2>
@@ -33,11 +33,9 @@ export function ChatSidebar() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
-        <React.Suspense fallback={<ChatListLoading />}>
-          <ChatList />
-        </React.Suspense>
-      </div>
+      <React.Suspense fallback={<ChatListLoading />}>
+        <ChatList />
+      </React.Suspense>
     </div>
   );
 }

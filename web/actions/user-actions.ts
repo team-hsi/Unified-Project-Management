@@ -50,12 +50,16 @@ export const userLogin = async (
   });
 
   if (!res.ok) {
-    return { success: false, error: "Invalid email or password" };
+    if (res.status === 401) {
+      return { success: false, error: "Invalid email or password" };
+    }
+    const data = await res.json();
+    return { success: false, error: extractErrors(data.error) };
   }
   const { user, tokens } = await res.json();
   const session = {
     userId: user.id,
-    activeSpace: user.activeSpace.id,
+    activeSpace: user.activeSpace,
     accessToken: tokens.accessToken,
     refreshToken: tokens.refreshToken,
   };
@@ -143,7 +147,20 @@ export const getUserById = async (payload: Pick<UserPayload, "id">) => {
 /*
  * get all users
  */
-export const getAllUsers = async () => {};
+export const getAllUsers = async () => {
+  const session = await getSession();
+  const res = await fetch(`${API}/v1/users`, {
+    headers: {
+      Authorization: `Bearer ${session.tokens.accessToken}`,
+    },
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    return { success: false, error: extractErrors(data.error) };
+  }
+  const data = await res.json();
+  return { success: true, data };
+};
 
 /*
  * update user

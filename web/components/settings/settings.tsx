@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SettingsSidebar } from "@/components/settings/settings-sidebar";
 import { SettingsContent } from "@/components/settings/settings-content";
@@ -18,6 +18,7 @@ export function SettingsDialog({ children }: SettingsDialogProps) {
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="flex h-[80vh] p-0 sm:max-w-[90vw] md:max-w-[90vw] lg:max-w-[90vw]">
+        <DialogTitle className="sr-only">Settings</DialogTitle>
         <div className="flex h-full w-full">
           {/* Sidebar */}
           <SettingsSidebar

@@ -52,7 +52,9 @@ export const createRoom = async (payload: Pick<RoomPayload, "name">) => {
 /*
  * update room by id
  */
-export const updateRoomById = async (payload: RoomPayload) => {
+export const updateRoomById = async (
+  payload: Pick<RoomPayload, "id" | "name">
+) => {
   const { id, name } = payload;
   const session = await getSession();
   const res = await fetch(`${API}/v1/rooms/${id}`, {
@@ -104,6 +106,60 @@ export const deleteRoom = async (payload: Pick<RoomPayload, "id">) => {
   });
   if (!res.ok) {
     const data = await res.json();
+    return { success: false, error: extractErrors(data.error) };
+  }
+  return { success: true };
+};
+
+/*
+ * get room members
+ */
+export const getRoomMembers = async (payload: Pick<RoomPayload, "id">) => {
+  const { id } = payload;
+  const res = await fetch(`${API}/v1/rooms/${id}/members`);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(extractErrors(data.error));
+  }
+  return data.members;
+};
+
+/*
+ * add room members
+ */
+export const addRoomMember = async (payload: Omit<RoomPayload, "name">) => {
+  const { id, userId, role } = payload;
+  const res = await fetch(`${API}/v1/rooms/${id}/members/add`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId, role }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    return { success: false, error: extractErrors(data.error) };
+  }
+  return { success: true };
+};
+
+/*
+ * remove room member
+ */
+export const removeRoomMember = async (
+  payload: Pick<RoomPayload, "id" | "userId">
+) => {
+  const { id, userId } = payload;
+  console.log("removeRoomMember", payload);
+  const res = await fetch(`${API}/v1/rooms/${id}/members/remove`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
     return { success: false, error: extractErrors(data.error) };
   }
   return { success: true };

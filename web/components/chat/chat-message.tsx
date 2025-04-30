@@ -10,20 +10,21 @@ import { useChat } from "@/lib/stores/chat-provider";
 import { useUser } from "@/lib/auth/auth-provider";
 import { EmptyChat } from "./empty-chat";
 export function ChatMessages() {
-  const { messages, isLoading } = useChat();
+  const { chat, isLoading } = useChat();
   const { user } = useUser();
 
   if (isLoading) {
     return <div className="p-4">Loading messages...</div>;
   }
+  console.log("messages", chat?.messages);
 
-  if (!messages || messages.length === 0) {
+  if (!chat || chat.messages.length === 0) {
     return <EmptyChat />;
   }
   return (
     <div className="h-full flex-1 overflow-hidden">
       <ChatMessageList>
-        {messages.map((message) => (
+        {chat.messages.map((message) => (
           <ChatBubble
             key={message.id}
             variant={message.senderId === user?.id ? "sent" : "received"}

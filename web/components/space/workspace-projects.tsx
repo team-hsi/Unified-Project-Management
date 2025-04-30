@@ -108,7 +108,11 @@ function ProjectCard({ project }: { project: Project }) {
   const formattedCreatedDate = format(createdDate, "MMM d, yyyy");
 
   return (
-    <Link href={`/${workspaceId}/${project.id}`} className="block">
+    <Link
+      href={`/${workspaceId}/${project.id}`}
+      prefetch={true}
+      className="block"
+    >
       <Card className="overflow-hidden transition-all hover:shadow-md">
         <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
           <div className="space-y-1">

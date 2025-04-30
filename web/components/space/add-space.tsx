@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CustomDialogItem } from "../project/custom-dialog-item";
+import { CustomDialog } from "../ui/custom-dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useWorkspace } from "@/hooks/use-workspace";
 
@@ -63,7 +63,7 @@ export function AddSpaceDialog({
   }
 
   return (
-    <CustomDialogItem
+    <CustomDialog
       triggerChildren={children}
       onOpenChange={onOpenChange}
       onSelect={onSelect}
@@ -116,6 +116,6 @@ export function AddSpaceDialog({
           </form>
         </Form>
       </DialogContent>
-    </CustomDialogItem>
+    </CustomDialog>
   );
 }

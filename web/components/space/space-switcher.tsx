@@ -20,11 +20,13 @@ import { useWorkspace } from "@/hooks/use-workspace";
 import type { Workspace } from "@/@types/space";
 import { AddSpaceDialog } from "./add-space";
 import { notFound, useParams } from "next/navigation";
+import Link from "next/link";
 
 export const SpaceSwitcher = () => {
   const { isMobile } = useSidebar();
   const { workspaceId } = useParams<{ workspaceId: string }>();
-  const { workspaces, setActive } = useWorkspace();
+
+  const { workspaces, setActive, prefetchWorkspace } = useWorkspace();
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [hasOpenDialog, setHasOpenDialog] = React.useState(false);
   const focusRef = React.useRef<HTMLElement | null>(null);
@@ -87,19 +89,26 @@ export const SpaceSwitcher = () => {
             </DropdownMenuLabel>
             {workspaces.data?.map((space: Workspace, index: number) => {
               return (
-                <DropdownMenuItem
+                <Link
                   key={space.id}
-                  onClick={() =>
-                    setActive.mutateAsync({ activeSpace: space.id })
-                  }
-                  className="gap-2 p-2"
+                  href={`/${space.id}/projects`}
+                  prefetch={true}
                 >
-                  <div className="flex size-6 items-center justify-center rounded-sm border">
-                    <GalleryVerticalEnd className="size-4 shrink-0" />
-                  </div>
-                  {space.name}
-                  <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-                </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onMouseEnter={() => prefetchWorkspace(space.id)}
+                    onFocus={() => prefetchWorkspace(space.id)}
+                    onClick={() =>
+                      setActive.mutateAsync({ activeSpace: space.id })
+                    }
+                    className="gap-2 p-2"
+                  >
+                    <div className="flex size-6 items-center justify-center rounded-sm border">
+                      <GalleryVerticalEnd className="size-4 shrink-0" />
+                    </div>
+                    {space.name}
+                    <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </Link>
               );
             })}
             <DropdownMenuSeparator />

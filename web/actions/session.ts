@@ -9,7 +9,7 @@ export const ACTIVE_WS = "unified_active_ws";
 
 export type SessionPayload = {
   userId: string;
-  activeSpace: string;
+  activeSpace: string | null;
   accessToken: string;
   refreshToken: string;
   expiresAt: Date;
@@ -48,10 +48,10 @@ export async function createSession(
     path: "/",
   });
   // Set active workspace cookie
-  cookieStore.set({
-    name: ACTIVE_WS,
-    value: payload.activeSpace,
-  });
+  // cookieStore.set({
+  //   name: ACTIVE_WS,
+  //   value: payload.activeSpace,
+  // });
 }
 
 export async function updateSession() {

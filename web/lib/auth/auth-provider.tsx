@@ -5,7 +5,7 @@ import { getCurrentSession, getSessionUser } from "@/actions/auth-actions";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createContext, useContext, ReactNode } from "react";
 
-interface Session {
+export interface Session {
   isAuth: boolean;
   activeSpace: unknown;
   userId: unknown;

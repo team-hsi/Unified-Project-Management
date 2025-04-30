@@ -3,13 +3,15 @@ import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import {
   createWorkspace as createAction,
   deleteWorkspace as deleteAction,
-  getActiveWorkspace,
+  getWorkspaceMembers,
+  getWorkspaceProjects,
   updateWorkspace as updateAction,
   updateActiveWorkspace,
 } from "@/actions/workspace-actions";
 import { getUserWorkspaces } from "@/actions/user-actions";
-import { useParams, useRouter } from "next/navigation";
-import { useUser } from "@/lib/auth/auth-provider";
+import { useRouter } from "next/navigation";
+import { Session, useUser } from "@/lib/auth/auth-provider";
+import { toast } from "sonner";
 
 interface HookProps {
   queryKey?: string[];
@@ -17,9 +19,6 @@ interface HookProps {
 }
 export const useWorkspace = (payload?: HookProps) => {
   const queryClient = getQueryClient();
-  const { projectId } = useParams<{
-    projectId: string;
-  }>();
 
   const router = useRouter();
   const { session } = useUser();
@@ -33,6 +32,18 @@ export const useWorkspace = (payload?: HookProps) => {
     queryFn: getUserWorkspaces,
   });
 
+  const prefetchWorkspace = (workspace: string) => {
+    router.prefetch(`/${workspace}/projects`);
+
+    queryClient.prefetchQuery({
+      queryKey: [session?.userId, "workspaces"],
+      queryFn: getUserWorkspaces,
+    });
+    queryClient.prefetchQuery({
+      queryKey: [workspace, "projects"],
+      queryFn: getWorkspaceProjects,
+    });
+  };
   const createWorkspace = useMutation({
     mutationFn: createAction,
     onSuccess: () => {
@@ -63,31 +74,43 @@ export const useWorkspace = (payload?: HookProps) => {
   });
   const setActive = useMutation({
     mutationFn: updateActiveWorkspace,
-    onSuccess: (data) => {
-      router.push(`/${data.data.id}/projects`);
-      // queryClient.invalidateQueries({ queryKey: [workspaceId, "projects"] });
-      queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
-      queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
-      queryClient.invalidateQueries({ queryKey: ["activeSpace"] });
+    onMutate: async (payload: { activeSpace: string }) => {
+      router.push(`/${payload.activeSpace}/projects`);
+      await queryClient.cancelQueries({ queryKey: ["session"] });
+      queryClient.setQueryData(["session"], (old: Session) => ({
+        ...old,
+        activeSpace: payload.activeSpace,
+      }));
+    },
+    onError: (error) => {
+      toast.warning(error.message);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["session"] });
     },
   });
-  const { data: activeSpace } = useQuery({
-    queryKey: ["activeSpace"],
-    queryFn: getActiveWorkspace,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    staleTime: Infinity,
+
+  const {
+    data: members,
+    isPending: isPendingMembers,
+    error: membersError,
+  } = useQuery({
+    queryKey: [session?.activeSpace, "members"],
+    queryFn: getWorkspaceMembers,
+    enabled: !!session?.activeSpace,
   });
 
   return {
     workspaces,
+    prefetchWorkspace,
     isLoading,
     error,
     createWorkspace,
     updateWorkspace,
     deleteWorkspace,
     setActive,
-    activeSpace,
+    members,
+    isPendingMembers,
+    membersError,
   };
 };

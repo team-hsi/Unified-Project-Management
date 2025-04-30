@@ -7,6 +7,9 @@ import {
   updateRoomById,
 } from "@/actions/room-actions";
 import { useParams } from "next/navigation";
+import { Room, RoomPayload } from "@/@types/room";
+import { useUser } from "@/lib/auth/auth-provider";
+import { toast } from "sonner";
 
 interface HookProps {
   queryKey?: string[];
@@ -17,6 +20,7 @@ export const useRoom = (payload?: HookProps) => {
   const { workspaceId } = useParams<{
     workspaceId: string;
   }>();
+  const { user } = useUser();
 
   const {
     data: rooms,
@@ -29,10 +33,43 @@ export const useRoom = (payload?: HookProps) => {
 
   const createRoom = useMutation({
     mutationFn: createAction,
+    onMutate: async (payload: Pick<RoomPayload, "name">) => {
+      await queryClient.cancelQueries({
+        queryKey: [workspaceId, "rooms"],
+      });
+      const previousRooms = queryClient.getQueryData([workspaceId, "rooms"]);
+
+      queryClient.setQueryData([workspaceId, "rooms"], (old: Room[]) => {
+        return [
+          ...old,
+          {
+            id: `temp-${Math.random().toString(36).substring(2, 9)}`,
+            name: payload.name,
+            type: "GROUP",
+            owner: user,
+            members: [],
+            spaceId: workspaceId,
+          },
+        ];
+      });
+      return { previousRooms };
+    },
+    onError: (error, variables, context) => {
+      toast.info(
+        `error.message
+        ${JSON.stringify(error)},
+        ${JSON.stringify(variables)}`
+      );
+      if (context?.previousRooms) {
+        queryClient.setQueryData([workspaceId, "rooms"], context.previousRooms);
+      }
+      toast.error(JSON.stringify(error));
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [workspaceId, "rooms"],
       });
+      toast.success("Room created successfully!");
       payload?.successAction?.();
     },
   });

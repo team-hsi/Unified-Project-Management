@@ -303,7 +303,10 @@ export const ItemDetails = ({
                 />
               </MetadataField>
               {/* Labels Field */}
-              <MetadataField icon={TagIcon} label="Labels">
+              {/*
+                testing out the new multiselect component
+                */}
+              {/* <MetadataField icon={TagIcon} label="Labels">
                 <FormField
                   control={form.control}
                   name="labels"
@@ -337,7 +340,7 @@ export const ItemDetails = ({
                     </FormItem>
                   )}
                 />
-              </MetadataField>
+              </MetadataField> */}
             </section>
 
             {/* Description Section */}

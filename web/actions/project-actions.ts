@@ -26,15 +26,14 @@ export const getAllProjects = async () => {
  */
 export const getProject = cache(async (id: string) => {
   const res = await fetch(`${API}/v1/projects/${id}`);
+  const data = await res.json();
   if (!res.ok) {
     if (res.status === 400) {
       notFound();
     } else {
-      const data = await res.json();
       return { success: false, error: extractErrors(data.error) };
     }
   }
-  const data = await res.json();
   return { success: true, data };
 });
 

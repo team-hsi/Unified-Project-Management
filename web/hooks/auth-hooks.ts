@@ -28,6 +28,9 @@ export function useLogin() {
       const result = await userLogin({ email, password });
 
       if (!result.success) {
+        if (result.error) {
+          throw new Error(result.error);
+        }
         throw new Error("Failed to login");
       }
 
@@ -41,9 +44,15 @@ export function useLogin() {
       router.push(`/${user.activeSpace.id}/projects`);
     },
     onError: (error: Error) => {
-      toast.error("Auth", {
-        description: error.message,
-      });
+      if (error.message === "fetch failed") {
+        toast.error("Auth", {
+          description: "Network failure check your connection!",
+        });
+      } else {
+        toast.error("Auth", {
+          description: error.message,
+        });
+      }
     },
   });
 }

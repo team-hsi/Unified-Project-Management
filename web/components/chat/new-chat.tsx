@@ -18,17 +18,16 @@ import { useRoom } from "@/hooks/use-room";
 export const NewChat = () => {
   const { createRoom } = useRoom();
   const [name, setName] = React.useState("");
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const handleCreateRoom = () => {
-    createRoom.mutate({ name }); // Call the createRoom function with the name
-    console.log("Creating room:", name);
-    // Reset room name after creation (optional)
     setName("");
-    // Close the drawer programmatically if needed, though DrawerClose button handles it
+    setIsOpen(false);
+    createRoom.mutate({ name });
   };
 
   return (
-    <Drawer>
+    <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
         <Button variant="ghost" className="w-4 h-5 p-0 hover:bg-background ">
           <Plus className="text-muted-foreground hover:scale-110" />

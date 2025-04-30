@@ -10,7 +10,7 @@ interface DialogItemProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-export const CustomDialogItem = ({
+export const CustomDialog = ({
   triggerChildren,
   children,
   onSelect,

@@ -39,7 +39,7 @@ const RootLayout = async ({
           color={"var(--toploader)"}
           height={3}
         />
-        <Toaster />
+        <Toaster richColors position="top-right" />
         <QueryProvider>
           <ThemeProvider
             attribute="class"

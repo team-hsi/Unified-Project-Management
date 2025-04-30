@@ -8,8 +8,8 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AuthProvider } from "@/lib/auth/auth-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-// export const dynamic = "force-dynamic";
-// export const revalidate = 0;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const WorkspaceLayout = async ({
   children,

@@ -3,3 +3,11 @@ export type ProjectPayload = {
   name: string;
   spaceId: string;
 };
+
+export type Project = {
+  id: string;
+  name: string;
+  ownerId: string;
+  createdAt: string;
+  updatedAt: string;
+};
