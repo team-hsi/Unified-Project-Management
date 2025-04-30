@@ -47,11 +47,6 @@ export async function createSession(
     sameSite: "lax",
     path: "/",
   });
-  // Set active workspace cookie
-  // cookieStore.set({
-  //   name: ACTIVE_WS,
-  //   value: payload.activeSpace,
-  // });
 }
 
 export async function updateSession() {
