@@ -1,6 +1,6 @@
-import { ProjectHeader } from "@/components/project/project-header";
-import { ViewContainer } from "@/components/project/view-container";
 import { getProject } from "@/actions/project-actions";
+import { ProjectHeader } from "@/feature/project/layout/project-header";
+import { ViewContainer } from "@/feature/project/views/view-container";
 import { Metadata } from "next";
 
 type Props = {

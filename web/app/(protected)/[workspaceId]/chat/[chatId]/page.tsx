@@ -1,9 +1,8 @@
+import { ChatInput } from "@/feature/chat/components/chat-input";
+import { ChatMessages } from "@/feature/chat/components/chat-message";
+import { ChatHeader } from "@/feature/chat/layout/chat-header";
+import { ChatHeaderLoading } from "@/feature/chat/shared/chat-loadings";
 import * as React from "react";
-import { ChatHeader } from "@/components/chat/chat-header";
-import { ChatInput } from "@/components/chat/chat-input";
-import { ChatMessages } from "@/components/chat/chat-message";
-
-import { ChatHeaderLoading } from "@/components/chat/chat-loadings";
 
 const ChatPage = () => {
   return (
