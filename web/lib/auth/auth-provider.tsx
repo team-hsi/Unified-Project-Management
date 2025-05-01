@@ -1,7 +1,10 @@
 "use client";
 
-import { User } from "@/@types/user";
-import { getCurrentSession, getSessionUser } from "@/actions/auth-actions";
+import { User } from "@/feature/shared/@types/user";
+import {
+  getCurrentSession,
+  getSessionUser,
+} from "@/feature/shared/actions/auth-actions";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createContext, useContext, ReactNode } from "react";
 

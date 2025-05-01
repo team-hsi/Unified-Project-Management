@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/feature/shared/ui/button";
 import Link from "next/link";
 import { Metadata } from "next";
 

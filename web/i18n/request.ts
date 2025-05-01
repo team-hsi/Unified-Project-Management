@@ -1,4 +1,4 @@
-import { getUserLocale } from "@/actions/locale";
+import { getUserLocale } from "@/feature/shared/actions/locale";
 import { getRequestConfig } from "next-intl/server";
 
 export default getRequestConfig(async () => {
