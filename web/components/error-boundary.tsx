@@ -38,7 +38,6 @@ export class ErrorBoundary extends Component<Props, State> {
     // Log the error
     errorLogger.log(error, {
       path: window.location.pathname,
-      componentStack: errorInfo.componentStack,
     });
 
     // Show toast based on error type

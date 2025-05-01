@@ -6,12 +6,10 @@ import {
   getWorkspaceMembers,
   getWorkspaceProjects,
   updateWorkspace as updateAction,
-  updateActiveWorkspace,
 } from "@/actions/workspace-actions";
 import { getUserWorkspaces } from "@/actions/user-actions";
 import { useRouter } from "next/navigation";
-import { Session, useUser } from "@/lib/auth/auth-provider";
-import { toast } from "sonner";
+import { useUser } from "@/lib/auth/auth-provider";
 
 interface HookProps {
   queryKey?: string[];
@@ -91,7 +89,6 @@ export const useWorkspace = (payload?: HookProps) => {
     createWorkspace,
     updateWorkspace,
     deleteWorkspace,
-    setActive,
     members,
     isPendingMembers,
     membersError,
