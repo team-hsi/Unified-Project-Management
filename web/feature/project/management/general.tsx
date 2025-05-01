@@ -9,7 +9,7 @@ import { Input } from "@/feature/shared/ui/input";
 import { Label } from "@/feature/shared/ui/label";
 import { Textarea } from "@/feature/shared/ui/textarea";
 import { Save } from "lucide-react";
-import type { Project } from "@/@types/projects";
+import type { Project } from "@/feature/shared/@types/projects";
 
 export function GeneralView({ project }: { project: Project }) {
   return (

@@ -4,10 +4,10 @@ import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { cn, hexToRgba } from "@/lib/utils";
 import { Button } from "@/feature/shared/ui/button";
 import InlineEdit from "@/feature/shared/ui/inline-edit";
-import { useBucketAction } from "@/hooks/use-bucket";
+import { useBucketAction } from "@/feature/shared/hooks/use-bucket";
 import React from "react";
 import { Plus } from "lucide-react";
-import { Bucket } from "@/@types/bucket";
+import { Bucket } from "@/feature/shared/@types/bucket";
 import { BucketDropdown } from "../dropdown/bucket-dropdown";
 
 interface KanbanBucketProps {

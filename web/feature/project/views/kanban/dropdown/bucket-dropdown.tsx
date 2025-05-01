@@ -12,7 +12,7 @@ import {
   ChangeBucketColor,
   DeleteBucket,
 } from "./bucket-dropdown-actions";
-import { Bucket } from "@/@types/bucket";
+import { Bucket } from "@/feature/shared/@types/bucket";
 
 export const BucketDropdown = ({ bucket }: { bucket: Bucket }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

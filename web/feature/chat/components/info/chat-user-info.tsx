@@ -6,10 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/feature/shared/ui/card";
-import { Member } from "@/@types/user";
+import { Member } from "@/feature/shared/@types/user";
 import { Button } from "@/feature/shared/ui/button";
 import { Trash2 } from "lucide-react";
-import { useMember } from "@/hooks/use-member";
+import { useMember } from "@/feature/shared/hooks/use-member";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { ChatSheetHeader } from "../../layout/chat-sheet-header";

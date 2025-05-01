@@ -3,8 +3,8 @@ import { Input } from "@/feature/shared/ui/input";
 import { Search } from "lucide-react";
 import { ScrollArea } from "@/feature/shared/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
-import { useMember } from "@/hooks/use-member";
-import { Member } from "@/@types/user";
+import { useMember } from "@/feature/shared/hooks/use-member";
+import { Member } from "@/feature/shared/@types/user";
 import { ChatSheetHeader } from "../../layout/chat-sheet-header";
 
 interface ChatMembersViewProps {

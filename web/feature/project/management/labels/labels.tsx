@@ -7,14 +7,14 @@ import {
 import { Button } from "@/feature/shared/ui/button";
 import { Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLabels } from "@/hooks/use-labels";
+import { useLabels } from "@/feature/shared/hooks/use-labels";
 import { LabelsLoading } from "./labels-loading";
 import { EmptyLabelState } from "./empty-labels";
-import type { Project } from "@/@types/projects";
+import type { Project } from "@/feature/shared/@types/projects";
 import { LabelForm } from "./label-form";
 import React from "react";
 import { LabelItem } from "./label-item";
-import { Label } from "@/@types/label";
+import { Label } from "@/feature/shared/@types/label";
 
 export const LabelsView = ({ project }: { project: Project }) => {
   const { labels } = useLabels({

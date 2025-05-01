@@ -1,10 +1,10 @@
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import React from "react";
 import { ChatEditForm } from "./chat-edit-form";
-import { useRoom } from "@/hooks/use-room";
+import { useRoom } from "@/feature/shared/hooks/use-room";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
-import { Room } from "@/@types/room";
+import { Room } from "@/feature/shared/@types/room";
 import { ChatSheetHeader } from "../../layout/chat-sheet-header";
 import {
   CardDescription,

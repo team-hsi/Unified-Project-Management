@@ -2,11 +2,11 @@
 
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import { toast } from "sonner";
-import { useKanban } from "@/hooks/use-kanban";
+import { useKanban } from "@/feature/shared/hooks/use-kanban";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { Button } from "@/feature/shared/ui/button";
-import { Item } from "@/@types/item";
-import { Bucket } from "@/@types/bucket";
+import { Item } from "@/feature/shared/@types/item";
+import { Bucket } from "@/feature/shared/@types/bucket";
 import { EmptyKanbanState } from "../shared/empty-kanban";
 import { KanbanBucket } from "./kanban-bucket";
 

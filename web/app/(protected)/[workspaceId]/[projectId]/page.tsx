@@ -1,4 +1,4 @@
-import { getProject } from "@/actions/project-actions";
+import { getProject } from "@/feature/shared/actions/project-actions";
 import { ProjectHeader } from "@/feature/project/layout/project-header";
 import { ViewContainer } from "@/feature/project/views/view-container";
 import { Metadata } from "next";

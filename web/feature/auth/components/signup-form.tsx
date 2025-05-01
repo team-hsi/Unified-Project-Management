@@ -16,7 +16,7 @@ import {
 } from "@/feature/shared/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSignup } from "@/hooks/auth-hooks";
+import { useSignup } from "@/feature/shared/hooks/auth-hooks";
 
 const signupSchema = z.object({
   firstname: z

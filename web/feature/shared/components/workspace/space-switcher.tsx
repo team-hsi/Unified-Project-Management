@@ -16,13 +16,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/feature/shared/ui/sidebar";
-import { useWorkspace } from "@/hooks/use-workspace";
-import type { Workspace } from "@/@types/space";
+import { useWorkspace } from "@/feature/shared/hooks/use-workspace";
+import type { Workspace } from "@/feature/shared/@types/space";
 import { AddSpaceDialog } from "./add-space";
 import { notFound, useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
-import { updateActiveWorkspace } from "@/actions/workspace-actions";
+import { updateActiveWorkspace } from "@/feature/shared/actions/workspace-actions";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { Session } from "@/lib/auth/auth-provider";
 import { toast } from "sonner";

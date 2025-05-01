@@ -1,9 +1,9 @@
-import { getSessionUser } from "@/actions/auth-actions";
-import { getSession } from "@/actions/dal";
-import { getUserWorkspaces } from "@/actions/user-actions";
-import { getWorkspaceProjects } from "@/actions/workspace-actions";
+import { getSessionUser } from "@/feature/shared/actions/auth-actions";
+import { getSession } from "@/feature/shared/actions/dal";
+import { getUserWorkspaces } from "@/feature/shared/actions/user-actions";
+import { getWorkspaceProjects } from "@/feature/shared/actions/workspace-actions";
 import { ProjectNavigation } from "@/feature/project/layout/navigation";
-import { AppSidebar } from "@/feature/shared/layout/sidebar/app-sidebar";
+import { AppSidebar } from "@/feature/shared/layout/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/feature/shared/ui/sidebar";
 import { AuthProvider } from "@/lib/auth/auth-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";

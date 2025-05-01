@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { Search } from "lucide-react";
-import { useRoom } from "@/hooks/use-room";
-import { NewChat } from "../actions/new-chat";
+import { useRoom } from "@/feature/shared/hooks/use-room";
+import { NewChat } from "../interactions/new-chat";
 import { ChatList } from "../components/chat-list";
 import { ChatListLoading } from "../shared/chat-loadings";
 

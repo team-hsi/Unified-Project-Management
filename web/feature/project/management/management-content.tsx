@@ -6,7 +6,7 @@ import { LabelsView } from "./labels/labels";
 import { PeopleView } from "./people";
 import { NotificationsView } from "./notifications";
 import { GeneralView } from "./general";
-import type { Project } from "@/@types/projects";
+import type { Project } from "@/feature/shared/@types/projects";
 
 interface ManagementContentProps {
   currentView: ManagementsView;

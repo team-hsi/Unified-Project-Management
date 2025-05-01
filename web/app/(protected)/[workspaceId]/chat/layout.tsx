@@ -2,7 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import { ChatStoreProvider } from "@/lib/stores/chat-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
-import { getWorkspaceRooms } from "@/actions/workspace-actions";
+import { getWorkspaceRooms } from "@/feature/shared/actions/workspace-actions";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Chat } from "@/feature/chat/layout/chat";
 export const metadata: Metadata = {

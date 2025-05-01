@@ -1,13 +1,13 @@
 "use client";
 import { Search } from "lucide-react";
 import { Badge } from "@/feature/shared/ui/badge";
-import { useRoom } from "@/hooks/use-room";
+import { useRoom } from "@/feature/shared/hooks/use-room";
 import { useMemo } from "react";
-import { Room } from "@/@types/room";
+import { Room } from "@/feature/shared/@types/room";
 import { useParams } from "next/navigation";
-import { useMember } from "@/hooks/use-member";
+import { useMember } from "@/feature/shared/hooks/use-member";
 import { ChatDetails } from "../components/info/chat-details";
-import { ChatDropdown } from "../actions/chat-dropdown";
+import { ChatDropdown } from "../interactions/chat-dropdown";
 
 export function ChatHeader() {
   const { chatId } = useParams<{ chatId: string }>();

@@ -17,7 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/feature/shared/ui/form";
-import { useLogin } from "@/hooks/auth-hooks";
+import { useLogin } from "@/feature/shared/hooks/auth-hooks";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),

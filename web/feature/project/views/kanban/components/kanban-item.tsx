@@ -4,10 +4,10 @@ import { Draggable } from "@hello-pangea/dnd";
 import { Checkbox } from "@/feature/shared/ui/checkbox";
 import { AnimatePresence, motion } from "framer-motion";
 import { Badge } from "@/feature/shared/ui/badge";
-import { useLabels } from "@/hooks/use-labels";
-import { Item } from "@/@types/item";
-import { ItemSheet } from "@/feature/shared/layout/sheets/item-sheet";
-import { DualButton } from "@/feature/task/dual-button";
+import { useLabels } from "@/feature/shared/hooks/use-labels";
+import { Item } from "@/feature/shared/@types/item";
+import { ItemSheet } from "@/feature/project/shared/item-sheet";
+import { DualButton } from "@/feature/project/components/dual-button";
 
 interface KanbanCardProps {
   item: Item;

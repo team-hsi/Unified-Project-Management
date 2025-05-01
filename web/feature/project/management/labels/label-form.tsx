@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/feature/shared/ui/form";
 import { ColorInput } from "@/feature/shared/ui/color-input";
-import { LabelPayload } from "@/@types/label";
+import { LabelPayload } from "@/feature/shared/@types/label";
 
 const formSchema = z.object({
   name: z.string().min(3, "Label name is required"),

@@ -5,7 +5,7 @@ import { ScrollArea } from "@/feature/shared/ui/scroll-area";
 import { ManagementsView } from "./types";
 import { ManagementsContent } from "./management-content";
 import { ManagementSidebar } from "./managemnt-sidebar";
-import type { Project } from "@/@types/projects";
+import type { Project } from "@/feature/shared/@types/projects";
 
 export const Management = ({ project }: { project: Project }) => {
   const [currentView, setCurrentView] = useState<ManagementsView>("general");

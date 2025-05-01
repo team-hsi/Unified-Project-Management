@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { KanbanBoard } from "./kanban/components/kanban-board";
 import { KanbanBoardSkeleton } from "./kanban/shared/skeletons";
-import { ListView } from "./list/shared/list";
+import { ListView } from "./list/components/list";
 import { ListViewSkeleton } from "./list/shared/skeletons";
 
 //TODO: Implement dynamic imports for code splitting

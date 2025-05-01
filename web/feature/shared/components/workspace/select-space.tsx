@@ -12,11 +12,11 @@ import {
   AvatarImage,
 } from "@/feature/shared/ui/avatar";
 import { ArrowRight, Plus } from "lucide-react";
-import { Workspace } from "@/@types/space";
+import { Workspace } from "@/feature/shared/@types/space";
 import { toast } from "sonner";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation } from "@tanstack/react-query";
-import { updateActiveWorkspace } from "@/actions/workspace-actions";
+import { updateActiveWorkspace } from "@/feature/shared/actions/workspace-actions";
 import { useRouter } from "next/navigation";
 import { Session } from "@/lib/auth/auth-provider";
 

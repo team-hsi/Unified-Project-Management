@@ -12,10 +12,10 @@ import {
 import { Input } from "@/feature/shared/ui/input";
 import { Avatar, AvatarFallback } from "@/feature/shared/ui/avatar";
 import { Mail, Search, Send, Users } from "lucide-react";
-import { Member } from "@/@types/user";
+import { Member } from "@/feature/shared/@types/user";
 import { Card, CardContent } from "@/feature/shared/ui/card";
 import { toast } from "sonner";
-import { useMember } from "@/hooks/use-member";
+import { useMember } from "@/feature/shared/hooks/use-member";
 
 interface TeamMember {
   id: string;

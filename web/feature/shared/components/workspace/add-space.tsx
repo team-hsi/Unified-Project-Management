@@ -21,8 +21,8 @@ import {
 import { Input } from "@/feature/shared/ui/input";
 import { Textarea } from "@/feature/shared/ui/textarea";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { CustomDialog } from "../../ui/custom-dialog";
+import { useWorkspace } from "@/feature/shared/hooks/use-workspace";
+import { CustomDialog } from "../custom-dialog";
 
 // Define the validation schema using Zod
 const spaceFormSchema = z.object({

@@ -8,19 +8,19 @@ import {
 } from "@/feature/shared/ui/card";
 import { Tabs, TabsContent, TabsList } from "@/feature/shared/ui/tabs";
 import { TabsTrigger } from "@radix-ui/react-tabs";
-import { useMember } from "@/hooks/use-member";
+import { useMember } from "@/feature/shared/hooks/use-member";
 import { ScrollArea } from "@/feature/shared/ui/scroll-area";
 import { Sheet, SheetContent, SheetTitle } from "@/feature/shared/ui/sheet";
 import { ChatUserInfo } from "./chat-user-info";
-import { Member } from "@/@types/user";
+import { Member } from "@/feature/shared/@types/user";
 import { ChatInfoEdit } from "./chat-info-edit";
-import { useRoom } from "@/hooks/use-room";
+import { useRoom } from "@/feature/shared/hooks/use-room";
 import { useParams } from "next/navigation";
 import { ChatMembersView } from "./chat-members-view";
-import { Room } from "@/@types/room";
+import { Room } from "@/feature/shared/@types/room";
 import { Button } from "@/feature/shared/ui/button";
 import { ChatSheetHeader } from "../../layout/chat-sheet-header";
-import { AddMemberDialog } from "../../actions/add-member";
+import { AddMemberDialog } from "../../interactions/add-member";
 
 interface ChatInfoProps {
   onClose?: () => void;

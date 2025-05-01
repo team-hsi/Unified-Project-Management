@@ -4,10 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { LabelForm } from "./label-form";
 import React from "react";
 import { Badge } from "@/feature/shared/ui/badge";
-import { useLabels } from "@/hooks/use-labels";
+import { useLabels } from "@/feature/shared/hooks/use-labels";
 import { Edit2, Trash2 } from "lucide-react";
 import { DeleteLabel } from "./delete-label";
-import { Label } from "@/@types/label";
+import { Label } from "@/feature/shared/@types/label";
 
 interface LabelItemProps {
   label: Label;

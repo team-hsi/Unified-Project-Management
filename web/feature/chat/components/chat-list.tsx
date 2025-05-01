@@ -1,7 +1,7 @@
 "use client";
 
-import { useRoom } from "@/hooks/use-room";
-import { Room } from "@/@types/room";
+import { useRoom } from "@/feature/shared/hooks/use-room";
+import { Room } from "@/feature/shared/@types/room";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useParams } from "next/navigation";

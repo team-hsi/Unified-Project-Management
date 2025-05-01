@@ -20,13 +20,13 @@ import {
 } from "@/feature/shared/ui/sidebar";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { CustomDialog } from "@/feature/shared/ui/custom-dialog";
-import { useProject } from "@/hooks/use-project";
-import { Project } from "@/@types/projects";
-import { UpdateProjectDialog } from "../dialogs/update-project";
+import { CustomDialog } from "@/feature/shared/components/custom-dialog";
+import { useProject } from "@/feature/shared/hooks/use-project";
+import { Project } from "@/feature/shared/@types/projects";
+import { UpdateProjectDialog } from "../interactions/update-project";
 import { Management } from "../management/management";
-import { DeleteProjectDialog } from "../dialogs/delete-project";
-import { CreateProjectDialog } from "../dialogs/create-project";
+import { DeleteProjectDialog } from "../interactions/delete-project";
+import { CreateProjectDialog } from "../interactions/create-project";
 
 export const NavProjects = () => {
   const { projects, isPending } = useProject();

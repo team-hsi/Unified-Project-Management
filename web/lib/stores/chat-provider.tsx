@@ -3,11 +3,11 @@
 import { type ReactNode, createContext, useContext } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getQueryClient } from "../query-client/get-query-client";
-import { getRoomMessages } from "@/actions/room-actions";
-import { sendMessage as sendMsg } from "@/actions/message-actions";
+import { getRoomMessages } from "@/feature/shared/actions/room-actions";
+import { sendMessage as sendMsg } from "@/feature/shared/actions/message-actions";
 import { toast } from "sonner";
 import { useUser } from "../auth/auth-provider";
-import { TChat } from "@/@types/room";
+import { TChat } from "@/feature/shared/@types/room";
 import { useParams } from "next/navigation";
 
 // --- Types

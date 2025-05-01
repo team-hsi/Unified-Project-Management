@@ -1,0 +1,163 @@
+import { getQueryClient } from "@/lib/query-client/get-query-client";
+import { useMutation } from "@tanstack/react-query";
+import {
+  createItem as createItemAction,
+  deleteItem as deleteItemAction,
+  updateItem as updateItemAction,
+} from "@/feature/shared/actions/item-actions";
+import { toast } from "sonner";
+import { Item } from "@/feature/shared/@types/item";
+import { Bucket } from "@/feature/shared/@types/bucket";
+
+export const useItemAction = ({
+  queryKey,
+  successAction,
+}: {
+  queryKey: string[];
+  successAction?: () => void;
+}) => {
+  const queryClient = getQueryClient();
+
+  const createItem = useMutation({
+    mutationFn: createItemAction,
+    onMutate: async (newItemData) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previousItems = queryClient.getQueryData(queryKey);
+      const bucketsQueryKey = [queryKey[0], "buckets"];
+
+      const buckets =
+        (queryClient.getQueryData(bucketsQueryKey) as Bucket[]) || [];
+      const bucket = buckets.find((b) => b.id === newItemData.bucketId);
+      if (!bucket) {
+        return { previousItems };
+      }
+      const optimisticItem: Item = {
+        id: `temp-${Date.now()}`,
+        name: newItemData.name || "New Item",
+        description: newItemData.description || "",
+        bucket: {
+          id: bucket.id,
+          name: bucket.name,
+          color: bucket.color,
+          project: {
+            name: "",
+            ownerId: "",
+            id: "",
+            createdAt: "",
+            updatedAt: "",
+          },
+          createdAt: "",
+          updatedAt: "",
+        },
+        status: newItemData.status || "incomplete",
+        position: 0,
+        priority: newItemData.priority || null,
+        dueDate: newItemData.dueDate || "",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        startDate: null,
+        labels: [],
+        checklist: [],
+      };
+      queryClient.setQueryData(queryKey, (old: Item[] = []) => {
+        return [...old, optimisticItem];
+      });
+      return { previousItems };
+    },
+    onError: (error, variables, context) => {
+      if (context?.previousItems) {
+        queryClient.setQueryData(queryKey, context.previousItems);
+      }
+      toast.error(error.message);
+    },
+    onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(result.error);
+        queryClient.invalidateQueries({ queryKey });
+        return;
+      }
+      toast.success("Item created successfully!");
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+
+  const updateItemInline = useMutation({
+    mutationFn: updateItemAction,
+    onMutate: async (updatedItemData) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previousItems = queryClient.getQueryData(queryKey);
+      console.log("previousItems", previousItems);
+      console.log("updatedItemData", updatedItemData);
+      // const newItemData = previousItems.map((item: { id: string }) => {
+      //   return item.id === updatedItemData.id
+      //     ? {
+      //         ...item,
+      //         ...updatedItemData,
+      //       }
+      //     : item;
+      // });
+      // console.log("newItemData", newItemData);
+      queryClient.setQueryData(queryKey, (old: Item[] = []) => {
+        console.log("item-old", old);
+        return old.map((item) =>
+          item.id === updatedItemData.id
+            ? {
+                ...item,
+                ...updatedItemData,
+                updatedAt: new Date().toISOString(),
+              }
+            : item
+        );
+      });
+      return { previousItems };
+    },
+    onError: (error, variables, context) => {
+      // If the mutation fails, revert back to the previous value
+      if (context?.previousItems) {
+        queryClient.setQueryData(queryKey, context.previousItems);
+      }
+      toast.error(error.message || "Failed to update item ");
+    },
+    onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(JSON.stringify(result.error));
+        queryClient.invalidateQueries({ queryKey });
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey });
+      successAction?.();
+    },
+  });
+  const deleteItem = useMutation({
+    mutationFn: deleteItemAction,
+    onMutate: async (deleteItem) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previousItems = queryClient.getQueryData(queryKey);
+      queryClient.setQueryData(queryKey, (old: Item[] = []) => {
+        return old.filter((item) => item.id !== deleteItem.id);
+      });
+      return { previousItems };
+    },
+    onError: (error, variables, context) => {
+      if (context?.previousItems) {
+        queryClient.setQueryData(queryKey, context.previousItems);
+      }
+      toast.error(error.message || "Failed to delete item");
+    },
+    onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(result.error);
+        queryClient.invalidateQueries({ queryKey });
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey });
+      toast.success("Item deleted successfully!");
+    },
+  });
+
+  return {
+    createItem,
+    updateItemInline,
+    deleteItem,
+  };
+};

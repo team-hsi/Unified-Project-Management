@@ -12,10 +12,10 @@ import { SidebarTrigger } from "@/feature/shared/ui/sidebar";
 import { usePathname } from "next/navigation";
 import { Fragment } from "react";
 import { NavigationControls } from "./nav-controls";
-import { useProject } from "@/hooks/use-project";
-import { useWorkspace } from "@/hooks/use-workspace";
-import { Workspace } from "@/@types/space";
-import { Project } from "@/@types/projects";
+import { useProject } from "@/feature/shared/hooks/use-project";
+import { useWorkspace } from "@/feature/shared/hooks/use-workspace";
+import { Workspace } from "@/feature/shared/@types/space";
+import { Project } from "@/feature/shared/@types/projects";
 import { NavUser } from "@/feature/user/nav-user";
 
 export const ProjectNavigation = () => {

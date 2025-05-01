@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { COOKIE_NAME as SESSION_COOKIE, decrypt } from "@/actions/session";
+import {
+  COOKIE_NAME as SESSION_COOKIE,
+  decrypt,
+} from "@/feature/shared/actions/session";
 import { cookies } from "next/headers";
 
 const protectedRoutes = ["/projects", "/chat", "/workspace", "/settings"];

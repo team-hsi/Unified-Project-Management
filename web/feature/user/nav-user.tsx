@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/feature/shared/ui/dropdown-menu";
 import { Skeleton } from "../shared/ui/skeleton";
-import { userLogout } from "@/actions/user-actions";
+import { userLogout } from "@/feature/shared/actions/user-actions";
 import { useUser } from "@/lib/auth/auth-provider";
 
 export function NavUser() {

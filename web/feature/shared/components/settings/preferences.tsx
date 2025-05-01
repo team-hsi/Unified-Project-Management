@@ -16,7 +16,7 @@ import {
 import { useTheme } from "next-themes";
 import { useLocale, useTranslations } from "next-intl";
 import { Locale } from "@/i18n/config";
-import { setUserLocale } from "@/actions/locale";
+import { setUserLocale } from "@/feature/shared/actions/locale";
 import { useTransition } from "react";
 import { cn } from "@/lib/utils";
 

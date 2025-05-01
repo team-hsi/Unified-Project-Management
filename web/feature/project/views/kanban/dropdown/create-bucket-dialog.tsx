@@ -14,7 +14,7 @@ import { Label } from "@/feature/shared/ui/label";
 import { Input } from "@/feature/shared/ui/input";
 import { ColorInput } from "@/feature/shared/ui/color-input";
 import { Button } from "@/feature/shared/ui/button";
-import { useBucketAction } from "@/hooks/use-bucket";
+import { useBucketAction } from "@/feature/shared/hooks/use-bucket";
 
 export const CreateBucket = ({
   projectId,

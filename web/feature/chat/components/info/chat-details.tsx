@@ -6,7 +6,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/feature/shared/ui/sheet";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/feature/shared/hooks/use-mobile";
 import { ChatInfo } from "./chat-info";
 import { ChatInfoEdit } from "./chat-info-edit";
 import { ChatMembersView } from "./chat-members-view";

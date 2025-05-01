@@ -15,9 +15,9 @@ import {
 import { Badge } from "@/feature/shared/ui/badge";
 import { Input } from "@/feature/shared/ui/input";
 import { useState } from "react";
-import { useProject } from "@/hooks/use-project";
+import { useProject } from "@/feature/shared/hooks/use-project";
 import { useParams } from "next/navigation";
-import { CreateProjectDialog } from "@/feature/project/dialogs/create-project";
+import { CreateProjectDialog } from "@/feature/project/interactions/create-project";
 import { EmptyProjects } from "@/feature/project/shared/empty-projetcs";
 
 interface Project {

@@ -6,18 +6,18 @@ import {
   DialogTitle,
 } from "@/feature/shared/ui/dialog";
 import { Loader, Palette, Plus, Trash2 } from "lucide-react";
-import { CustomDialog } from "@/feature/shared/ui/custom-dialog";
+import { CustomDialog } from "@/feature/shared/components/custom-dialog";
 import { useState } from "react";
 import { ColorInput } from "@/feature/shared/ui/color-input";
-import { useBucketAction } from "@/hooks/use-bucket";
+import { useBucketAction } from "@/feature/shared/hooks/use-bucket";
 import { stringToColor, cn } from "@/lib/utils";
-import { useItemAction } from "@/hooks/use-item";
+import { useItemAction } from "@/feature/shared/hooks/use-item";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/feature/shared/ui/popover";
-import { Bucket } from "@/@types/bucket";
+import { Bucket } from "@/feature/shared/@types/bucket";
 import { NameDescriptionForm } from "@/feature/auth/components/name-description-form";
 
 /*
