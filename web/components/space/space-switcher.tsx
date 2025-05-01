@@ -19,14 +19,21 @@ import {
 import { useWorkspace } from "@/hooks/use-workspace";
 import type { Workspace } from "@/@types/space";
 import { AddSpaceDialog } from "./add-space";
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import { updateActiveWorkspace } from "@/actions/workspace-actions";
+import { getQueryClient } from "@/lib/query-client/get-query-client";
+import { Session } from "@/lib/auth/auth-provider";
+import { toast } from "sonner";
 
 export const SpaceSwitcher = () => {
   const { isMobile } = useSidebar();
   const { workspaceId } = useParams<{ workspaceId: string }>();
+  const queryClient = getQueryClient();
+  const router = useRouter();
 
-  const { workspaces, setActive, prefetchWorkspace } = useWorkspace();
+  const { workspaces, prefetchWorkspace } = useWorkspace();
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [hasOpenDialog, setHasOpenDialog] = React.useState(false);
   const focusRef = React.useRef<HTMLElement | null>(null);
@@ -38,6 +45,23 @@ export const SpaceSwitcher = () => {
       setIsDropdownOpen(false);
     }
   };
+  const setActive = useMutation({
+    mutationFn: updateActiveWorkspace,
+    onMutate: async (payload: { activeSpace: string }) => {
+      router.push(`/${payload.activeSpace}/projects`);
+      await queryClient.cancelQueries({ queryKey: ["session"] });
+      queryClient.setQueryData(["session"], (old: Session) => ({
+        ...old,
+        activeSpace: payload.activeSpace,
+      }));
+    },
+    onError: (error) => {
+      toast.warning(error.message);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["session"] });
+    },
+  });
   const activeWorkspace = workspaces.data?.find(
     (space: Workspace) => space.id === workspaceId
   );

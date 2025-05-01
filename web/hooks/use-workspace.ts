@@ -72,23 +72,6 @@ export const useWorkspace = (payload?: HookProps) => {
       payload?.successAction?.();
     },
   });
-  const setActive = useMutation({
-    mutationFn: updateActiveWorkspace,
-    onMutate: async (payload: { activeSpace: string }) => {
-      router.push(`/${payload.activeSpace}/projects`);
-      await queryClient.cancelQueries({ queryKey: ["session"] });
-      queryClient.setQueryData(["session"], (old: Session) => ({
-        ...old,
-        activeSpace: payload.activeSpace,
-      }));
-    },
-    onError: (error) => {
-      toast.warning(error.message);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["session"] });
-    },
-  });
 
   const {
     data: members,
