@@ -19,6 +19,7 @@ import { useProject } from "@/feature/shared/hooks/use-project";
 import { useParams } from "next/navigation";
 import { CreateProjectDialog } from "@/feature/project/interactions/create-project";
 import { EmptyProjects } from "@/feature/project/shared/empty-projetcs";
+import { ScrollArea } from "../../ui/scroll-area";
 
 interface Project {
   id: string;
@@ -35,7 +36,7 @@ export const WorkspaceProjects = () => {
 
   // Filter projects based on search query
   const filteredProjects =
-    projects?.data?.filter((project: Project) =>
+    projects?.filter((project: Project) =>
       project.name.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
@@ -48,8 +49,8 @@ export const WorkspaceProjects = () => {
   }
 
   return (
-    <div className="space-y-10">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="h-full flex flex-col overflow-hidden">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-5 pb-0">
         <div className="flex items-center gap-2">
           <h3 className="text-lg font-medium">All Projects</h3>
           <Badge variant="outline" className="ml-2">
@@ -77,13 +78,15 @@ export const WorkspaceProjects = () => {
       </div>
 
       {filteredProjects.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProjects.map((project: Project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-        </div>
+        <ScrollArea className="flex-1  overflow-hidden p-5 pb-2">
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+            {filteredProjects.map((project: Project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        </ScrollArea>
       ) : searchQuery ? (
-        <div className="flex min-h-[200px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+        <div className="flex h-full flex-col flex-1 items-center justify-center rounded-lg border border-dashed p-8 text-center">
           <p className="text-muted-foreground">
             No projects found matching &quot;{searchQuery}&quot;
           </p>
@@ -113,7 +116,7 @@ function ProjectCard({ project }: { project: Project }) {
       prefetch={true}
       className="block"
     >
-      <Card className="overflow-hidden transition-all hover:shadow-md">
+      <Card className="transition-all hover:shadow-md">
         <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
           <div className="space-y-1">
             <CardTitle className="text-base">{project.name}</CardTitle>

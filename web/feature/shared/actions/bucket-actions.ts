@@ -1,6 +1,7 @@
 "use server";
 import { BucketPayload } from "@/feature/shared/@types/bucket";
 import { extractErrors } from "@/lib/utils";
+import { revalidateTag } from "next/cache";
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 /*
@@ -34,7 +35,6 @@ export const getBucketById = async (payload: Pick<BucketPayload, "id">) => {
  * create bucket
  */
 export const createBucket = async (payload: Omit<BucketPayload, "id">) => {
-  console.log("create bucket payload", payload);
   const res = await fetch(`${API}/v1/buckets/create`, {
     method: "POST",
     headers: {
@@ -46,6 +46,7 @@ export const createBucket = async (payload: Omit<BucketPayload, "id">) => {
   if (!res.ok) {
     return { success: false, error: extractErrors(data.error) };
   }
+  revalidateTag(`${payload.projectId}-buckets`);
   return { success: true, data };
 };
 
@@ -79,7 +80,9 @@ export const getBucketItemsById = async (
   payload: Pick<BucketPayload, "id">
 ) => {
   const { id } = payload;
-  const res = await fetch(`${API}/v1/buckets/${id}/items`);
+  const res = await fetch(`${API}/v1/buckets/${id}/items`, {
+    next: { revalidate: 60 * 2, tags: ["bucket-items"] },
+  });
   if (!res.ok) {
     const data = await res.json();
     return { success: false, error: extractErrors(data.error) };

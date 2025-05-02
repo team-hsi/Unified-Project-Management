@@ -22,11 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const Page = async () => {
-  return (
-    <div className="max-h-full overflow-hidden p-5">
-      <WorkspaceProjects />
-    </div>
-  );
+  return <WorkspaceProjects />;
 };
 
 export default Page;

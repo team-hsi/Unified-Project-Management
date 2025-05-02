@@ -47,7 +47,7 @@ export const ProjectNavigation = () => {
                   <BreadcrumbItem className="hidden md:block">
                     {isLast ? (
                       <BreadcrumbPage className=" capitalize">
-                        {projects.data.find((p: Project) => p.id === segment)
+                        {projects.find((p: Project) => p.id === segment)
                           ?.name || segment}
                       </BreadcrumbPage>
                     ) : (

@@ -41,30 +41,36 @@ export const userCreate = async (
 export const userLogin = async (
   payload: Pick<UserPayload, "email" | "password">
 ) => {
-  const res = await fetch(`${API}/v1/users/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) {
-      return { success: false, error: "Invalid email or password" };
-    }
+  try {
+    const res = await fetch(`${API}/v1/users/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
     const data = await res.json();
-    return { success: false, error: extractErrors(data.error) };
+    console.log("data=>", data);
+    if (!res.ok) {
+      if (res.status === 401) {
+        throw new Error("Invalid email or password");
+      } else {
+        throw new Error("Failed to login");
+      }
+    }
+    const { user, tokens } = data;
+    const session = {
+      userId: user.id,
+      activeSpace: user.activeSpace?.id || null,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    };
+    await createSession(session);
+    return user;
+  } catch (error) {
+    console.log("err=>", error);
+    throw new Error(extractErrors(error));
   }
-  const { user, tokens } = await res.json();
-  const session = {
-    userId: user.id,
-    activeSpace: user.activeSpace,
-    accessToken: tokens.accessToken,
-    refreshToken: tokens.refreshToken,
-  };
-  await createSession(session);
-  return { success: true, user };
 };
 
 /*

@@ -38,7 +38,7 @@ export const LoginForm = () => {
     },
   });
   const onSubmit = async (data: LoginFormValues) => {
-    login.mutateAsync(data);
+    await login.mutateAsync(data);
   };
   return (
     <div className="flex flex-col gap-6">

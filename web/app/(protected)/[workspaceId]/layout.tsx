@@ -8,8 +8,7 @@ import { SidebarInset, SidebarProvider } from "@/feature/shared/ui/sidebar";
 import { AuthProvider } from "@/lib/auth/auth-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+import { Suspense } from "react";
 
 const WorkspaceLayout = async ({
   children,
@@ -39,10 +38,16 @@ const WorkspaceLayout = async ({
     <HydrationBoundary state={dehydrate(queryClient)}>
       <AuthProvider>
         <SidebarProvider>
-          <AppSidebar />
+          <Suspense fallback={<div className="h-full w-full"> Loading...</div>}>
+            <AppSidebar />
+          </Suspense>
           <SidebarInset>
             <ProjectNavigation />
-            {children}
+            <Suspense
+              fallback={<div className="h-full w-full"> Loading 🌌</div>}
+            >
+              {children}
+            </Suspense>
           </SidebarInset>
         </SidebarProvider>
       </AuthProvider>

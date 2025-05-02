@@ -5,6 +5,7 @@ import { getSession } from "./dal";
 import { cache } from "react";
 import { ProjectPayload } from "@/feature/shared/@types/projects";
 import { extractErrors } from "@/lib/utils";
+import { revalidateTag } from "next/cache";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -54,6 +55,7 @@ export const createProject = async (payload: Omit<ProjectPayload, "id">) => {
     const data = await res.json();
     return { success: false, error: extractErrors(data.error) };
   }
+  revalidateTag(`${session.activeSpace}-projects`);
   const data = await res.json();
   return { success: true, data };
 };
@@ -66,6 +68,7 @@ export const updateProject = async (
   payload: Omit<ProjectPayload, "spaceId">
 ) => {
   const { id, name } = payload;
+  const session = await getSession();
   const res = await fetch(`${API}/v1/projects/${id}`, {
     method: "PUT",
     headers: {
@@ -78,6 +81,7 @@ export const updateProject = async (
     // const data = await res.json();
     // return { success: false, error: extractErrors(data.error) };
   }
+  revalidateTag(`${session.activeSpace}-projects`);
   // const data = await res.json();
   // return { success: true, data };
   return res.json();
@@ -88,6 +92,7 @@ export const updateProject = async (
  */
 export const deleteProject = async (payload: Pick<ProjectPayload, "id">) => {
   const { id } = payload;
+  const session = await getSession();
   const res = await fetch(`${API}/v1/projects/${id}`, {
     method: "DELETE",
   });
@@ -95,6 +100,7 @@ export const deleteProject = async (payload: Pick<ProjectPayload, "id">) => {
     const data = await res.json();
     return { success: false, error: extractErrors(data.error) };
   }
+  revalidateTag(`${session.activeSpace}-projects`);
   return { success: true };
 };
 
@@ -106,7 +112,9 @@ export const getProjectBuckets = async (
   payload: Pick<ProjectPayload, "id">
 ) => {
   const { id } = payload;
-  const res = await fetch(`${API}/v1/projects/${id}/buckets`);
+  const res = await fetch(`${API}/v1/projects/${id}/buckets`, {
+    next: { revalidate: 60 * 2, tags: [`${id}-buckets`, "project-buckets"] },
+  });
   if (!res.ok) {
     // const data = await res.json();
     // return { success: false, error: extractErrors(data.error) };
@@ -122,13 +130,14 @@ export const getProjectBuckets = async (
  */
 export const getProjectItems = async (payload: Pick<ProjectPayload, "id">) => {
   const { id } = payload;
-  const res = await fetch(`${API}/v1/projects/${id}/items`);
+  const res = await fetch(`${API}/v1/projects/${id}/items`, {
+    next: { revalidate: 60 * 2, tags: [`${id}-items`, "project-items"] },
+  });
+  const data = await res.json();
   if (!res.ok) {
-    const data = await res.json();
-    console.log(data);
     throw new Error(`Error fetching tasks: ${data.error}`);
   }
-  return res.json();
+  return data;
 };
 
 /*

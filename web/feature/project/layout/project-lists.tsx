@@ -29,7 +29,8 @@ import { DeleteProjectDialog } from "../interactions/delete-project";
 import { CreateProjectDialog } from "../interactions/create-project";
 
 export const NavProjects = () => {
-  const { projects, isPending } = useProject();
+  const { projects } = useProject();
+  console.log(projects, "projects data");
   const { isMobile } = useSidebar();
   const { workspaceId } = useParams<{ workspaceId: string }>();
 
@@ -63,7 +64,7 @@ export const NavProjects = () => {
       setOpenDropdowns((prev) => ({ ...prev, [projectId]: false }));
     }
   };
-  if (projects.data.length === 0) {
+  if (projects.length === 0) {
     return (
       <SidebarGroup className="group-data-[collapsible=icon]:hidden">
         <SidebarGroupLabel>Projects</SidebarGroupLabel>
@@ -76,9 +77,9 @@ export const NavProjects = () => {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       {/* <ProjectUrlSync /> */}
-      <SidebarGroupLabel>Projects {isPending}</SidebarGroupLabel>
+      <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
-        {projects.data.map((project: Project) => (
+        {projects.map((project: Project) => (
           <SidebarMenuItem key={project.id}>
             <SidebarMenuButton asChild isActive={segments.includes(project.id)}>
               <Link href={`/${workspaceId}/${project.id}`} prefetch={true}>

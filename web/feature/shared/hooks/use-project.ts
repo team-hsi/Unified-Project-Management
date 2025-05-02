@@ -27,8 +27,8 @@ export const useProject = (payload?: HookProps) => {
   });
 
   const createProject = useMutation({
-    mutationFn: (data: { name: string }) =>
-      createAction({ ...data, spaceId: workspaceId }),
+    mutationFn: async (data: { name: string }) =>
+      await createAction({ ...data, spaceId: workspaceId }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [workspaceId, "projects"],

@@ -48,17 +48,34 @@ export const SpaceSwitcher = () => {
   const setActive = useMutation({
     mutationFn: updateActiveWorkspace,
     onMutate: async (payload: { activeSpace: string }) => {
-      router.push(`/${payload.activeSpace}/projects`);
+      // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: ["session"] });
+
+      // Snapshot the previous value
+      const previousSession = queryClient.getQueryData(["session"]);
+
+      // Optimistically update to the new value
       queryClient.setQueryData(["session"], (old: Session) => ({
         ...old,
         activeSpace: payload.activeSpace,
       }));
+
+      // Navigate immediately
+      router.push(`/${payload.activeSpace}/projects`);
+
+      // Return a context object with the snapshotted value
+      return { previousSession };
     },
-    onError: (error) => {
-      toast.warning(error.message);
+    onError: (err, payload, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousSession) {
+        queryClient.setQueryData(["session"], context.previousSession);
+        router.push("/select-workspace");
+      }
+      toast.warning("Failed to switch workspace");
     },
     onSettled: () => {
+      // Always refetch after error or success
       queryClient.invalidateQueries({ queryKey: ["session"] });
     },
   });

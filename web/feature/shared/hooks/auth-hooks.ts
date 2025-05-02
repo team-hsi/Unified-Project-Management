@@ -23,30 +23,16 @@ export function useLogin() {
   const searchParams = useSearchParams();
 
   return useMutation({
-    mutationFn: async ({
-      email,
-      password,
-    }: {
-      email: string;
-      password: string;
-    }) => {
-      const result = await userLogin({ email, password });
-
-      if (!result.success) {
-        if (result.error) {
-          throw new Error(result.error);
-        }
-        throw new Error("Failed to login");
-      }
-
-      return result.user;
-    },
+    mutationFn: userLogin,
     onSuccess: (user) => {
+      console.log("onSuccess", user);
       const callbackUrl = searchParams.get("callbackUrl");
       if (callbackUrl) {
         router.push(callbackUrl);
+      } else if (!user.activeSpace) {
+        router.push("/select-workspace");
       } else {
-        router.push(`/${user.activeSpace.id}/projects`);
+        router.push(`/${user.activeSpace}/projects`);
       }
       queryClient.setQueryData(["user"], user);
       toast.success("Auth", {

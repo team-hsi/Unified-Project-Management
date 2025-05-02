@@ -45,13 +45,18 @@ export const getWorkspaceById = cache(async (id: string) => {
 
 export const getWorkspaceProjects = async () => {
   const session = await getSession();
-  const res = await fetch(`${API}/v1/spaces/${session.activeSpace}/projects`);
-  if (!res.ok) {
-    const data = await res.json();
-    return { success: false, error: extractErrors(data.error) };
-  }
+  const res = await fetch(`${API}/v1/spaces/${session.activeSpace}/projects`, {
+    next: {
+      revalidate: 60 * 2,
+      tags: [`${session.activeSpace}-projects`, "ws-projects"],
+    },
+  });
   const data = await res.json();
-  return { success: true, data };
+  if (!res.ok) {
+    throw new Error(extractErrors(data.error));
+  }
+  // cacheLife("seconds"); // Cache for 24 hours
+  return data;
 };
 
 /*
@@ -65,6 +70,7 @@ export const getWorkspaceRooms = async (
   try {
     const { id } = payload;
     const res = await fetch(`${API}/v1/spaces/${id}/rooms`, {
+      next: { revalidate: 60 * 2, tags: ["rooms"] },
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -163,6 +169,7 @@ export const deleteWorkspace = async (
 export const getWorkspaceMembers = async () => {
   const session = await getSession();
   const res = await fetch(`${API}/v1/spaces/${session.activeSpace}/members`, {
+    next: { revalidate: 60 * 2, tags: ["ws-members"] },
     method: "GET",
     headers: {
       "Content-Type": "application/json",
