@@ -15,8 +15,9 @@ export interface RoomPayload {
   name: string;
   userId: string;
   role: string;
+  spaceId: string;
 }
 
-export interface TChat extends Room {
+export interface Chat extends Room {
   messages: Message[] | [];
 }

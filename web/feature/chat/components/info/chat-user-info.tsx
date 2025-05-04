@@ -9,10 +9,10 @@ import {
 import { Member } from "@/feature/shared/@types/user";
 import { Button } from "@/feature/shared/ui/button";
 import { Trash2 } from "lucide-react";
-import { useMember } from "@/feature/shared/hooks/use-member";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { ChatSheetHeader } from "../../layout/chat-sheet-header";
+import { useRoom } from "@/feature/shared/hooks/use-room";
 
 interface ChatUserInfoProps {
   member: Member;
@@ -21,11 +21,11 @@ interface ChatUserInfoProps {
 // TODO: add joined date to the member
 export const ChatUserInfo = ({ member, onClose }: ChatUserInfoProps) => {
   const { chatId } = useParams<{ chatId: string }>();
-  const { removeChatMember } = useMember();
+  const { removeMember } = useRoom();
 
   const handleRemoveMember = async () => {
     try {
-      await removeChatMember.mutateAsync({
+      await removeMember.mutateAsync({
         id: chatId,
         userId: member.user.id,
       });

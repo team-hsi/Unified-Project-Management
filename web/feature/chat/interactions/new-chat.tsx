@@ -16,14 +16,14 @@ import { Plus } from "lucide-react";
 import { useRoom } from "@/feature/shared/hooks/use-room";
 
 export const NewChat = () => {
-  const { createRoom } = useRoom();
+  const { create } = useRoom();
   const [name, setName] = React.useState("");
   const [isOpen, setIsOpen] = React.useState(false);
 
   const handleCreateRoom = () => {
     setName("");
     setIsOpen(false);
-    createRoom.mutate({ name });
+    create.mutate({ name });
   };
 
   return (

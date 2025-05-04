@@ -8,6 +8,7 @@ export type Project = {
   id: string;
   name: string;
   ownerId: string;
+  space: string;
   createdAt: string;
   updatedAt: string;
 };

@@ -9,9 +9,8 @@ import { Loader, Palette, Plus, Trash2 } from "lucide-react";
 import { CustomDialog } from "@/feature/shared/components/custom-dialog";
 import { useState } from "react";
 import { ColorInput } from "@/feature/shared/ui/color-input";
-import { useBucketAction } from "@/feature/shared/hooks/use-bucket";
 import { stringToColor, cn } from "@/lib/utils";
-import { useItemAction } from "@/feature/shared/hooks/use-item";
+
 import {
   Popover,
   PopoverContent,
@@ -19,6 +18,8 @@ import {
 } from "@/feature/shared/ui/popover";
 import { Bucket } from "@/feature/shared/@types/bucket";
 import { NameDescriptionForm } from "@/feature/auth/components/name-description-form";
+import { useBucket } from "@/feature/shared/hooks/use-bucket";
+import { useItem } from "@/feature/shared/hooks/use-item";
 
 /*
  * Add Item
@@ -32,16 +33,14 @@ export const AddBucketItem = ({
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
-  const { createItem } = useItemAction({
-    queryKey: [bucket.project.id, "items"],
-  });
+  const { create } = useItem();
 
   const handleSubmit = async (values: {
     name: string;
     description?: string;
   }) => {
     onOpenChange?.(false);
-    await createItem.mutateAsync({ ...values, bucketId: bucket.id });
+    await create.mutateAsync({ ...values, bucketId: bucket.id });
   };
 
   return (
@@ -56,7 +55,7 @@ export const AddBucketItem = ({
         </DialogHeader>
         <NameDescriptionForm
           onSubmit={handleSubmit}
-          isPending={createItem.isPending}
+          isPending={create.isPending}
           label="Add"
         />
       </DialogContent>
@@ -81,9 +80,7 @@ export const ChangeBucketColor = ({
     bucket.color || stringToColor(bucket.id)
   );
   const [colorPopoverOpen, setColorPopoverOpen] = useState(false);
-  const { updateBucket } = useBucketAction({
-    queryKey: [bucket.project.id, "buckets"],
-  });
+  const { update } = useBucket();
 
   return (
     <Popover open={colorPopoverOpen} onOpenChange={setColorPopoverOpen}>
@@ -113,15 +110,15 @@ export const ChangeBucketColor = ({
           <Button
             onClick={async () => {
               onOpenChange?.(false);
-              await updateBucket.mutateAsync({
+              await update.mutateAsync({
                 id: bucket.id,
                 name: bucket.name,
                 color,
               });
             }}
-            disabled={updateBucket.isPending || color === bucket.color}
+            disabled={update.isPending || color === bucket.color}
           >
-            {updateBucket.isPending ? (
+            {update.isPending ? (
               <Loader className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               "Change Color"
@@ -145,9 +142,7 @@ export const EditBucket = ({
   const [color, setColor] = useState<string>(
     bucket.color || stringToColor(bucket.id)
   );
-  const { updateBucket } = useBucketAction({
-    queryKey: [bucket.project.id, "buckets"],
-  });
+  const { update } = useBucket();
 
   return (
     <CustomDialog
@@ -174,15 +169,15 @@ export const EditBucket = ({
           <Button
             onClick={async () => {
               onOpenChange?.(false);
-              await updateBucket.mutateAsync({
+              await update.mutateAsync({
                 id: bucket.id,
                 name: bucket.name,
                 color,
               });
             }}
-            disabled={updateBucket.isPending || color === bucket.color}
+            disabled={update.isPending || color === bucket.color}
           >
-            {updateBucket.isPending ? (
+            {update.isPending ? (
               <Loader className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               "Change Color"
@@ -207,12 +202,10 @@ export const DeleteBucket = ({
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
-  const { deleteBucket } = useBucketAction({
-    queryKey: [bucket.project.id, "buckets"],
-  });
+  const { remove } = useBucket();
   const handleDeleteBucket = async () => {
     onOpenChange?.(false);
-    await deleteBucket.mutateAsync({ id: bucket.id });
+    await remove.mutateAsync({ id: bucket.id });
   };
 
   return (
@@ -233,10 +226,10 @@ export const DeleteBucket = ({
           <Button
             variant="destructive"
             className="flex-1"
-            disabled={deleteBucket.isPending}
+            disabled={remove.isPending}
             onClick={handleDeleteBucket}
           >
-            {deleteBucket.isPending ? (
+            {remove.isPending ? (
               <Loader className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               "Delete"

@@ -12,15 +12,16 @@ import { SidebarTrigger } from "@/feature/shared/ui/sidebar";
 import { usePathname } from "next/navigation";
 import { Fragment } from "react";
 import { NavigationControls } from "./nav-controls";
-import { useProject } from "@/feature/shared/hooks/use-project";
 import { useWorkspace } from "@/feature/shared/hooks/use-workspace";
+
 import { Workspace } from "@/feature/shared/@types/space";
-import { Project } from "@/feature/shared/@types/projects";
 import { NavUser } from "@/feature/user/nav-user";
+import { useProject } from "@/feature/shared/hooks/use-project";
+import { Project } from "@/feature/shared/@types/projects";
 
 export const ProjectNavigation = () => {
-  const { projects } = useProject();
-  const { workspaces } = useWorkspace();
+  const { workspaceProjects } = useProject();
+  const { userWorkspaces } = useWorkspace();
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
   return (
@@ -47,14 +48,14 @@ export const ProjectNavigation = () => {
                   <BreadcrumbItem className="hidden md:block">
                     {isLast ? (
                       <BreadcrumbPage className=" capitalize">
-                        {projects.find((p: Project) => p.id === segment)
-                          ?.name || segment}
+                        {workspaceProjects.find(
+                          (p: Project) => p.id === segment
+                        )?.name || segment}
                       </BreadcrumbPage>
                     ) : (
                       <BreadcrumbPage className=" capitalize">
-                        {workspaces.data.find(
-                          (w: Workspace) => w.id === segment
-                        )?.name || segment}
+                        {userWorkspaces.find((w: Workspace) => w.id === segment)
+                          ?.name || segment}
                       </BreadcrumbPage>
                     )}
                   </BreadcrumbItem>

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   COOKIE_NAME as SESSION_COOKIE,
   decrypt,
-} from "@/feature/shared/actions/session";
+} from "@/feature/shared/actions/core/session";
 import { cookies } from "next/headers";
 
 const protectedRoutes = ["/projects", "/chat", "/workspace", "/settings"];

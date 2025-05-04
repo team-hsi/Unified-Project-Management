@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import { Button } from "@/feature/shared/ui/button";
 import { CreateCheckList } from "../interactions/create-check-list";
-import { useItemAction } from "@/feature/shared/hooks/use-item";
 import type { CheckList as Check } from "@/feature/shared/@types/check-list";
 import { toast } from "sonner";
 import {
@@ -15,7 +14,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/feature/shared/ui/tooltip";
-import { useParams } from "next/navigation";
+import { useItem } from "@/feature/shared/hooks/use-item";
 
 export const CheckList = ({
   lists,
@@ -25,15 +24,7 @@ export const CheckList = ({
   itemId: string;
 }) => {
   const [checklist, setCheckList] = React.useState(lists || []);
-  const { projectId } = useParams() as { projectId: string };
-  const { updateItemInline } = useItemAction({
-    queryKey: [projectId, "items"],
-    successAction: () => {
-      toast.success("Update", {
-        description: "Checklist updated successfully!",
-      });
-    },
-  });
+  const { update } = useItem();
 
   React.useEffect(() => {
     setCheckList(lists || []);
@@ -45,7 +36,10 @@ export const CheckList = ({
         idx === index ? { ...item, isCompleted: !item.isCompleted } : item
       )
     );
-    await updateItemInline.mutateAsync({ checklist, id: itemId });
+    await update.mutateAsync({ checklist, id: itemId });
+    toast.success("Update", {
+      description: "Checklist updated successfully!",
+    });
   };
   if (!checklist || checklist.length === 0) {
     return (

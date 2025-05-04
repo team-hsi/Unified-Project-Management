@@ -3,16 +3,16 @@
 import { type ReactNode, createContext, useContext } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getQueryClient } from "../query-client/get-query-client";
-import { getRoomMessages } from "@/feature/shared/actions/room-actions";
-import { sendMessage as sendMsg } from "@/feature/shared/actions/message-actions";
 import { toast } from "sonner";
 import { useUser } from "../auth/auth-provider";
-import { TChat } from "@/feature/shared/@types/room";
+import { Chat } from "@/feature/shared/@types/room";
 import { useParams } from "next/navigation";
+import { createMessage } from "@/feature/shared/actions/api/message/mutations";
+import { getRoomMessages } from "@/feature/shared/actions/api/message/queries";
 
 // --- Types
 type ChatContextType = {
-  chat: TChat;
+  chat: Chat;
   isLoading: boolean;
   sendMessage: (content: string) => Promise<void>;
 };
@@ -26,15 +26,12 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
 
   const { data: chat, isLoading } = useQuery({
     queryKey: [chatId, "chat"],
-    queryFn: () => {
-      if (!chatId) return Promise.resolve([]);
-      return getRoomMessages({ id: chatId });
-    },
-    enabled: !!chatId, // only fetch if a chat is selected
+    queryFn: () => getRoomMessages({ id: chatId }),
+    enabled: !!chatId,
   });
 
   const sendAction = useMutation({
-    mutationFn: sendMsg,
+    mutationFn: createMessage,
     onMutate: async ({ roomId, content }) => {
       await queryClient.cancelQueries({
         queryKey: [roomId, "chat"],
@@ -44,7 +41,7 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
       // Optimistically update the message list by adding the new message
       queryClient.setQueryData(
         [roomId, "chat"],
-        (oldChat: TChat | undefined) => {
+        (oldChat: Chat | undefined) => {
           console.log("oldchat=>", oldChat);
           return {
             ...oldChat,
@@ -84,7 +81,7 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
   return (
     <ChatStoreContext.Provider
       value={{
-        chat,
+        chat: chat as Chat,
         isLoading,
         sendMessage,
       }}

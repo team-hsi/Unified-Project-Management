@@ -4,11 +4,11 @@ import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { cn, hexToRgba } from "@/lib/utils";
 import { Button } from "@/feature/shared/ui/button";
 import InlineEdit from "@/feature/shared/ui/inline-edit";
-import { useBucketAction } from "@/feature/shared/hooks/use-bucket";
 import React from "react";
 import { Plus } from "lucide-react";
 import { Bucket } from "@/feature/shared/@types/bucket";
 import { BucketDropdown } from "../dropdown/bucket-dropdown";
+import { useBucket } from "@/feature/shared/hooks/use-bucket";
 
 interface KanbanBucketProps {
   bucket: Bucket;
@@ -19,21 +19,17 @@ export const KanbanBucket = ({ bucket, index }: KanbanBucketProps) => {
   const [lastAttemptedName, setLastAttemptedName] = React.useState<
     string | null
   >(null);
-  const { updateBucket } = useBucketAction({
-    queryKey: [bucket.project.id, "buckets"],
-  });
-  const displayName = updateBucket.isPending
-    ? updateBucket.variables?.name
-    : bucket.name;
+  const { update } = useBucket();
+  const displayName = update.isPending ? update.variables?.name : bucket.name;
 
   const handleSave = (value: string) => {
     setLastAttemptedName(value);
-    updateBucket.mutate({ id: bucket.id, name: value });
+    update.mutate({ id: bucket.id, name: value });
   };
 
   const handleRetry = () => {
     if (lastAttemptedName) {
-      updateBucket.mutate({ id: bucket.id, name: lastAttemptedName });
+      update.mutate({ id: bucket.id, name: lastAttemptedName });
     }
   };
   return (
@@ -66,7 +62,7 @@ export const KanbanBucket = ({ bucket, index }: KanbanBucketProps) => {
                   borderColor: hexToRgba(bucket.color, 1),
                 }}
               />
-              {updateBucket.isError ? (
+              {update.isError ? (
                 <div className="flex items-center gap-2">
                   <div className="flex items-center text-destructive">
                     <span>{lastAttemptedName || bucket.name}</span>

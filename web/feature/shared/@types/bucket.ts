@@ -1,4 +1,5 @@
 import { Item } from "@/feature/shared/@types/item";
+import { Project } from "@/feature/shared/@types/projects";
 
 export type BucketPayload = {
   id: string;
@@ -10,13 +11,7 @@ export type BucketPayload = {
 export interface Bucket {
   id: string;
   name: string;
-  project: {
-    name: string;
-    ownerId: string;
-    id: string;
-    createdAt: string;
-    updatedAt: string;
-  };
+  project: Project
   items: Item[];
   color: string;
   createdAt: string;

@@ -14,7 +14,7 @@ import { Label } from "@/feature/shared/ui/label";
 import { Input } from "@/feature/shared/ui/input";
 import { ColorInput } from "@/feature/shared/ui/color-input";
 import { Button } from "@/feature/shared/ui/button";
-import { useBucketAction } from "@/feature/shared/hooks/use-bucket";
+import { useBucket } from "@/feature/shared/hooks/use-bucket";
 
 export const CreateBucket = ({
   projectId,
@@ -30,9 +30,7 @@ export const CreateBucket = ({
   });
   const [color, setColor] = React.useState<string>("#f5f5f4");
 
-  const { createBucket } = useBucketAction({
-    queryKey: [projectId, "buckets"],
-  });
+  const { create } = useBucket();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -72,14 +70,14 @@ export const CreateBucket = ({
             className="flex-1"
             onClick={async () => {
               setOpen(false);
-              await createBucket.mutateAsync({
+              await create.mutateAsync({
                 ...bucketData,
                 color,
               });
             }}
             disabled={!bucketData.name.trim() || bucketData.name.length < 3}
           >
-            {createBucket.isPending ? (
+            {create.isPending ? (
               <Loader className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               "Create"

@@ -3,9 +3,9 @@ import { Input } from "@/feature/shared/ui/input";
 import { Search } from "lucide-react";
 import { ScrollArea } from "@/feature/shared/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
-import { useMember } from "@/feature/shared/hooks/use-member";
 import { Member } from "@/feature/shared/@types/user";
 import { ChatSheetHeader } from "../../layout/chat-sheet-header";
+import { useRoom } from "@/feature/shared/hooks/use-room";
 
 interface ChatMembersViewProps {
   onClose: () => void;
@@ -16,10 +16,10 @@ export const ChatMembersView = ({
   onClose,
   onMemberClick,
 }: ChatMembersViewProps) => {
-  const { chatMembers, isChatMembersPending } = useMember();
+  const { roomMembers, isPendingRoomMembers } = useRoom();
   const [searchQuery, setSearchQuery] = React.useState("");
 
-  const filteredMembers = chatMembers?.filter((member: Member) => {
+  const filteredMembers = roomMembers?.members.filter((member: Member) => {
     const fullName =
       `${member.user.firstname} ${member.user.lastname}`.toLowerCase();
     const email = member.user.email.toLowerCase();
@@ -44,7 +44,7 @@ export const ChatMembersView = ({
         </div>
 
         <ScrollArea className="h-[calc(100vh-200px)]">
-          {isChatMembersPending ? (
+          {isPendingRoomMembers ? (
             <div className="text-center text-muted-foreground p-4">
               Loading members...
             </div>

@@ -1,7 +1,7 @@
 import { Button } from "@/feature/shared/ui/button";
-import { useItemAction } from "@/feature/shared/hooks/use-item";
 import { cn } from "@/lib/utils";
 import { CheckCircle, Trash } from "lucide-react";
+import { useItem } from "@/feature/shared/hooks/use-item";
 
 export const DualButton = ({
   className,
@@ -14,9 +14,7 @@ export const DualButton = ({
     status?: string;
   };
 }) => {
-  const { deleteItem, updateItemInline } = useItemAction({
-    queryKey: [data.projectId, "items"],
-  });
+  const { remove, update } = useItem();
   return (
     <div
       className={cn(
@@ -31,7 +29,7 @@ export const DualButton = ({
         aria-label="edit-item"
         onClick={(e) => {
           e.stopPropagation();
-          updateItemInline.mutateAsync({
+          update.mutateAsync({
             status: data.status === "complete" ? "incomplete" : "complete",
             id: data.itemId,
           });
@@ -48,10 +46,10 @@ export const DualButton = ({
         className="rounded-none shadow-none hover:text-red-500 first:rounded-s-lg last:rounded-e-lg focus-visible:z-10"
         variant="outline"
         size="icon"
-        aria-label="delete-item"
+        aria-label="remove-item"
         onClick={(e) => {
           e.stopPropagation();
-          deleteItem.mutateAsync({ id: data.itemId });
+          remove.mutateAsync({ id: data.itemId });
         }}
       >
         <Trash size={16} strokeWidth={1} aria-hidden="true" />

@@ -25,3 +25,9 @@ export interface Member {
   role: "admin" | "guest" | "member";
   user: User;
 }
+
+export interface MemberPayload {
+  id: string;
+  role: "admin" | "guest" | "member";
+  userId: string;
+}

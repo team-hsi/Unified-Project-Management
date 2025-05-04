@@ -14,33 +14,32 @@ import {
 import { ArrowRight, Plus } from "lucide-react";
 import { Workspace } from "@/feature/shared/@types/space";
 import { toast } from "sonner";
-import { getQueryClient } from "@/lib/query-client/get-query-client";
-import { useMutation } from "@tanstack/react-query";
-import { updateActiveWorkspace } from "@/feature/shared/actions/workspace-actions";
-import { useRouter } from "next/navigation";
-import { Session } from "@/lib/auth/auth-provider";
+// import { getQueryClient } from "@/lib/query-client/get-query-client";
+// import { useMutation } from "@tanstack/react-query";
+// import { useRouter } from "next/navigation";
+// import { Session } from "@/lib/auth/auth-provider";
 
 const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {
-  const queryClient = getQueryClient();
-  const router = useRouter();
+  // const queryClient = getQueryClient();
+  // const router = useRouter();
 
-  const setActive = useMutation({
-    mutationFn: updateActiveWorkspace,
-    onMutate: async (payload: { activeSpace: string }) => {
-      router.push(`/${payload.activeSpace}/projects`);
-      await queryClient.cancelQueries({ queryKey: ["session"] });
-      queryClient.setQueryData(["session"], (old: Session) => ({
-        ...old,
-        activeSpace: payload.activeSpace,
-      }));
-    },
-    onError: (error) => {
-      toast.warning(error.message);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["session"] });
-    },
-  });
+  // const setActive = useMutation({
+  //   mutationFn: updateActiveWorkspace,
+  //   onMutate: async (payload: { activeSpace: string }) => {
+  //     router.push(`/${payload.activeSpace}/projects`);
+  //     await queryClient.cancelQueries({ queryKey: ["session"] });
+  //     queryClient.setQueryData(["session"], (old: Session) => ({
+  //       ...old,
+  //       activeSpace: payload.activeSpace,
+  //     }));
+  //   },
+  //   onError: (error) => {
+  //     toast.warning(error.message);
+  //   },
+  //   onSettled: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["session"] });
+  //   },
+  // });
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -61,7 +60,7 @@ const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {
               className="w-full justify-between h-16 rounded-none border-b last:border-b-0 first:border-t hover:bg-accent group"
               onClick={async () => {
                 toast(`${workspace.name} selected!`);
-                setActive.mutate({ activeSpace: workspace.id });
+                // setActive.mutate({ activeSpace: workspace.id });
               }}
             >
               <div className="flex items-center gap-4">

@@ -14,9 +14,8 @@ import { Button } from "@/feature/shared/ui/button";
 import { Input } from "@/feature/shared/ui/input";
 import { Checkbox } from "@/feature/shared/ui/checkbox";
 import { Label } from "@/feature/shared/ui/label";
-import { useItemAction } from "@/feature/shared/hooks/use-item";
+import { useItem } from "@/feature/shared/hooks/use-item";
 import { toast } from "sonner";
-import { useParams } from "next/navigation";
 import type { CheckList } from "@/feature/shared/@types/check-list";
 
 const checkListSchema = z.object({
@@ -52,23 +51,18 @@ export const CreateCheckList = ({
       isCompleted: false,
     },
   });
-  const { projectId } = useParams<{ projectId: string }>();
-  const { updateItemInline } = useItemAction({
-    queryKey: [projectId, "items"],
-    successAction: () => {
-      toast.success("Create", {
-        description: "Your checklist has been created.",
-      });
-      reset();
-    },
-  });
+  const { update } = useItem();
 
   const onSubmit = async (data: FormValues) => {
     const checklist = [...(currentList ?? []), data];
     try {
       setCheckList(checklist);
       setIsOpen(false);
-      await updateItemInline.mutateAsync({ checklist, id: itemId });
+      await update.mutateAsync({ checklist, id: itemId });
+      toast.success("Create", {
+        description: "Your checklist has been created.",
+      });
+      reset();
     } catch (error) {
       console.error("Submission failed:", error);
     }
@@ -129,8 +123,8 @@ export const CreateCheckList = ({
               Cancel
             </Button>{" "}
             {/* Optional Cancel Button */}
-            <Button type="submit" disabled={updateItemInline.isPending}>
-              {updateItemInline.isPending ? "Creating..." : "Create"}
+            <Button type="submit" disabled={update.isPending}>
+              {update.isPending ? "Creating..." : "Create"}
             </Button>
           </DialogFooter>
         </form>

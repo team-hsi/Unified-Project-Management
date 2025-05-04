@@ -2,14 +2,14 @@ import { CheckList } from "@/feature/shared/@types/check-list";
 import { Label } from "@/feature/shared/@types/label";
 
 export type ItemPayload = {
-  name?: string;
-  description?: string;
-  labels?: string[];
-  startDate?: string;
-  dueDate?: string;
-  checklist?: CheckList[];
-  priority?: "low" | "medium" | "high" | "";
-  status?: "complete" | "incomplete";
+  name: string;
+  description: string;
+  labels: string[];
+  startDate: string;
+  dueDate: string;
+  checklist: CheckList[];
+  priority: "low" | "medium" | "high" | "";
+  status: "complete" | "incomplete";
   id: string;
   bucketId: string;
 };

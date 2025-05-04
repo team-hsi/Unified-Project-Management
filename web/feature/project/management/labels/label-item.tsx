@@ -4,10 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { LabelForm } from "./label-form";
 import React from "react";
 import { Badge } from "@/feature/shared/ui/badge";
-import { useLabels } from "@/feature/shared/hooks/use-labels";
 import { Edit2, Trash2 } from "lucide-react";
 import { DeleteLabel } from "./delete-label";
 import { Label } from "@/feature/shared/@types/label";
+import { useLabel } from "@/feature/shared/hooks/use-label";
 
 interface LabelItemProps {
   label: Label;
@@ -15,12 +15,12 @@ interface LabelItemProps {
 
 export function LabelItem({ label }: LabelItemProps) {
   const [isEditing, setIsEditing] = React.useState(false);
-  const { updateLabel, deleteLabel } = useLabels({
+  const { update, remove } = useLabel({
     projectId: label.project.id,
   });
 
   const handleDelete = async () => {
-    await deleteLabel.mutateAsync({ id: label.id });
+    await remove.mutateAsync({ id: label.id });
   };
 
   return (
@@ -85,7 +85,7 @@ export function LabelItem({ label }: LabelItemProps) {
                   setIsEditing(false);
                 }}
                 onSave={async (values) => {
-                  await updateLabel.mutateAsync({ ...values, id: label.id });
+                  await update.mutateAsync({ ...values, id: label.id });
                   setIsEditing(false);
                 }}
               />

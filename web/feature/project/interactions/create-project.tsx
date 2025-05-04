@@ -8,8 +8,8 @@ import {
   DialogTrigger,
 } from "@/feature/shared/ui/dialog";
 import { FolderPlus } from "lucide-react";
-import { useProject } from "@/feature/shared/hooks/use-project";
 import { NameDescriptionForm } from "@/feature/auth/components/name-description-form";
+import { useProject } from "@/feature/shared/hooks/use-project";
 
 export function CreateProjectDialog({
   children,
@@ -18,10 +18,10 @@ export function CreateProjectDialog({
 }) {
   const [open, setOpen] = React.useState(false);
 
-  const { createProject } = useProject();
+  const { create } = useProject();
 
   const handleCreate = async (data: { name: string }) => {
-    await createProject.mutateAsync(data);
+    await create.mutateAsync(data);
     setOpen(false);
   };
 
@@ -47,7 +47,7 @@ export function CreateProjectDialog({
         </div>
         <NameDescriptionForm
           onSubmit={handleCreate}
-          isPending={createProject.isPending}
+          isPending={create.isPending}
           label="Create"
         />
       </DialogContent>

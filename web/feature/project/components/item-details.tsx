@@ -21,7 +21,7 @@ import {
   AccordionTrigger,
 } from "@/feature/shared/ui/accordion";
 import InlineEdit from "@/feature/shared/ui/inline-edit";
-import { useItemAction } from "@/feature/shared/hooks/use-item";
+import { useItem } from "@/feature/shared/hooks/use-item";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -49,7 +49,7 @@ import {
 } from "@/feature/shared/ui/select";
 import { Checkbox } from "@/feature/shared/ui/checkbox";
 import type { ItemFormValues } from "../shared/types";
-import { useLabels } from "@/feature/shared/hooks/use-labels";
+import { useLabel } from "@/feature/shared/hooks/use-label";
 import { Item } from "@/feature/shared/@types/item";
 import { Label } from "@/feature/shared/@types/label";
 import { itemFormSchema } from "../shared/schema";
@@ -81,24 +81,18 @@ export const ItemDetails = ({
   setUnsavedForm: (value: boolean) => void;
   unsavedForm: boolean;
 }) => {
-  const { updateItemInline } = useItemAction({
-    queryKey: [item.bucket.project.id, "items"],
-    successAction: () => {
-      setUnsavedForm(false);
-      form.reset(form.getValues());
-    },
-  });
-  const { labels } = useLabels({ projectId: item.bucket.project.id });
+  const { update } = useItem();
+  const { labels } = useLabel({ projectId: item.bucket.project.id });
 
   const labelOptions = React.useMemo(() => {
     return (
-      labels.data?.data.map((label: Label) => ({
+      labels?.map((label: Label) => ({
         value: label.id,
         label: label.name,
         color: label.color,
       })) || []
     );
-  }, [labels.data?.data]);
+  }, [labels]);
 
   const initialLabels = React.useMemo(() => {
     return (item.labels || [])
@@ -131,13 +125,14 @@ export const ItemDetails = ({
     if (payload.priority === "") {
       delete payload.priority;
     }
-
-    return updateItemInline.mutateAsync({
+    update.mutateAsync({
       id: item.id,
       ...payload,
       labels: labelIds,
       dueDate: data.dueDate ? data.dueDate.toISOString() : "",
     });
+    setUnsavedForm(false);
+    form.reset(form.getValues());
   };
 
   return (
@@ -150,7 +145,7 @@ export const ItemDetails = ({
             textStyle="cursor-pointer"
             inputStyle="rounded-md"
             onSave={(value) =>
-              updateItemInline.mutateAsync({
+              update.mutateAsync({
                 id: item.id,
                 name: value,
               })
@@ -380,7 +375,7 @@ export const ItemDetails = ({
             {/* Save Button - only shown when form is dirty */}
             {unsavedForm && (
               <Button type="submit" className="mt-4">
-                {updateItemInline.isPending ? (
+                {update.isPending ? (
                   <Loader className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                   "Save"

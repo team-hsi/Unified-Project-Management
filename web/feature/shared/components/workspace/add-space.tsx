@@ -23,6 +23,7 @@ import { Textarea } from "@/feature/shared/ui/textarea";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useWorkspace } from "@/feature/shared/hooks/use-workspace";
 import { CustomDialog } from "../custom-dialog";
+import { createWorkspace } from "../../actions/api/workspace/queries";
 
 // Define the validation schema using Zod
 const spaceFormSchema = z.object({
@@ -54,10 +55,10 @@ export function AddSpaceDialog({
     },
   });
 
-  const { createWorkspace } = useWorkspace();
+  const { create } = useWorkspace();
 
   async function onSubmit(values: SpaceFormValues) {
-    await createWorkspace.mutateAsync(values);
+    await create.mutateAsync(values);
     form.reset();
     onOpenChange?.(false);
   }

@@ -19,11 +19,11 @@ interface ChatInfoEditProps {
 
 export const ChatInfoEdit = ({ onClose, room }: ChatInfoEditProps) => {
   const { chatId } = useParams<{ chatId: string }>();
-  const { updateRoom } = useRoom();
+  const { update } = useRoom();
 
   const handleNameUpdate = async (name: string) => {
     try {
-      await updateRoom.mutateAsync({
+      await update.mutateAsync({
         id: chatId,
         name,
       });

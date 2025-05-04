@@ -10,7 +10,6 @@ import {
 } from "@/feature/shared/ui/dialog";
 import { toast } from "sonner";
 import { Button } from "@/feature/shared/ui/button";
-import { useMember } from "@/feature/shared/hooks/use-member";
 import { Member } from "@/feature/shared/@types/user";
 import { Input } from "@/feature/shared/ui/input";
 import { Checkbox } from "@/feature/shared/ui/checkbox";
@@ -25,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/feature/shared/ui/select";
+import { useRoom } from "@/feature/shared/hooks/use-room";
 
 interface AddMemberDialogProps {
   children: React.ReactNode;
@@ -37,7 +37,7 @@ interface SelectedMember {
 
 export const AddMemberDialog = ({ children }: AddMemberDialogProps) => {
   const { chatId } = useParams<{ chatId: string }>();
-  const { addChatMember, space } = useMember();
+  const { addMember, roomMembers } = useRoom();
   const [open, setOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedMembers, setSelectedMembers] = React.useState<
@@ -50,7 +50,7 @@ export const AddMemberDialog = ({ children }: AddMemberDialogProps) => {
     try {
       await Promise.all(
         selectedMembers.map(({ userId, role }) =>
-          addChatMember.mutateAsync({ userId, role, id: chatId })
+          addMember.mutateAsync({ userId, role, id: chatId })
         )
       );
 
@@ -64,7 +64,7 @@ export const AddMemberDialog = ({ children }: AddMemberDialogProps) => {
     }
   };
 
-  const currentSpaceMembers = space?.members || [];
+  const currentSpaceMembers = roomMembers?.members || [];
 
   const filteredMembers = currentSpaceMembers.filter((member: Member) => {
     const fullName =
@@ -261,7 +261,7 @@ export const AddMemberDialog = ({ children }: AddMemberDialogProps) => {
                     <Button
                       type="submit"
                       className="rounded-full size-8"
-                      disabled={addChatMember.isPending}
+                      disabled={addMember.isPending}
                     >
                       <ArrowRight size={20} />
                     </Button>

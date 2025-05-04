@@ -4,10 +4,10 @@ import { Draggable } from "@hello-pangea/dnd";
 import { Checkbox } from "@/feature/shared/ui/checkbox";
 import { AnimatePresence, motion } from "framer-motion";
 import { Badge } from "@/feature/shared/ui/badge";
-import { useLabels } from "@/feature/shared/hooks/use-labels";
 import { Item } from "@/feature/shared/@types/item";
 import { ItemSheet } from "@/feature/project/shared/item-sheet";
 import { DualButton } from "@/feature/project/components/dual-button";
+import { useLabel } from "@/feature/shared/hooks/use-label";
 
 interface KanbanCardProps {
   item: Item;
@@ -15,7 +15,7 @@ interface KanbanCardProps {
 }
 
 export const KanbanItem = ({ item, index }: KanbanCardProps) => {
-  const { labels } = useLabels({
+  const { labels } = useLabel({
     projectId: item.bucket.project.id,
   });
   return (
@@ -37,7 +37,7 @@ export const KanbanItem = ({ item, index }: KanbanCardProps) => {
             <CardContent className="p-0 flex flex-col">
               <div className="flex items-center gap-1 mb-2">
                 {item.labels?.map((label) => {
-                  const itemLabel = labels.data?.data.find(
+                  const itemLabel = labels?.find(
                     (l: { id: string }) => l.id === label.id
                   );
                   return (

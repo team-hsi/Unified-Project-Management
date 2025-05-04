@@ -1,29 +1,28 @@
-import { getQueryClient } from "@/lib/query-client/get-query-client";
+"use client";
+
 import { useMutation } from "@tanstack/react-query";
-import {
-  createItem as createItemAction,
-  deleteItem as deleteItemAction,
-  updateItem as updateItemAction,
-} from "@/feature/shared/actions/item-actions";
+import { useParams } from "next/navigation";
+import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { toast } from "sonner";
-import { Item } from "@/feature/shared/@types/item";
-import { Bucket } from "@/feature/shared/@types/bucket";
+import {
+  createItem,
+  updateItem,
+  deleteItem,
+} from "../actions/api/item/mutations";
+import { Bucket } from "../@types/bucket";
+import { Item } from "../@types/item";
 
-export const useItemAction = ({
-  queryKey,
-  successAction,
-}: {
-  queryKey: string[];
-  successAction?: () => void;
-}) => {
+export const useItem = () => {
   const queryClient = getQueryClient();
+  const { projectId } = useParams<{ projectId: string }>();
 
-  const createItem = useMutation({
-    mutationFn: createItemAction,
+  // Create item mutation
+  const create = useMutation({
+    mutationFn: createItem,
     onMutate: async (newItemData) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previousItems = queryClient.getQueryData(queryKey);
-      const bucketsQueryKey = [queryKey[0], "buckets"];
+      await queryClient.cancelQueries({ queryKey: [projectId, "items"] });
+      const previousItems = queryClient.getQueryData([projectId, "items"]);
+      const bucketsQueryKey = [projectId, "buckets"];
 
       const buckets =
         (queryClient.getQueryData(bucketsQueryKey) as Bucket[]) || [];
@@ -59,35 +58,31 @@ export const useItemAction = ({
         labels: [],
         checklist: [],
       };
-      queryClient.setQueryData(queryKey, (old: Item[] = []) => {
+      queryClient.setQueryData([projectId, "items"], (old: Item[] = []) => {
         return [...old, optimisticItem];
       });
       return { previousItems };
     },
     onError: (error, variables, context) => {
       if (context?.previousItems) {
-        queryClient.setQueryData(queryKey, context.previousItems);
+        queryClient.setQueryData([projectId, "items"], context.previousItems);
       }
-      toast.error(error.message);
+      toast.error(error.name, {
+        description: error.message,
+      });
     },
-    onSuccess: (result) => {
-      if (!result.success) {
-        toast.error(result.error);
-        queryClient.invalidateQueries({ queryKey });
-        return;
-      }
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
       toast.success("Item created successfully!");
-      queryClient.invalidateQueries({ queryKey });
     },
   });
 
-  const updateItemInline = useMutation({
-    mutationFn: updateItemAction,
+  // Update item mutation
+  const update = useMutation({
+    mutationFn: updateItem,
     onMutate: async (updatedItemData) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previousItems = queryClient.getQueryData(queryKey);
-      console.log("previousItems", previousItems);
-      console.log("updatedItemData", updatedItemData);
+      await queryClient.cancelQueries({ queryKey: [projectId, "items"] });
+      const previousItems = queryClient.getQueryData([projectId, "items"]);
       // const newItemData = previousItems.map((item: { id: string }) => {
       //   return item.id === updatedItemData.id
       //     ? {
@@ -97,8 +92,7 @@ export const useItemAction = ({
       //     : item;
       // });
       // console.log("newItemData", newItemData);
-      queryClient.setQueryData(queryKey, (old: Item[] = []) => {
-        console.log("item-old", old);
+      queryClient.setQueryData([projectId, "items"], (old: Item[] = []) => {
         return old.map((item) =>
           item.id === updatedItemData.id
             ? {
@@ -112,52 +106,46 @@ export const useItemAction = ({
       return { previousItems };
     },
     onError: (error, variables, context) => {
-      // If the mutation fails, revert back to the previous value
       if (context?.previousItems) {
-        queryClient.setQueryData(queryKey, context.previousItems);
+        queryClient.setQueryData([projectId, "items"], context.previousItems);
       }
-      toast.error(error.message || "Failed to update item ");
+      toast.error(error.name, {
+        description: error.message,
+      });
     },
-    onSuccess: (result) => {
-      if (!result.success) {
-        toast.error(JSON.stringify(result.error));
-        queryClient.invalidateQueries({ queryKey });
-        return;
-      }
-      queryClient.invalidateQueries({ queryKey });
-      successAction?.();
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
+      toast.success("Item updated successfully!");
     },
   });
-  const deleteItem = useMutation({
-    mutationFn: deleteItemAction,
+
+  // Delete item mutation
+  const remove = useMutation({
+    mutationFn: deleteItem,
     onMutate: async (deleteItem) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previousItems = queryClient.getQueryData(queryKey);
-      queryClient.setQueryData(queryKey, (old: Item[] = []) => {
+      await queryClient.cancelQueries({ queryKey: [projectId, "items"] });
+      const previousItems = queryClient.getQueryData([projectId, "items"]);
+      queryClient.setQueryData([projectId, "items"], (old: Item[] = []) => {
         return old.filter((item) => item.id !== deleteItem.id);
       });
       return { previousItems };
     },
     onError: (error, variables, context) => {
       if (context?.previousItems) {
-        queryClient.setQueryData(queryKey, context.previousItems);
+        queryClient.setQueryData([projectId, "items"], context.previousItems);
       }
       toast.error(error.message || "Failed to delete item");
     },
-    onSuccess: (result) => {
-      if (!result.success) {
-        toast.error(result.error);
-        queryClient.invalidateQueries({ queryKey });
-        return;
-      }
-      queryClient.invalidateQueries({ queryKey });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
       toast.success("Item deleted successfully!");
     },
   });
 
   return {
-    createItem,
-    updateItemInline,
-    deleteItem,
+    // Mutations
+    create,
+    update,
+    remove,
   };
 };

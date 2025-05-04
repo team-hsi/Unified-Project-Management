@@ -1,67 +1,91 @@
-import { getQueryClient } from "@/lib/query-client/get-query-client";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import {
-  createProject as createAction,
-  deleteProject as deleteAction,
-  updateProject as updateAction,
-} from "@/feature/shared/actions/project-actions";
-// import { getUserProjects } from "@/actions/user-actions";
-import { getWorkspaceProjects } from "@/feature/shared/actions/workspace-actions";
-import { useParams } from "next/navigation";
+"use client";
 
-interface HookProps {
-  queryKey?: string[];
-  successAction?: () => void;
-}
-export const useProject = (payload?: HookProps) => {
+import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
+import { getQueryClient } from "@/lib/query-client/get-query-client";
+import { getWorkspaceProjects } from "../actions/api/project/queries";
+import {
+  createProject,
+  updateProject,
+  deleteProject,
+} from "../actions/api/project/mutations";
+import { getProjectBuckets } from "../actions/api/bucket/queries";
+import { getProjectItems } from "../actions/api/item/queries";
+
+export const useProject = () => {
   const queryClient = getQueryClient();
   const { workspaceId } = useParams<{ workspaceId: string }>();
 
+  // Get workspace projects
   const {
-    data: projects,
-    isPending,
-    error,
+    data: workspaceProjects,
+    isPending: isLoadingWp,
+    error: errorWp,
   } = useSuspenseQuery({
     queryKey: [workspaceId, "projects"],
-    queryFn: getWorkspaceProjects,
+    queryFn: () => getWorkspaceProjects({ id: workspaceId }),
   });
 
-  const createProject = useMutation({
+  // Create project mutation
+  const create = useMutation({
     mutationFn: async (data: { name: string }) =>
-      await createAction({ ...data, spaceId: workspaceId }),
+      await createProject({ ...data, spaceId: workspaceId }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [workspaceId, "projects"],
       });
-      payload?.successAction?.();
     },
   });
 
-  const updateProject = useMutation({
-    mutationFn: updateAction,
+  // Update project mutation
+  const update = useMutation({
+    mutationFn: updateProject,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [workspaceId, "projects"],
       });
-      payload?.successAction?.();
     },
   });
-  const deleteProject = useMutation({
-    mutationFn: deleteAction,
+
+  // Delete project mutation
+  const remove = useMutation({
+    mutationFn: deleteProject,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [workspaceId, "projects"],
       });
-      payload?.successAction?.();
     },
   });
+
+  // Prefetch projects data
+  // const prefetchWorkspace = (workspaceId: string) => {
+  //   queryClient.prefetchQuery({
+  //     queryKey: [workspaceId, "projects"],
+  //     queryFn: () => getWorkspaceProjects({ id: workspaceId }),
+  //   });
+  // };
+
+  const prefetchProject = (projectId: string) => {
+    queryClient.prefetchQuery({
+      queryKey: [projectId, "buckets"],
+      queryFn: () => getProjectBuckets({ id: projectId }),
+    });
+    queryClient.prefetchQuery({
+      queryKey: [projectId, "items"],
+      queryFn: () => getProjectItems({ id: projectId }),
+    });
+  };
 
   return {
-    projects,
-    isPending,
-    error,
-    createProject,
-    updateProject,
-    deleteProject,
+    // Queries
+    workspaceProjects,
+    isLoadingWp,
+    errorWp,
+    // Mutations
+    create,
+    update,
+    remove,
+    // Utilities
+    prefetchProject,
   };
 };

@@ -1,4 +1,4 @@
-import { getWorkspaceById } from "@/feature/shared/actions/workspace-actions";
+import { getWorkspaceById } from "@/feature/shared/actions/api/workspace/queries";
 import { WorkspaceProjects } from "@/feature/shared/components/workspace/workspace-projects";
 import { Metadata } from "next";
 
@@ -9,15 +9,15 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { workspaceId } = await params;
 
-  const workspace = await getWorkspaceById(workspaceId);
-  if (!workspace.success) {
+  const workspace = await getWorkspaceById({ id: workspaceId });
+  if (!workspace) {
     return {
       title: "Workspace Not Found",
     };
   }
 
   return {
-    title: workspace.data.name || workspaceId,
+    title: workspace.name || workspaceId,
   };
 }
 

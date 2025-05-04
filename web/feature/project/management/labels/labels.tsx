@@ -7,7 +7,6 @@ import {
 import { Button } from "@/feature/shared/ui/button";
 import { Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLabels } from "@/feature/shared/hooks/use-labels";
 import { LabelsLoading } from "./labels-loading";
 import { EmptyLabelState } from "./empty-labels";
 import type { Project } from "@/feature/shared/@types/projects";
@@ -15,13 +14,13 @@ import { LabelForm } from "./label-form";
 import React from "react";
 import { LabelItem } from "./label-item";
 import { Label } from "@/feature/shared/@types/label";
+import { useLabel } from "@/feature/shared/hooks/use-label";
 
 export const LabelsView = ({ project }: { project: Project }) => {
-  const { labels } = useLabels({
+  const { labels, create, isLoading } = useLabel({
     projectId: project.id,
   });
   const [isAddingLabel, setIsAddingLabel] = React.useState(false);
-  const { addLabel } = useLabels({ projectId: project.id });
 
   return (
     <div className="p-6">
@@ -37,7 +36,7 @@ export const LabelsView = ({ project }: { project: Project }) => {
       <div className="mt-4 border rounded-lg overflow-hidden shadow-sm">
         <div className="flex items-center justify-between bg-muted/30 p-4">
           <div className="text-sm font-medium">
-            {labels.data?.data.length || 0} Labels
+            {labels?.length || 0} Labels
           </div>
           <Button
             variant="outline"
@@ -50,9 +49,9 @@ export const LabelsView = ({ project }: { project: Project }) => {
           </Button>
         </div>
 
-        {labels.isLoading ? (
+        {isLoading ? (
           <LabelsLoading />
-        ) : labels.data?.data.length === 0 && !isAddingLabel ? (
+        ) : labels?.length === 0 && !isAddingLabel ? (
           <EmptyLabelState />
         ) : (
           <div className="bg-background divide-y">
@@ -70,7 +69,7 @@ export const LabelsView = ({ project }: { project: Project }) => {
                   <div className="p-4 bg-muted/10">
                     <LabelForm
                       onSave={async (values) => {
-                        await addLabel.mutateAsync({
+                        await create.mutateAsync({
                           ...values,
                           projectId: project.id,
                         });
@@ -87,8 +86,8 @@ export const LabelsView = ({ project }: { project: Project }) => {
               )}
             </AnimatePresence>
 
-            {labels.data?.data.length > 0 &&
-              labels.data?.data.map((label: Label) => (
+            {(labels?.length ?? 0) > 0 &&
+              labels?.map((label: Label) => (
                 <LabelItem key={label.id} label={label} />
               ))}
           </div>

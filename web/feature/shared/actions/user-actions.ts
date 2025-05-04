@@ -1,9 +1,9 @@
 "use server";
-import { createSession, deleteSession } from "@/feature/shared/actions/session";
 import { redirect } from "next/navigation";
-import { getSession } from "./dal";
 import { UserPayload } from "@/feature/shared/@types/user";
 import { extractErrors } from "@/lib/utils";
+import { createSession, deleteSession } from "./core/session";
+import { getSession } from "./core/dal";
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 /*
@@ -76,15 +76,16 @@ export const userLogin = async (
 /*
  * get user workspaces by user id
  */
-export const getUserWorkspaces = async () => {
-  const session = await getSession();
-  const res = await fetch(`${API}/v1/users/${session.userId}/spaces`);
-  const data = await res.json();
-  if (!res.ok) {
-    return { success: false, error: extractErrors(data.error) };
-  }
-  return { success: true, data };
-};
+// ✅
+// export const getUserWorkspaces = async () => {
+//   const session = await getSession();
+//   const res = await fetch(`${API}/v1/users/${session.userId}/spaces`);
+//   const data = await res.json();
+//   if (!res.ok) {
+//     return { success: false, error: extractErrors(data.error) };
+//   }
+//   return { success: true, data };
+// };
 
 /*
  * get authenticated user projects

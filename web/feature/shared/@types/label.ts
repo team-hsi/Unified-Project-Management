@@ -6,6 +6,7 @@ export type LabelPayload = {
 };
 
 export type Label = {
+  id: string;
   name: string;
   color: string;
   project: {
@@ -13,5 +14,6 @@ export type Label = {
     name: string;
     ownerId: string;
   };
-  id: string;
+  createdAt: string;
+  updatedAt: string;
 };

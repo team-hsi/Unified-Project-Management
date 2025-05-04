@@ -31,21 +31,21 @@ interface Project {
 
 export const WorkspaceProjects = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { projects, isPending, error } = useProject();
+  const { workspaceProjects, isLoadingWp, errorWp } = useProject();
   // Updated to include error
 
   // Filter projects based on search query
   const filteredProjects =
-    projects?.filter((project: Project) =>
+    workspaceProjects?.filter((project: Project) =>
       project.name.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
-  if (isPending) {
+  if (isLoadingWp) {
     return <ProjectsLoading />;
   }
 
-  if (error) {
-    return <ProjectsError error={error} />;
+  if (errorWp) {
+    return <ProjectsError error={errorWp} />;
   }
 
   return (
@@ -103,6 +103,7 @@ export const WorkspaceProjects = () => {
 
 function ProjectCard({ project }: { project: Project }) {
   // Format dates using date-fns
+  const { prefetchProject } = useProject();
   const createdDate = new Date(project.createdAt);
   const updatedDate = new Date(project.updatedAt);
   const { workspaceId } = useParams<{ workspaceId: string }>();
@@ -116,7 +117,11 @@ function ProjectCard({ project }: { project: Project }) {
       prefetch={true}
       className="block"
     >
-      <Card className="transition-all hover:shadow-md">
+      <Card
+        className="transition-all hover:shadow-md"
+        onMouseEnter={() => prefetchProject(project.id)}
+        onFocus={() => prefetchProject(project.id)}
+      >
         <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
           <div className="space-y-1">
             <CardTitle className="text-base">{project.name}</CardTitle>

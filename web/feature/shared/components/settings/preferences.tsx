@@ -16,9 +16,9 @@ import {
 import { useTheme } from "next-themes";
 import { useLocale, useTranslations } from "next-intl";
 import { Locale } from "@/i18n/config";
-import { setUserLocale } from "@/feature/shared/actions/locale";
 import { useTransition } from "react";
 import { cn } from "@/lib/utils";
+import { setUserLocale } from "../../actions/core/locale";
 
 export function PreferencesView() {
   const { theme, setTheme } = useTheme();

@@ -43,15 +43,12 @@ export const DeleteProjectDialog = ({
     },
   });
 
-  const { deleteProject } = useProject({
-    successAction: () => {
-      form.reset();
-      onOpenChange?.(false);
-    },
-  });
+  const { remove } = useProject();
 
   const onSubmit = async () => {
-    await deleteProject.mutateAsync({ id: project.id });
+    await remove.mutateAsync({ id: project.id });
+    form.reset();
+    onOpenChange?.(false);
   };
 
   return (
@@ -89,7 +86,7 @@ export const DeleteProjectDialog = ({
                   <FormControl>
                     <Input
                       placeholder=" project name..."
-                      disabled={deleteProject.isPending}
+                      disabled={remove.isPending}
                       {...field}
                     />
                   </FormControl>
@@ -108,9 +105,9 @@ export const DeleteProjectDialog = ({
               type="submit"
               variant="destructive"
               className="flex-1"
-              disabled={deleteProject.isPending}
+              disabled={remove.isPending}
             >
-              {deleteProject.isPending ? (
+              {remove.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 </>

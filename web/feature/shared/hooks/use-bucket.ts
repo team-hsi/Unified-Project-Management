@@ -1,37 +1,34 @@
-import { getQueryClient } from "@/lib/query-client/get-query-client";
+"use client";
+
 import { useMutation } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
+import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { toast } from "sonner";
 import {
-  createBucket as createBucketAction,
-  deleteBucket as deleteBucketAction,
-  updateBucket as updateBucketAction,
-} from "@/feature/shared/actions/bucket-actions";
-import { useRouter } from "next/navigation";
-import { Bucket } from "@/feature/shared/@types/bucket";
+  createBucket,
+  updateBucket,
+  deleteBucket,
+} from "../actions/api/bucket/mutations";
+import { Bucket } from "../@types/bucket";
 
-export const useBucketAction = ({
-  queryKey,
-  successAction,
-}: {
-  queryKey: string[];
-  successAction?: () => void;
-}) => {
+export const useBucket = () => {
   const queryClient = getQueryClient();
-  const router = useRouter();
+  const { projectId } = useParams<{ projectId: string }>();
 
-  const createBucket = useMutation({
-    mutationFn: createBucketAction,
+  // Create bucket mutation
+  const create = useMutation({
+    mutationFn: createBucket,
     onMutate: async (newBucketData) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previousBuckets = queryClient.getQueryData(queryKey);
+      await queryClient.cancelQueries({ queryKey: [projectId, "buckets"] });
+      const previousBuckets = queryClient.getQueryData([projectId, "buckets"]);
       const optimisticBucket: Bucket = {
         id: `temp-${Date.now()}`,
         name: newBucketData.name,
         color: newBucketData.color || "#1f1f8",
         project: {
-          id: queryKey[1],
+          id: projectId,
           name: "New project for Bucket",
-          ownerId: queryKey[1],
+          ownerId: projectId,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -39,70 +36,34 @@ export const useBucketAction = ({
         updatedAt: new Date().toISOString(),
         items: [],
       };
-      queryClient.setQueryData(queryKey, (old: Bucket[] = []) => {
+      queryClient.setQueryData([projectId, "buckets"], (old: Bucket[] = []) => {
         return [...old, optimisticBucket];
       });
       return { previousBuckets };
     },
     onError: (error, variables, context) => {
       if (context?.previousBuckets) {
-        queryClient.setQueryData(queryKey, context.previousBuckets);
+        queryClient.setQueryData(
+          [projectId, "buckets"],
+          context.previousBuckets
+        );
       }
-      toast.error(JSON.stringify(error));
+      toast.error(error.name, {
+        description: error.message,
+      });
     },
-    onSuccess: (result) => {
-      if (!result.success) {
-        toast.error(result.error);
-        queryClient.invalidateQueries({ queryKey });
-        return;
-      }
-      queryClient.invalidateQueries({ queryKey });
-      successAction?.();
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
     },
   });
 
-  const deleteBucket = useMutation({
-    mutationFn: deleteBucketAction,
-    onMutate: async (deleteBucket) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previousBuckets = queryClient.getQueryData(queryKey);
-      queryClient.setQueryData(queryKey, (old: Bucket[] = []) => {
-        return old.filter((bucket) => bucket.id !== deleteBucket.id);
-      });
-      return { previousBuckets };
-    },
-    onError: (error, variables, context) => {
-      if (context?.previousBuckets) {
-        queryClient.setQueryData(queryKey, context.previousBuckets);
-      }
-      toast.error("something went wrong refresh the page");
-    },
-    onSuccess: (result) => {
-      if (!result.success) {
-        toast.error(result.error, {
-          description: "Please refresh your page.",
-          action: {
-            label: "Refresh",
-            onClick: (event) => {
-              event.preventDefault();
-              router.refresh();
-            },
-          },
-        });
-        queryClient.invalidateQueries({ queryKey });
-        return;
-      }
-      queryClient.invalidateQueries({ queryKey });
-      toast.success("Bucket deleted!");
-    },
-  });
-  const updateBucket = useMutation({
-    mutationFn: updateBucketAction,
-    mutationKey: ["updateBucket"],
+  // Update bucket mutation
+  const update = useMutation({
+    mutationFn: updateBucket,
     onMutate: async (updatedBucketData) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previousBuckets = queryClient.getQueryData(queryKey);
-      queryClient.setQueryData(queryKey, (old: Bucket[] = []) => {
+      await queryClient.cancelQueries({ queryKey: [projectId, "buckets"] });
+      const previousBuckets = queryClient.getQueryData([projectId, "buckets"]);
+      queryClient.setQueryData([projectId, "buckets"], (old: Bucket[] = []) => {
         return old.map((bucket) =>
           bucket.id === updatedBucketData.id
             ? {
@@ -117,33 +78,53 @@ export const useBucketAction = ({
     },
     onError: (error, variables, context) => {
       if (context?.previousBuckets) {
-        queryClient.setQueryData(queryKey, context.previousBuckets);
+        queryClient.setQueryData(
+          [projectId, "buckets"],
+          context.previousBuckets
+        );
       }
-      toast.error("something went wrong refresh the page");
+      toast.error(error.name, {
+        description: error.message,
+      });
     },
-    onSuccess: (result) => {
-      if (!result.success) {
-        toast.error(result.error, {
-          description: "Please refresh your page.",
-          action: {
-            label: "Refresh",
-            onClick: (event) => {
-              event.preventDefault();
-              router.refresh();
-            },
-          },
-        });
-        queryClient.invalidateQueries({ queryKey });
-        return;
-      }
-      queryClient.invalidateQueries({ queryKey });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
       toast.success("Bucket updated!");
     },
   });
 
+  // Delete bucket mutation
+  const remove = useMutation({
+    mutationFn: deleteBucket,
+    onMutate: async (deleteBucket) => {
+      await queryClient.cancelQueries({ queryKey: [projectId, "buckets"] });
+      const previousBuckets = queryClient.getQueryData([projectId, "buckets"]);
+      queryClient.setQueryData([projectId, "buckets"], (old: Bucket[] = []) => {
+        return old.filter((bucket) => bucket.id !== deleteBucket.id);
+      });
+      return { previousBuckets };
+    },
+    onError: (error, variables, context) => {
+      if (context?.previousBuckets) {
+        queryClient.setQueryData(
+          [projectId, "buckets"],
+          context.previousBuckets
+        );
+      }
+      toast.error(error.name, {
+        description: error.message,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
+      toast.success("Bucket deleted!");
+    },
+  });
+
   return {
-    createBucket,
-    updateBucket,
-    deleteBucket,
+    // Mutations
+    create,
+    update,
+    remove,
   };
 };

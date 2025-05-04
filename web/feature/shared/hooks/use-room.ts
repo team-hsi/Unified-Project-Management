@@ -1,38 +1,54 @@
-import { getQueryClient } from "@/lib/query-client/get-query-client";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { getWorkspaceRooms } from "@/feature/shared/actions/workspace-actions";
 import {
-  createRoom as createAction,
-  deleteRoom as deleteAction,
-  updateRoomById,
-} from "@/feature/shared/actions/room-actions";
-import { useParams } from "next/navigation";
-import { Room, RoomPayload } from "@/feature/shared/@types/room";
-import { useUser } from "@/lib/auth/auth-provider";
+  useSuspenseQuery,
+  useMutation,
+  useQueryClient,
+  useQuery,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getWorkspaceRooms, getRoomMembers } from "../actions/api/room/queries";
+import {
+  createRoom,
+  updateRoom,
+  deleteRoom,
+  addRoomMember,
+  removeRoomMember,
+} from "../actions/api/room/mutations";
+import { useParams } from "next/navigation";
+import { Room, RoomPayload } from "../@types/room";
+import { useUser } from "@/lib/auth/auth-provider";
 
-interface HookProps {
-  queryKey?: string[];
-  successAction?: () => void;
-}
-export const useRoom = (payload?: HookProps) => {
-  const queryClient = getQueryClient();
-  const { workspaceId } = useParams<{
-    workspaceId: string;
-  }>();
+export const useRoom = () => {
+  const queryClient = useQueryClient();
   const { user } = useUser();
+  const { workspaceId, chatId } = useParams<{
+    workspaceId: string;
+    chatId: string;
+  }>();
 
+  // Queries
   const {
     data: rooms,
-    isPending,
-    error,
+    isPending: isPendingRooms,
+    error: errorRooms,
   } = useSuspenseQuery({
     queryKey: [workspaceId, "rooms"],
     queryFn: () => getWorkspaceRooms({ id: workspaceId }),
   });
 
-  const createRoom = useMutation({
-    mutationFn: createAction,
+  const {
+    data: roomMembers,
+    isPending: isPendingRoomMembers,
+    error: errorRoomMembers,
+  } = useQuery({
+    queryKey: [chatId, "room-members"],
+    queryFn: () => getRoomMembers({ id: chatId }),
+    enabled: !!chatId,
+  });
+
+  // Mutations
+  const create = useMutation({
+    mutationFn: ({ name }: { name: string }) =>
+      createRoom({ name, spaceId: workspaceId }),
     onMutate: async (payload: Pick<RoomPayload, "name">) => {
       await queryClient.cancelQueries({
         queryKey: [workspaceId, "rooms"],
@@ -55,11 +71,6 @@ export const useRoom = (payload?: HookProps) => {
       return { previousRooms };
     },
     onError: (error, variables, context) => {
-      toast.info(
-        `error.message
-        ${JSON.stringify(error)},
-        ${JSON.stringify(variables)}`
-      );
       if (context?.previousRooms) {
         queryClient.setQueryData([workspaceId, "rooms"], context.previousRooms);
       }
@@ -70,35 +81,81 @@ export const useRoom = (payload?: HookProps) => {
         queryKey: [workspaceId, "rooms"],
       });
       toast.success("Room created successfully!");
-      payload?.successAction?.();
     },
   });
 
-  const updateRoom = useMutation({
-    mutationFn: updateRoomById,
+  const update = useMutation({
+    mutationFn: updateRoom,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [workspaceId, "rooms"],
-      });
-      payload?.successAction?.();
+      queryClient.invalidateQueries({ queryKey: [workspaceId, "rooms"] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
-  const deleteRoom = useMutation({
-    mutationFn: deleteAction,
+
+  const remove = useMutation({
+    mutationFn: deleteRoom,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [workspaceId, "rooms"],
-      });
-      payload?.successAction?.();
+      queryClient.invalidateQueries({ queryKey: [workspaceId, "rooms"] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
+
+  const addMember = useMutation({
+    mutationFn: addRoomMember,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [chatId, "room-members"] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const removeMember = useMutation({
+    mutationFn: removeRoomMember,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [chatId, "room-members"] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  // Prefetching
+  const prefetchRooms = async () => {
+    queryClient.prefetchQuery({
+      queryKey: [workspaceId, "rooms"],
+      queryFn: () => getWorkspaceRooms({ id: workspaceId }),
+      staleTime: 60000,
+    });
+  };
+
+  // const pefetchChat = () => {
+  //         queryClient.prefetchQuery({
+  //           queryKey: [chatId, "chat"],
+  //           queryFn: () => getRoomMessages({ id: chatId }),
+  //         });
+  //       };
 
   return {
+    // Queries
     rooms,
-    isPending,
-    error,
-    createRoom,
-    updateRoom,
-    deleteRoom,
+    isPendingRooms,
+    errorRooms,
+    roomMembers,
+    isPendingRoomMembers,
+    errorRoomMembers,
+    // Mutations
+    create,
+    update,
+    remove,
+    addMember,
+    removeMember,
+
+    // Utilities
+    prefetchRooms,
   };
 };

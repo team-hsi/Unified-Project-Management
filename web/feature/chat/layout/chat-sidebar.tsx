@@ -7,10 +7,10 @@ import { ChatList } from "../components/chat-list";
 import { ChatListLoading } from "../shared/chat-loadings";
 
 export function ChatSidebar() {
-  const { error } = useRoom();
+  const { errorRooms } = useRoom();
   const [searchTerm, setSearchTerm] = useState("");
 
-  if (error) {
+  if (errorRooms) {
     return <div className="p-4">Error loading rooms</div>;
   }
 

@@ -5,13 +5,13 @@ import { useRoom } from "@/feature/shared/hooks/use-room";
 import { useMemo } from "react";
 import { Room } from "@/feature/shared/@types/room";
 import { useParams } from "next/navigation";
-import { useMember } from "@/feature/shared/hooks/use-member";
 import { ChatDetails } from "../components/info/chat-details";
 import { ChatDropdown } from "../interactions/chat-dropdown";
+import { Skeleton } from "@/feature/shared/ui/skeleton";
 
 export function ChatHeader() {
   const { chatId } = useParams<{ chatId: string }>();
-  const { chatMembers } = useMember();
+  const { roomMembers, isPendingRoomMembers } = useRoom();
   const { rooms } = useRoom();
   const activeChat = useMemo(() => {
     const room = rooms.find((r: Room) => r.id === chatId);
@@ -19,7 +19,7 @@ export function ChatHeader() {
   }, [chatId, rooms]);
 
   return (
-    <div className="border-b border-chat-border bg-chat-header p-2 shadow-sm">
+    <div className="border-b p-2 shadow-sm">
       <div className="flex items-center justify-between">
         <ChatDetails>
           <div className="flex items-center">
@@ -45,9 +45,13 @@ export function ChatHeader() {
                   size="sm"
                   className="mr-1.5 h-2 w-2 rounded-full p-0"
                 />
-                <span className="text-xs text-muted-foreground">
-                  {chatMembers?.length} members
-                </span>
+                {isPendingRoomMembers ? (
+                  <Skeleton className="h-3 w-16" />
+                ) : (
+                  <span className="text-xs text-muted-foreground">
+                    {roomMembers?.members.length} members
+                  </span>
+                )}
               </div>
             </div>
           </div>

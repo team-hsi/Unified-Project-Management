@@ -1,15 +1,13 @@
 import { Bucket } from "@/feature/shared/@types/bucket";
 import { Item } from "@/feature/shared/@types/item";
-import { moveItem, reorderItem } from "@/feature/shared/actions/item-actions";
-import {
-  getProjectBuckets,
-  getProjectItems,
-} from "@/feature/shared/actions/project-actions";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation, useSuspenseQueries } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
+import { moveItem, reorderItems } from "../actions/api/item/mutations";
+import { getProjectBuckets } from "../actions/api/bucket/queries";
+import { getProjectItems } from "../actions/api/item/queries";
 
 export const useKanban = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -59,7 +57,7 @@ export const useKanban = () => {
   });
 
   const reorderItemMutation = useMutation({
-    mutationFn: reorderItem,
+    mutationFn: reorderItems,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });

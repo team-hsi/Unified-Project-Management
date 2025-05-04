@@ -8,7 +8,6 @@ import {
 } from "@/feature/shared/ui/card";
 import { Tabs, TabsContent, TabsList } from "@/feature/shared/ui/tabs";
 import { TabsTrigger } from "@radix-ui/react-tabs";
-import { useMember } from "@/feature/shared/hooks/use-member";
 import { ScrollArea } from "@/feature/shared/ui/scroll-area";
 import { Sheet, SheetContent, SheetTitle } from "@/feature/shared/ui/sheet";
 import { ChatUserInfo } from "./chat-user-info";
@@ -30,9 +29,7 @@ export const ChatInfo = ({ onClose }: ChatInfoProps) => {
   const [openEdit, setOpenEdit] = React.useState(false);
   const [viewMembers, setViewMembers] = React.useState(false);
 
-  const { chatMembers, isChatMembersPending } = useMember();
-
-  const { rooms } = useRoom();
+  const { rooms, roomMembers, isPendingRoomMembers } = useRoom();
   const { chatId } = useParams<{ chatId: string }>();
   const [selectedMember, setSelectedMember] = React.useState<Member | null>(
     null
@@ -53,9 +50,9 @@ export const ChatInfo = ({ onClose }: ChatInfoProps) => {
             <AvatarFallback>Av</AvatarFallback>
           </Avatar>
           <CardHeader className="text-center">
-            <CardTitle className="">{currentRoom?.name}</CardTitle>
+            <CardTitle>{currentRoom?.name}</CardTitle>
             <CardDescription className="">
-              {chatMembers?.length || 0} members
+              {roomMembers?.members.length || 0} members
             </CardDescription>
           </CardHeader>
         </div>
@@ -96,17 +93,17 @@ export const ChatInfo = ({ onClose }: ChatInfoProps) => {
             </TabsList>
             <TabsContent value="members" className="mt-4">
               <ScrollArea className="h-[300px]">
-                {isChatMembersPending ? (
+                {isPendingRoomMembers ? (
                   <div className="text-center text-muted-foreground">
                     Loading members...
                   </div>
-                ) : chatMembers?.length === 0 ? (
+                ) : roomMembers?.members.length === 0 ? (
                   <div className="text-center text-muted-foreground">
                     No members yet
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {chatMembers?.map((member: Member) => (
+                    {roomMembers?.members.map((member: Member) => (
                       <div
                         key={member.user.id}
                         onClick={() => setSelectedMember(member)}

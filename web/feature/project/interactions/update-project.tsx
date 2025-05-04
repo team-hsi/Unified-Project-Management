@@ -24,18 +24,14 @@ export const UpdateProjectDialog = ({
     resolver: zodResolver(projectSchema),
     defaultValues,
   });
-  const { updateProject } = useProject({
-    successAction: () => {
-      form.reset();
-      onOpenChange?.(false);
-    },
-  });
+  const { update } = useProject();
   const handleSubmit = async (values: {
     name: string;
     description?: string;
   }) => {
     onOpenChange?.(false);
-    await updateProject.mutateAsync({ name: values.name, id: project.id });
+    await update.mutateAsync({ name: values.name, id: project.id });
+    form.reset();
   };
   return (
     <DialogContent>
@@ -55,7 +51,7 @@ export const UpdateProjectDialog = ({
       </div>
       <NameDescriptionForm
         onSubmit={handleSubmit}
-        isPending={updateProject.isPending}
+        isPending={update.isPending}
         label="Update"
         defaultValues={defaultValues}
       />

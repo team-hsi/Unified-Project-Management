@@ -1,96 +1,107 @@
-import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import {
-  createWorkspace as createAction,
-  deleteWorkspace as deleteAction,
-  getWorkspaceMembers,
-  getWorkspaceProjects,
-  updateWorkspace as updateAction,
-} from "@/feature/shared/actions/workspace-actions";
-import { getUserWorkspaces } from "@/feature/shared/actions/user-actions";
-import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/auth/auth-provider";
+import { getQueryClient } from "@/lib/query-client/get-query-client";
+import {
+  // getAllWorkspaces,
+  getUserWorkspaces,
+  getWorkspaceMembers,
+} from "../actions/api/workspace/queries";
+import {
+  createWorkspace,
+  updateWorkspace,
+  deleteWorkspace,
+  addWorkspaceMembers,
+} from "../actions/api/workspace/mutations";
 
-interface HookProps {
-  queryKey?: string[];
-  successAction?: () => void;
-}
-export const useWorkspace = (payload?: HookProps) => {
+export const useWorkspace = () => {
   const queryClient = getQueryClient();
-
-  const router = useRouter();
   const { session } = useUser();
 
+  // Get user's workspaces
   const {
-    data: workspaces,
-    isPending: isLoading,
-    error: error,
+    data: userWorkspaces,
+    isPending: isLoadingWs,
+    error: errorWs,
   } = useSuspenseQuery({
     queryKey: [session?.userId, "workspaces"],
     queryFn: getUserWorkspaces,
   });
 
-  const prefetchWorkspace = (workspace: string) => {
-    router.prefetch(`/${workspace}/projects`);
+  // Get workspace members
+  const {
+    data: workspaceMembers,
+    isPending: isLoadingWsMembers,
+    error: errorWsMembers,
+  } = useQuery({
+    queryKey: [session?.activeSpace, "ws-members"],
+    queryFn: () => getWorkspaceMembers({ id: session?.activeSpace as string }),
+    enabled: !!session?.activeSpace,
+  });
 
+  // Create workspace mutation
+  const create = useMutation({
+    mutationFn: createWorkspace,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [session?.userId, "workspaces"],
+      });
+    },
+  });
+
+  // Update workspace mutation
+  const update = useMutation({
+    mutationFn: updateWorkspace,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [session?.userId, "workspaces"],
+      });
+    },
+  });
+
+  // Delete workspace mutation
+  const remove = useMutation({
+    mutationFn: deleteWorkspace,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["workspaces"],
+      });
+    },
+  });
+
+  // Add workspace members mutation
+  const inviteMember = useMutation({
+    mutationFn: addWorkspaceMembers,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [session?.activeSpace, "ws-members"],
+      });
+    },
+  });
+
+  // Prefetch workspace data
+  const prefetchWorkspace = () => {
     queryClient.prefetchQuery({
       queryKey: [session?.userId, "workspaces"],
       queryFn: getUserWorkspaces,
     });
-    queryClient.prefetchQuery({
-      queryKey: [workspace, "projects"],
-      queryFn: getWorkspaceProjects,
-    });
   };
-  const createWorkspace = useMutation({
-    mutationFn: createAction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [session?.userId, "workspaces"],
-      });
-      payload?.successAction?.();
-    },
-  });
-
-  const updateWorkspace = useMutation({
-    mutationFn: updateAction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [session?.userId, "workspaces"],
-      });
-      payload?.successAction?.();
-    },
-  });
-  const deleteWorkspace = useMutation({
-    mutationFn: deleteAction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [session?.userId, "workspaces"],
-      });
-      payload?.successAction?.();
-    },
-  });
-
-  const {
-    data: members,
-    isPending: isPendingMembers,
-    error: membersError,
-  } = useQuery({
-    queryKey: [session?.activeSpace, "members"],
-    queryFn: getWorkspaceMembers,
-    enabled: !!session?.activeSpace,
-  });
 
   return {
-    workspaces,
+    // Queries
+    userWorkspaces,
+    isLoadingWs,
+    errorWs,
+    workspaceMembers,
+    isLoadingWsMembers,
+    errorWsMembers,
+
+    // Mutations
+    create,
+    update,
+    remove,
+    inviteMember,
+
+    // Utilities
     prefetchWorkspace,
-    isLoading,
-    error,
-    createWorkspace,
-    updateWorkspace,
-    deleteWorkspace,
-    members,
-    isPendingMembers,
-    membersError,
   };
 };

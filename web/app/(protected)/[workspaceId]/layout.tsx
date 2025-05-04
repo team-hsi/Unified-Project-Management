@@ -1,7 +1,6 @@
 import { getSessionUser } from "@/feature/shared/actions/auth-actions";
-import { getSession } from "@/feature/shared/actions/dal";
-import { getUserWorkspaces } from "@/feature/shared/actions/user-actions";
-import { getWorkspaceProjects } from "@/feature/shared/actions/workspace-actions";
+import { getSession } from "@/feature/shared/actions/core/dal";
+import { getUserWorkspaces } from "@/feature/shared/actions/api/workspace/queries";
 import { ProjectNavigation } from "@/feature/project/layout/navigation";
 import { AppSidebar } from "@/feature/shared/layout/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/feature/shared/ui/sidebar";
@@ -9,6 +8,7 @@ import { AuthProvider } from "@/lib/auth/auth-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
+import { getWorkspaceProjects } from "@/feature/shared/actions/api/project/queries";
 
 const WorkspaceLayout = async ({
   children,
@@ -24,7 +24,7 @@ const WorkspaceLayout = async ({
   queryClient.setQueryData(["session"], session);
   queryClient.prefetchQuery({
     queryKey: [workspaceId, "projects"],
-    queryFn: getWorkspaceProjects,
+    queryFn: () => getWorkspaceProjects({ id: workspaceId }),
   });
   queryClient.prefetchQuery({
     queryKey: ["user"],

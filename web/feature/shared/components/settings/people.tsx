@@ -15,7 +15,8 @@ import { Mail, Search, Send, Users } from "lucide-react";
 import { Member } from "@/feature/shared/@types/user";
 import { Card, CardContent } from "@/feature/shared/ui/card";
 import { toast } from "sonner";
-import { useMember } from "@/feature/shared/hooks/use-member";
+import { useWorkspace } from "../../hooks/use-workspace";
+import { useParams } from "next/navigation";
 
 interface TeamMember {
   id: string;
@@ -26,23 +27,28 @@ interface TeamMember {
 }
 
 export const PeopleView = () => {
-  const { space, isPending, error, inviteMember } = useMember();
+  const { workspaceMembers, isLoadingWsMembers, errorWsMembers, inviteMember } =
+    useWorkspace();
+    const { workspaceId} = useParams<{workspaceId: string}>()
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<string | null>(null);
-  const [invite, setInvite] = useState({
+  const [invite, setInvite] = useState<{
+    email: string;
+    role: Member['role']
+  }>({
     email: "",
     role: "member",
   });
 
-  if (isPending) {
+  if (isLoadingWsMembers) {
     return <div className="text-center">Loading...</div>;
   }
-  if (error) {
+  if (errorWsMembers) {
     return <div className="text-center">Error loading members</div>;
   }
 
   const mappedMembers: TeamMember[] =
-    space?.members?.map((member: Member) => {
+    workspaceMembers?.members?.map((member: Member) => {
       const user = member.user;
       const initials = `${user.firstname.charAt(0)}${user.lastname.charAt(0)}`;
 
@@ -82,7 +88,7 @@ export const PeopleView = () => {
       ...prev,
       email: "",
     }));
-    await inviteMember.mutateAsync({ userId: invite.email, role: invite.role });
+    await inviteMember.mutateAsync({ userId: invite.email, role: invite.role , id: workspaceId});
   };
 
   return (
@@ -117,7 +123,7 @@ export const PeopleView = () => {
 
                 <Select
                   value={invite.role}
-                  onValueChange={(value) =>
+                  onValueChange={(value: Member['role']) =>
                     setInvite({ ...invite, role: value })
                   }
                 >
@@ -125,7 +131,6 @@ export const PeopleView = () => {
                     <SelectValue placeholder="Role" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="owner">Owner</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="member">Member</SelectItem>
                     <SelectItem value="guest">Guest</SelectItem>
@@ -199,7 +204,7 @@ export const PeopleView = () => {
                 <div></div>
                 <Select
                   defaultValue={member.role}
-                  onValueChange={(value) => handleRoleChange(member.id, value)}
+                  onValueChange={(value: "admin" | "guest" | "member") => handleRoleChange(member.id, value)}
                 >
                   <SelectTrigger className="w-[120px]">
                     <SelectValue placeholder="Role" />

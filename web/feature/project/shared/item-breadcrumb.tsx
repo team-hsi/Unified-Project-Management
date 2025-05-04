@@ -12,8 +12,8 @@ import { SheetClose } from "@/feature/shared/ui/sheet";
 import { Badge } from "@/feature/shared/ui/badge";
 import { useIsMobile } from "@/feature/shared/hooks/use-mobile";
 import { Separator } from "@/feature/shared/ui/separator";
-import { useItemAction } from "@/feature/shared/hooks/use-item";
 import { Button } from "@/feature/shared/ui/button";
+import { useItem } from "@/feature/shared/hooks/use-item";
 
 export const ItemBreadcrumb = ({
   item,
@@ -29,9 +29,7 @@ export const ItemBreadcrumb = ({
   segments: string[];
   unsavedForm: boolean;
 }) => {
-  const { deleteItem } = useItemAction({
-    queryKey: [item.projectId, "items"],
-  });
+  const { remove } = useItem();
   const isMobile = useIsMobile();
   const Icon = isMobile ? ChevronsDown : ChevronsRight;
   return (
@@ -81,7 +79,7 @@ export const ItemBreadcrumb = ({
           onClick={(e) => {
             e.stopPropagation();
             onClose();
-            deleteItem.mutateAsync({ id: item.id });
+            remove.mutateAsync({ id: item.id });
           }}
         >
           <Trash size={16} strokeWidth={1} aria-hidden="true" />

@@ -1,5 +1,5 @@
 "use server";
-import { getSession, getUser } from "./dal";
+import { getSession, getUser } from "@/feature/shared/actions/core/dal";
 
 export async function getCurrentSession() {
   const session = await getSession();

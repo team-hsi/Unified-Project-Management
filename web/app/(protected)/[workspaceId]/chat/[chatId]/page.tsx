@@ -10,7 +10,7 @@ const ChatPage = () => {
       <React.Suspense fallback={<ChatHeaderLoading />}>
         <ChatHeader />
       </React.Suspense>
-      <div className="flex-1 overflow-y-auto  bg-chat-bg">
+      <div className="flex-1 overflow-y-auto">
         <ChatMessages />
       </div>
       <ChatInput />
