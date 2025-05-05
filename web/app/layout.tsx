@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// import { Geist, Geist_Mono } from "next/font/google";
 import { QueryProvider } from "@/lib/query-client/query-provider";
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
@@ -8,15 +8,15 @@ import { Toaster } from "sonner";
 import { getLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
 export const metadata: Metadata = {
   title: "Unified Project Management",
@@ -32,14 +32,14 @@ const RootLayout = async ({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextTopLoader
           showSpinner={false}
           color={"var(--toploader)"}
           height={3}
         />
-        <Toaster />
+        <Toaster richColors position="top-right" />
         <QueryProvider>
           <ThemeProvider
             attribute="class"
