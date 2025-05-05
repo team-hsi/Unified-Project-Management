@@ -1,7 +1,6 @@
 "use server";
 import { getSession } from "./dal";
 import { extractErrors } from "@/lib/utils";
-import { notFound } from "next/navigation";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 type FetchOptions = {

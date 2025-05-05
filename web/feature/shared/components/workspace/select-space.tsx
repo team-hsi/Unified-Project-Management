@@ -12,10 +12,11 @@ import {
   AvatarImage,
 } from "@/feature/shared/ui/avatar";
 import { ArrowRight, Plus } from "lucide-react";
-import { Workspace } from "@/feature/shared/@types/space";
 import Link from "next/link";
+import { useWorkspace } from "../../hooks/use-workspace";
 
-const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {
+const SelectWorkspace = () => {
+  const { userWorkspaces } = useWorkspace();
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm p-0">
@@ -28,7 +29,7 @@ const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {
           </p>
         </CardHeader>
         <CardContent className="p-0">
-          {workspaces.map((workspace) => (
+          {userWorkspaces.map((workspace) => (
             <Link key={workspace.id} href={`/${workspace.id}/projects`}>
               <Button
                 variant="ghost"
