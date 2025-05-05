@@ -5,13 +5,15 @@ import {
   // getAllWorkspaces,
   getUserWorkspaces,
   getWorkspaceMembers,
-} from "../../../actions/api/workspace/queries";
+} from "@/actions/api/workspace/queries";
 import {
   createWorkspace,
   updateWorkspace,
   deleteWorkspace,
   addWorkspaceMembers,
-} from "../../../actions/api/workspace/mutations";
+} from "@/actions/api/workspace/mutations";
+import { updateUserActiveSpace } from "@/actions/api/user/mutations";
+import { toast } from "sonner";
 
 export const useWorkspace = () => {
   const queryClient = getQueryClient();
@@ -78,6 +80,17 @@ export const useWorkspace = () => {
     },
   });
 
+  // mutate active workspace
+  const setActive = useMutation({
+    mutationFn: updateUserActiveSpace,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["session"],
+      });
+      toast.success("Workspace changed!");
+    },
+  });
+
   // Prefetch workspace data
   const prefetchWorkspace = () => {
     queryClient.prefetchQuery({
@@ -100,6 +113,7 @@ export const useWorkspace = () => {
     update,
     remove,
     inviteMember,
+    setActive,
 
     // Utilities
     prefetchWorkspace,

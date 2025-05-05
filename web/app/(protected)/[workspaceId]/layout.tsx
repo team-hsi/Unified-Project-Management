@@ -1,4 +1,3 @@
-import { getSessionUser } from "@/actions/auth-actions";
 import { getSession } from "@/actions/core/dal";
 import { getUserWorkspaces } from "@/actions/api/workspace/queries";
 import { ProjectNavigation } from "@/feature/project/layout/navigation";
@@ -9,6 +8,8 @@ import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { getWorkspaceProjects } from "@/actions/api/project/queries";
+import { getSessionUser } from "@/actions/api/user/auth";
+import { SpaceSync } from "@/feature/shared/components/workspace/space-sync";
 
 const WorkspaceLayout = async ({
   children,
@@ -37,6 +38,7 @@ const WorkspaceLayout = async ({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <AuthProvider>
+        <SpaceSync />
         <SidebarProvider>
           <Suspense fallback={<div className="h-full w-full"> Loading...</div>}>
             <AppSidebar />

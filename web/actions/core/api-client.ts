@@ -26,9 +26,7 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
   }
   const data = await response.json();
   if (!response.ok) {
-    if (response.status === 400) {
-      notFound();
-    }
+    console.log("error=>", extractErrors(data.error));
     throw new Error(extractErrors(data.error));
   }
   return data;

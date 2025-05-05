@@ -26,7 +26,7 @@ export interface UserWithToken {
     accessToken: string;
     refreshToken: string;
   };
- }
+}
 export interface Member {
   id: string;
   role: "admin" | "guest" | "member";
@@ -37,4 +37,15 @@ export interface MemberPayload {
   id: string;
   role: "admin" | "guest" | "member";
   userId: string;
+}
+
+export interface Session {
+  isAuth: boolean;
+  activeSpace: unknown;
+  userId: unknown;
+  tokens: {
+    accessToken: unknown;
+    refreshToken: unknown;
+  };
+  expiresAt?: unknown;
 }

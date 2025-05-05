@@ -21,73 +21,32 @@ import type { Workspace } from "@/feature/shared/@types/space";
 import { AddSpaceDialog } from "./add-space";
 import { notFound, useParams } from "next/navigation";
 import Link from "next/link";
-// import { useMutation } from "@tanstack/react-query";
-// import { getQueryClient } from "@/lib/query-client/get-query-client";
-// import { Session } from "@/lib/auth/auth-provider";
-// import { toast } from "sonner";
 
 export const SpaceSwitcher = () => {
   const { isMobile } = useSidebar();
   const { workspaceId } = useParams<{ workspaceId: string }>();
-  // const queryClient = getQueryClient();
-  // const router = useRouter();
 
-  const { userWorkspaces, isLoadingWs, errorWs } = useWorkspace();
+  const { userWorkspaces } = useWorkspace();
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [hasOpenDialog, setHasOpenDialog] = React.useState(false);
   const focusRef = React.useRef<HTMLElement | null>(null);
   const dropdownTriggerRef = React.useRef<HTMLButtonElement | null>(null);
+
   const handleDialogOpenChange = (open: boolean) => {
     setHasOpenDialog(open);
     if (!open) {
       setIsDropdownOpen(false);
     }
   };
-
-  // const setActive = useMutation({
-  //   mutationFn: console.log,
-  //   onMutate: async (payload: { activeSpace: string }) => {
-  //     await queryClient.cancelQueries({ queryKey: ["session"] });
-  //     const previousSession = queryClient.getQueryData(["session"]);
-  //     queryClient.setQueryData(["session"], (old: Session) => ({
-  //       ...old,
-  //       activeSpace: payload.activeSpace,
-  //     }));
-  //     router.push(`/${payload.activeSpace}/projects`);
-  //     return { previousSession };
-  //   },
-  //   onError: (err, payload, context) => {
-  //     if (context?.previousSession) {
-  //       queryClient.setQueryData(["session"], context.previousSession);
-  //       router.push("/select-workspace");
-  //     }
-  //     toast.warning("Failed to switch workspace");
-  //   },
-  //   onSettled: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["session"] });
-  //   },
-  // });
-
-  const activeWorkspace = userWorkspaces.find(
+  const activeWorkspace = userWorkspaces?.find(
     (space: Workspace) => space.id === workspaceId
   );
-
   if (!activeWorkspace) {
     return notFound();
   }
-
   const handleMenuItemSelect = () => {
     focusRef.current = dropdownTriggerRef.current;
   };
-
-  if (isLoadingWs) {
-    return <div>Loading...</div>;
-  }
-
-  if (errorWs) {
-    return <div>Error loading workspaces</div>;
-  }
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -128,7 +87,7 @@ export const SpaceSwitcher = () => {
             <DropdownMenuLabel className="text-xs text-muted-foreground">
               Workspace
             </DropdownMenuLabel>
-            {userWorkspaces.map((space: Workspace, index: number) => {
+            {userWorkspaces?.map((space: Workspace, index: number) => {
               return (
                 <Link
                   key={space.id}
@@ -136,8 +95,8 @@ export const SpaceSwitcher = () => {
                   prefetch={true}
                 >
                   <DropdownMenuItem
-                    onClick={() => console.log("clicked")}
-                    // setActive.mutateAsync({ activeSpace: space.id })
+                    // onMouseEnter={() => prefetchWorkspace(space.id)}
+                    // onFocus={() => prefetchWorkspace(space.id)}
                     className="gap-2 p-2"
                   >
                     <div className="flex size-6 items-center justify-center rounded-sm border">

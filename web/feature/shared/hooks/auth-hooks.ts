@@ -20,7 +20,7 @@ export function useLogin() {
       } else if (!user.activeSpace) {
         router.push("/select-workspace");
       } else {
-        router.push(`/${user.activeSpace}/projects`);
+        router.push(`/${user.activeSpace.id}/projects`);
       }
       queryClient.setQueryData(["user"], user);
       toast.success("Auth", {

@@ -17,7 +17,6 @@ import { toast } from "sonner";
 // import { getQueryClient } from "@/lib/query-client/get-query-client";
 // import { useMutation } from "@tanstack/react-query";
 // import { useRouter } from "next/navigation";
-// import { Session } from "@/lib/auth/auth-provider";
 
 const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {
   // const queryClient = getQueryClient();

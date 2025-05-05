@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  COOKIE_NAME as SESSION_COOKIE,
-  decrypt,
-} from "@/actions/core/session";
+import { COOKIE_NAME as SESSION_COOKIE, decrypt } from "@/actions/core/session";
 import { cookies } from "next/headers";
 
 const protectedRoutes = ["/projects", "/chat", "/workspace", "/settings"];
@@ -32,16 +29,16 @@ export default async function middleware(req: NextRequest) {
   }
 
   // If user is authenticated and has an active workspace, ensure path starts with active workspace
-  if (
-    session?.userId &&
-    session?.activeSpace &&
-    !path.startsWith(`/${session.activeSpace}`) &&
-    !path.startsWith("/select-workspace")
-  ) {
-    return NextResponse.redirect(
-      new URL(`/${session.activeSpace}/projects`, req.nextUrl)
-    );
-  }
+  // if (
+  //   session?.userId &&
+  //   session?.activeSpace &&
+  //   !path.startsWith(`/${session.activeSpace}`) &&
+  //   !path.startsWith("/select-workspace")
+  // ) {
+  //   return NextResponse.redirect(
+  //     new URL(`/${session.activeSpace}/projects`, req.nextUrl)
+  //   );
+  // }
 
   return NextResponse.next();
 }

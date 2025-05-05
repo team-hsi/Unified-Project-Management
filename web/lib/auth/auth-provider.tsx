@@ -1,23 +1,10 @@
 "use client";
 
-import { User } from "@/feature/shared/@types/user";
-import {
-  getCurrentSession,
-  getSessionUser,
-} from "@/actions/auth-actions";
+import { Session, User } from "@/feature/shared/@types/user";
+import { getCurrentSession, getSessionUser } from "@/actions/api/user/auth";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createContext, useContext, ReactNode } from "react";
 
-export interface Session {
-  isAuth: boolean;
-  activeSpace: unknown;
-  userId: unknown;
-  tokens: {
-    accessToken: unknown;
-    refreshToken: unknown;
-  };
-  expiresAt?: unknown;
-}
 interface AuthContextType {
   user: User | null;
   isPending: boolean;
