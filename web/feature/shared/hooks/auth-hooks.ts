@@ -2,22 +2,17 @@
 import { createUser, loginUser, logoutUser } from "@/actions/api/user/auth";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export function useLogin() {
   const router = useRouter();
   const queryClient = getQueryClient();
-  const searchParams = useSearchParams();
 
   return useMutation({
     mutationFn: loginUser,
     onSuccess: (user) => {
-      console.log("onSuccess", user);
-      const callbackUrl = searchParams.get("callbackUrl");
-      if (callbackUrl) {
-        router.push(callbackUrl);
-      } else if (!user.activeSpace) {
+      if (!user.activeSpace) {
         router.push("/select-workspace");
       } else {
         router.push(`/${user.activeSpace.id}/projects`);

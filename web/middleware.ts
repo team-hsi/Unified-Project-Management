@@ -15,18 +15,17 @@ export default async function middleware(req: NextRequest) {
   if (isProtectedRoute && !session?.userId) {
     const signInUrl = new URL("/sign-in", req.nextUrl);
     // Store the current path as callbackUrl in the URL
-    signInUrl.searchParams.set("callbackUrl", path);
     return NextResponse.redirect(signInUrl);
   }
 
   // If user is authenticated but has no active workspace, redirect to select-workspace
-  if (
-    session?.userId &&
-    !session?.activeSpace &&
-    !path.startsWith("/select-workspace")
-  ) {
-    return NextResponse.redirect(new URL("/select-workspace", req.nextUrl));
-  }
+  // if (
+  //   session?.userId &&
+  //   !session?.activeSpace &&
+  //   !path.startsWith("/select-workspace")
+  // ) {
+  //   return NextResponse.redirect(new URL("/select-workspace", req.nextUrl));
+  // }
 
   // If user is authenticated and has an active workspace, ensure path starts with active workspace
   // if (
