@@ -1,17 +1,28 @@
-import { WorkspaceProjects } from "@/components/space/workspace-projects";
+import { getWorkspaceById } from "@/actions/api/workspace/queries";
+import { WorkspaceProjects } from "@/feature/shared/components/workspace/workspace-projects";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Projects",
-  description: "Projects page",
+type Props = {
+  params: Promise<{ workspaceId: string }>;
 };
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { workspaceId } = await params;
+
+  const workspace = await getWorkspaceById({ id: workspaceId });
+  if (!workspace) {
+    return {
+      title: "Workspace Not Found",
+    };
+  }
+
+  return {
+    title: workspace.name || workspaceId,
+  };
+}
+
 const Page = async () => {
-  return (
-    <div className="max-h-full overflow-hidden p-5">
-      <WorkspaceProjects />
-    </div>
-  );
+  return <WorkspaceProjects />;
 };
 
 export default Page;

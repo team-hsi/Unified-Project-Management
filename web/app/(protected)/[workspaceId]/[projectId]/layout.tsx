@@ -1,4 +1,5 @@
-import { getProjectBuckets, getProjectItems } from "@/actions/project-actions";
+import { getProjectBuckets } from "@/actions/api/bucket/queries";
+import { getProjectItems } from "@/actions/api/item/queries";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 type Props = {

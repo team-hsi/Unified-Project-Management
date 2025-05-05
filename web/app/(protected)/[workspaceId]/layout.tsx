@@ -1,15 +1,15 @@
-import { getSessionUser } from "@/actions/auth-actions";
-import { getSession } from "@/actions/dal";
-import { getUserWorkspaces } from "@/actions/user-actions";
-import { getWorkspaceProjects } from "@/actions/workspace-actions";
-import { ProjectNavigation } from "@/components/project/project-navigation";
-import { AppSidebar } from "@/components/sidebar/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { getSession } from "@/actions/core/dal";
+import { getUserWorkspaces } from "@/actions/api/workspace/queries";
+import { ProjectNavigation } from "@/feature/project/layout/navigation";
+import { AppSidebar } from "@/feature/shared/layout/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/feature/shared/ui/sidebar";
 import { AuthProvider } from "@/lib/auth/auth-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-// export const dynamic = "force-dynamic";
-// export const revalidate = 0;
+import { Suspense } from "react";
+import { getWorkspaceProjects } from "@/actions/api/project/queries";
+import { getSessionUser } from "@/actions/api/user/auth";
+import { SpaceSync } from "@/feature/shared/components/workspace/space-sync";
 
 const WorkspaceLayout = async ({
   children,
@@ -25,7 +25,7 @@ const WorkspaceLayout = async ({
   queryClient.setQueryData(["session"], session);
   queryClient.prefetchQuery({
     queryKey: [workspaceId, "projects"],
-    queryFn: getWorkspaceProjects,
+    queryFn: () => getWorkspaceProjects({ id: workspaceId }),
   });
   queryClient.prefetchQuery({
     queryKey: ["user"],
@@ -38,11 +38,16 @@ const WorkspaceLayout = async ({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <AuthProvider>
+        <SpaceSync />
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
             <ProjectNavigation />
-            {children}
+            <Suspense
+              fallback={<div className="h-full w-full"> Loading 🌌</div>}
+            >
+              {children}
+            </Suspense>
           </SidebarInset>
         </SidebarProvider>
       </AuthProvider>

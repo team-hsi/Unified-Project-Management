@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { CountdownTimer } from "@/components/ui/countdown-timer";
+import { Button } from "@/feature/shared/ui/button";
+import { CountdownTimer } from "@/feature/shared/ui/countdown-timer";
 
 const LandingPage = () => {
   return (
