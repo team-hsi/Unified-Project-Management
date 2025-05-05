@@ -1,4 +1,4 @@
-import { getUserWorkspaces } from "@/feature/shared/actions/api/workspace/queries";
+import { getUserWorkspaces } from "@/actions/api/workspace/queries";
 import SelectWorkspace from "@/feature/shared/components/workspace/select-space";
 
 const page = async () => {

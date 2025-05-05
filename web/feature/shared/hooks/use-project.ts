@@ -3,14 +3,14 @@
 import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
-import { getWorkspaceProjects } from "../actions/api/project/queries";
+import { getWorkspaceProjects } from "../../../actions/api/project/queries";
 import {
   createProject,
   updateProject,
   deleteProject,
-} from "../actions/api/project/mutations";
-import { getProjectBuckets } from "../actions/api/bucket/queries";
-import { getProjectItems } from "../actions/api/item/queries";
+} from "../../../actions/api/project/mutations";
+import { getProjectBuckets } from "../../../actions/api/bucket/queries";
+import { getProjectItems } from "../../../actions/api/item/queries";
 
 export const useProject = () => {
   const queryClient = getQueryClient();

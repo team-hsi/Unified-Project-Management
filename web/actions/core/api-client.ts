@@ -57,6 +57,17 @@ export const post = async <T>(endpoint: string, data: unknown): Promise<T> => {
   return handleResponse<T>(response);
 };
 
+export const auth = async <T>(endpoint: string, data: unknown): Promise<T> => {
+  const response = await fetch(`${API}${endpoint}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<T>(response);
+};
+
 export const put = async <T>(endpoint: string, data: unknown): Promise<T> => {
   const headers = await getHeaders();
   const response = await fetch(`${API}${endpoint}`, {

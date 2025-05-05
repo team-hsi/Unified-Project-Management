@@ -8,7 +8,7 @@ import {
   createItem,
   updateItem,
   deleteItem,
-} from "../actions/api/item/mutations";
+} from "../../../actions/api/item/mutations";
 import { Bucket } from "../@types/bucket";
 import { Item } from "../@types/item";
 

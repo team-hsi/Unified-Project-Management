@@ -1,9 +1,8 @@
 "use server";
-
 import { revalidateTag } from "next/cache";
 import { Project, ProjectPayload } from "@/feature/shared/@types/projects";
 import { extractErrors } from "@/lib/utils";
-import { del, post, put } from "@/feature/shared/actions/core/api-client";
+import { del, post, put } from "@/actions/core/api-client";
 import { CACHE_TAGS } from "../../../core/cache-config";
 import { getSession } from "../../../core/dal";
 

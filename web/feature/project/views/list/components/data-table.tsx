@@ -26,7 +26,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { PlusCircle } from "lucide-react";
 import { AddItemDrawer } from "./new-item-drawer";
-import { getProjectItems } from "@/feature/shared/actions/api/item/queries";
+import { getProjectItems } from "@/actions/api/item/queries";
 import { Item } from "@/feature/shared/@types/item";
 import { ItemSheet } from "@/feature/project/shared/item-sheet";
 

@@ -1,7 +1,6 @@
 "use server";
-
 import { extractErrors } from "@/lib/utils";
-import { get } from "@/feature/shared/actions/core/api-client";
+import { get } from "@/actions/core/api-client";
 import { Project, ProjectPayload } from "@/feature/shared/@types/projects";
 import { cache } from "react";
 import { CACHE_LIFE, CACHE_TAGS } from "../../../core/cache-config";

@@ -5,17 +5,18 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { getWorkspaceRooms, getRoomMembers } from "../actions/api/room/queries";
+import { getWorkspaceRooms, getRoomMembers } from "../../../actions/api/room/queries";
 import {
   createRoom,
   updateRoom,
   deleteRoom,
   addRoomMember,
   removeRoomMember,
-} from "../actions/api/room/mutations";
+} from "../../../actions/api/room/mutations";
 import { useParams } from "next/navigation";
 import { Room, RoomPayload } from "../@types/room";
 import { useUser } from "@/lib/auth/auth-provider";
+import { useCallback } from "react";
 
 export const useRoom = () => {
   const queryClient = useQueryClient();
@@ -125,20 +126,17 @@ export const useRoom = () => {
   });
 
   // Prefetching
-  const prefetchRooms = async () => {
-    queryClient.prefetchQuery({
+  const prefetchRooms = useCallback(() => {
+    if (!workspaceId) return;
+    
+    console.log("Prefetching rooms for workspace:", workspaceId);
+    
+    return queryClient.prefetchQuery({
       queryKey: [workspaceId, "rooms"],
       queryFn: () => getWorkspaceRooms({ id: workspaceId }),
-      staleTime: 60000,
+      staleTime: 60000, // Consider data fresh for 1 minute
     });
-  };
-
-  // const pefetchChat = () => {
-  //         queryClient.prefetchQuery({
-  //           queryKey: [chatId, "chat"],
-  //           queryFn: () => getRoomMessages({ id: chatId }),
-  //         });
-  //       };
+  }, [workspaceId, queryClient]);
 
   return {
     // Queries

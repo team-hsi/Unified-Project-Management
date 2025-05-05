@@ -5,13 +5,13 @@ import {
   // getAllWorkspaces,
   getUserWorkspaces,
   getWorkspaceMembers,
-} from "../actions/api/workspace/queries";
+} from "../../../actions/api/workspace/queries";
 import {
   createWorkspace,
   updateWorkspace,
   deleteWorkspace,
   addWorkspaceMembers,
-} from "../actions/api/workspace/mutations";
+} from "../../../actions/api/workspace/mutations";
 
 export const useWorkspace = () => {
   const queryClient = getQueryClient();

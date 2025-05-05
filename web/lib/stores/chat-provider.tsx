@@ -7,8 +7,8 @@ import { toast } from "sonner";
 import { useUser } from "../auth/auth-provider";
 import { Chat } from "@/feature/shared/@types/room";
 import { useParams } from "next/navigation";
-import { createMessage } from "@/feature/shared/actions/api/message/mutations";
-import { getRoomMessages } from "@/feature/shared/actions/api/message/queries";
+import { createMessage } from "@/actions/api/message/mutations";
+import { getRoomMessages } from "@/actions/api/message/queries";
 
 // --- Types
 type ChatContextType = {

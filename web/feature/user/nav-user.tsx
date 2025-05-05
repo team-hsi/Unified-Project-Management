@@ -16,8 +16,8 @@ import {
   DropdownMenuTrigger,
 } from "@/feature/shared/ui/dropdown-menu";
 import { Skeleton } from "../shared/ui/skeleton";
-import { userLogout } from "@/feature/shared/actions/user-actions";
 import { useUser } from "@/lib/auth/auth-provider";
+import { logoutUser } from "@/actions/api/user/auth";
 
 export function NavUser() {
   const { user, isPending } = useUser();
@@ -75,7 +75,7 @@ export function NavUser() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onSelect={async () => userLogout()}>
+          <DropdownMenuItem onSelect={async () => logoutUser()}>
             <LogOut />
             Log out
           </DropdownMenuItem>

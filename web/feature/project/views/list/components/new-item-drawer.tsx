@@ -32,7 +32,7 @@ import {
 } from "@/feature/shared/ui/select";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { getProjectBuckets } from "@/feature/shared/actions/api/bucket/queries";
+import { getProjectBuckets } from "@/actions/api/bucket/queries";
 import { Bucket } from "@/feature/shared/@types/bucket";
 import { useItem } from "@/feature/shared/hooks/use-item";
 

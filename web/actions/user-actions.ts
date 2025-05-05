@@ -1,77 +1,76 @@
 "use server";
-import { redirect } from "next/navigation";
 import { UserPayload } from "@/feature/shared/@types/user";
 import { extractErrors } from "@/lib/utils";
-import { createSession, deleteSession } from "./core/session";
+import { createSession } from "./core/session";
 import { getSession } from "./core/dal";
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 /*
  * create a new user
  */
-export const userCreate = async (
-  payload: Omit<UserPayload, "id" | "activeSpaceId">
-) => {
-  const res = await fetch(`${API}/v1/users/create`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+// export const userCreate = async (
+//   payload: Omit<UserPayload, "id" | "activeSpaceId">
+// ) => {
+//   const res = await fetch(`${API}/v1/users/create`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(payload),
+//   });
 
-  if (!res.ok) {
-    const data = await res.json();
-    return { success: false, error: extractErrors(data.error) };
-  }
-  const { user, tokens } = await res.json();
-  const session = {
-    userId: user.id,
-    activeSpace: user.activeSpace.id,
-    accessToken: tokens.accessToken,
-    refreshToken: tokens.refreshToken,
-  };
-  await createSession(session);
-  return { success: true, user };
-};
+//   if (!res.ok) {
+//     const data = await res.json();
+//     return { success: false, error: extractErrors(data.error) };
+//   }
+//   const { user, tokens } = await res.json();
+//   const session = {
+//     userId: user.id,
+//     activeSpace: user.activeSpace.id,
+//     accessToken: tokens.accessToken,
+//     refreshToken: tokens.refreshToken,
+//   };
+//   await createSession(session);
+//   return { success: true, user };
+// };
 
 /*
  * login user
- */
-export const userLogin = async (
-  payload: Pick<UserPayload, "email" | "password">
-) => {
-  try {
-    const res = await fetch(`${API}/v1/users/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    console.log("data=>", data);
-    if (!res.ok) {
-      if (res.status === 401) {
-        throw new Error("Invalid email or password");
-      } else {
-        throw new Error("Failed to login");
-      }
-    }
-    const { user, tokens } = data;
-    const session = {
-      userId: user.id,
-      activeSpace: user.activeSpace?.id || null,
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-    };
-    await createSession(session);
-    return user;
-  } catch (error) {
-    console.log("err=>", error);
-    throw new Error(extractErrors(error));
-  }
-};
+//  */
+// export const userLogin = async (
+//   payload: Pick<UserPayload, "email" | "password">
+// ) => {
+//   try {
+//     const res = await fetch(`${API}/v1/users/login`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(payload),
+//     });
+//     const data = await res.json();
+//     console.log("data=>", data);
+//     if (!res.ok) {
+//       if (res.status === 401) {
+//         throw new Error("Invalid email or password");
+//       } else {
+//         throw new Error("Failed to login");
+//       }
+//     }
+//     const { user, tokens } = data;
+//     const session = {
+//       userId: user.id,
+//       activeSpace: user.activeSpace?.id || null,
+//       accessToken: tokens.accessToken,
+//       refreshToken: tokens.refreshToken,
+//     };
+//     await createSession(session);
+//     return user;
+//   } catch (error) {
+//     console.log("err=>", error);
+//     throw new Error(extractErrors(error));
+//   }
+// };
 
 /*
  * get user workspaces by user id
@@ -205,7 +204,3 @@ export const changeUserPassword = async () => {};
 /*
  * logout user
  */
-export const userLogout = async () => {
-  await deleteSession();
-  redirect("/sign-in");
-};

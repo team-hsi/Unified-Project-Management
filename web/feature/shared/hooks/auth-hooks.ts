@@ -1,21 +1,9 @@
 "use client";
-import {
-  userCreate,
-  userLogin,
-  userLogout,
-} from "@/feature/shared/actions/user-actions";
+import { createUser, loginUser, logoutUser } from "@/actions/api/user/auth";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-export interface User {
-  id: string;
-  firstname: string;
-  lastname: string;
-  username: string;
-  email: string;
-  password: string;
-}
 
 export function useLogin() {
   const router = useRouter();
@@ -23,7 +11,7 @@ export function useLogin() {
   const searchParams = useSearchParams();
 
   return useMutation({
-    mutationFn: userLogin,
+    mutationFn: loginUser,
     onSuccess: (user) => {
       console.log("onSuccess", user);
       const callbackUrl = searchParams.get("callbackUrl");
@@ -40,15 +28,10 @@ export function useLogin() {
       });
     },
     onError: (error: Error) => {
-      if (error.message === "fetch failed") {
-        toast.error("Auth", {
-          description: "Network failure check your connection!",
-        });
-      } else {
-        toast.error("Auth", {
-          description: error.message,
-        });
-      }
+      console.error("Login error =>:", error);
+      toast.error("Auth", {
+        description: error.message,
+      });
     },
   });
 }
@@ -58,18 +41,15 @@ export const useSignup = () => {
   const queryClient = getQueryClient();
 
   return useMutation({
-    mutationFn: async (userData: Omit<User, "id">) => {
-      const result = await userCreate(userData);
-      if (!result.success) {
-        throw new Error(result.error || "Failed to create account");
-      }
-
-      return result.user;
-    },
+    mutationFn: createUser,
     onSuccess: (user) => {
       queryClient.setQueryData(["user"], user);
       toast.success("Account created successfully!");
-      router.push(`/${user.activeSpace.id}/projects`);
+      if (user.activeSpace) {
+        router.push(`/${user.activeSpace.id}/projects`);
+      } else {
+        router.push("/select-workspace");
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -80,7 +60,7 @@ export const useSignup = () => {
 export const useLogout = () => {
   const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: userLogout,
+    mutationFn: logoutUser,
     onSuccess: () => {
       queryClient.setQueryData(["currentUser"], null);
       queryClient.clear();

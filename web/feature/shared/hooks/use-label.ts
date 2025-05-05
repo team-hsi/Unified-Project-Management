@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { getProjectLabels } from "../actions/api/label/queries";
+import { getProjectLabels } from "@/actions/api/label/queries";
 import {
   createLabel,
   updateLabel,
   deleteLabel,
-} from "../actions/api/label/mutations";
+} from "@/actions/api/label/mutations";
 
 export const useLabel = ({ projectId }: { projectId: string }) => {
   const queryClient = useQueryClient();

@@ -4,7 +4,7 @@ import { ChatStoreProvider } from "@/lib/stores/chat-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Chat } from "@/feature/chat/layout/chat";
-import { getWorkspaceRooms } from "@/feature/shared/actions/api/room/queries";
+import { getWorkspaceRooms } from "@/actions/api/room/queries";
 export const metadata: Metadata = {
   title: "Chat",
   description: "Collaboration chat page",

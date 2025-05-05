@@ -1,3 +1,4 @@
+"use server";
 import { Label, LabelPayload } from "@/feature/shared/@types/label";
 import { post, put, del } from "../../../core/api-client";
 import { extractErrors } from "@/lib/utils";

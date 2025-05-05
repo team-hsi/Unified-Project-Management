@@ -1,4 +1,4 @@
-import { getWorkspaceById } from "@/feature/shared/actions/api/workspace/queries";
+import { getWorkspaceById } from "@/actions/api/workspace/queries";
 import { WorkspaceProjects } from "@/feature/shared/components/workspace/workspace-projects";
 import { Metadata } from "next";
 

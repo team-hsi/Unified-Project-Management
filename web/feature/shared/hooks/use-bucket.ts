@@ -8,7 +8,7 @@ import {
   createBucket,
   updateBucket,
   deleteBucket,
-} from "../actions/api/bucket/mutations";
+} from "../../../actions/api/bucket/mutations";
 import { Bucket } from "../@types/bucket";
 
 export const useBucket = () => {

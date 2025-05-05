@@ -1,6 +1,6 @@
-import { getSessionUser } from "@/feature/shared/actions/auth-actions";
-import { getSession } from "@/feature/shared/actions/core/dal";
-import { getUserWorkspaces } from "@/feature/shared/actions/api/workspace/queries";
+import { getSessionUser } from "@/actions/auth-actions";
+import { getSession } from "@/actions/core/dal";
+import { getUserWorkspaces } from "@/actions/api/workspace/queries";
 import { ProjectNavigation } from "@/feature/project/layout/navigation";
 import { AppSidebar } from "@/feature/shared/layout/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/feature/shared/ui/sidebar";
@@ -8,7 +8,7 @@ import { AuthProvider } from "@/lib/auth/auth-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
-import { getWorkspaceProjects } from "@/feature/shared/actions/api/project/queries";
+import { getWorkspaceProjects } from "@/actions/api/project/queries";
 
 const WorkspaceLayout = async ({
   children,

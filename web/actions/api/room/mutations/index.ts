@@ -1,3 +1,4 @@
+"use server";
 import { Room, RoomPayload } from "@/feature/shared/@types/room";
 import { post, put, del } from "../../../core/api-client";
 import { extractErrors } from "@/lib/utils";

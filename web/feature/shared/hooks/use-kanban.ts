@@ -5,9 +5,9 @@ import { useMutation, useSuspenseQueries } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
-import { moveItem, reorderItems } from "../actions/api/item/mutations";
-import { getProjectBuckets } from "../actions/api/bucket/queries";
-import { getProjectItems } from "../actions/api/item/queries";
+import { moveItem, reorderItems } from "../../../actions/api/item/mutations";
+import { getProjectBuckets } from "../../../actions/api/bucket/queries";
+import { getProjectItems } from "../../../actions/api/item/queries";
 
 export const useKanban = () => {
   const { projectId } = useParams<{ projectId: string }>();

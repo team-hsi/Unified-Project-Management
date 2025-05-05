@@ -20,6 +20,13 @@ export interface User {
   createdAt: string;
   updatedAt: string;
 }
+export interface UserWithToken {
+  user: User;
+  tokens: {
+    accessToken: string;
+    refreshToken: string;
+  };
+ }
 export interface Member {
   id: string;
   role: "admin" | "guest" | "member";
