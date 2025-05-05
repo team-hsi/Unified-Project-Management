@@ -40,9 +40,7 @@ const WorkspaceLayout = async ({
       <AuthProvider>
         <SpaceSync />
         <SidebarProvider>
-          <Suspense fallback={<div className="h-full w-full"> Loading...</div>}>
-            <AppSidebar />
-          </Suspense>
+          <AppSidebar />
           <SidebarInset>
             <ProjectNavigation />
             <Suspense
