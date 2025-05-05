@@ -1,5 +1,4 @@
 "use server";
-
 import { post, put, del } from "../../../core/api-client";
 import {
   Item,
@@ -14,11 +13,12 @@ export const createItem = async (
   payload: {
     name: string;
     bucketId: string;
+    projectId: string;
   } & Partial<Omit<ItemPayload, "name" | "bucketId">>
 ) => {
   try {
     const result = await post<Item>("/v1/items/create", payload);
-    // revalidateTag(CACHE_TAGS.PROJECT.ITEMS(result.bucket.project.id));
+    revalidateTag(CACHE_TAGS.PROJECT.ITEMS(payload.projectId));
     revalidateTag(CACHE_TAGS.BUCKET.ITEMS(payload.bucketId));
     return result;
   } catch (error) {
@@ -28,7 +28,8 @@ export const createItem = async (
 };
 
 export const updateItem = async (
-  payload: Pick<ItemPayload, "id"> & Partial<Omit<ItemPayload, "id" | "bucketId">>
+  payload: Pick<ItemPayload, "id"> &
+    Partial<Omit<ItemPayload, "id" | "bucketId">>
 ) => {
   try {
     const { id, ...rest } = payload;
@@ -43,13 +44,13 @@ export const updateItem = async (
   }
 };
 
-export const deleteItem = async (payload: Pick<ItemPayload, "id">) => {
-  //todo: add bucketId and projectId to payload
+export const deleteItem = async (
+  payload: Pick<ItemPayload, "id" | "bucketId"> & { projectId: string }
+) => {
   try {
-    const { id } = payload;
-    await del<void>(`/v1/items/${id}`);
-    // revalidateTag(CACHE_TAGS.BUCKET.ITEMS(result.bucket.id));
-    // revalidateTag(CACHE_TAGS.PROJECT.ITEMS(result.bucket.project.id));
+    await del<void>(`/v1/items/${payload.id}`);
+    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(payload.bucketId));
+    revalidateTag(CACHE_TAGS.PROJECT.ITEMS(payload.projectId));
     return true;
   } catch (error) {
     console.error(`Error deleting item ${payload.id}:`, error);

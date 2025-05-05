@@ -20,7 +20,7 @@ export function LabelItem({ label }: LabelItemProps) {
   });
 
   const handleDelete = async () => {
-    await remove.mutateAsync({ id: label.id });
+    await remove.mutateAsync(label.id);
   };
 
   return (

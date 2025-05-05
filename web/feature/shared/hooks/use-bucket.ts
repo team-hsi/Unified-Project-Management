@@ -1,5 +1,4 @@
 "use client";
-
 import { useMutation } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
@@ -8,12 +7,15 @@ import {
   createBucket,
   updateBucket,
   deleteBucket,
-} from "../../../actions/api/bucket/mutations";
+} from "@/actions/api/bucket/mutations";
 import { Bucket } from "../@types/bucket";
 
 export const useBucket = () => {
   const queryClient = getQueryClient();
-  const { projectId } = useParams<{ projectId: string }>();
+  const { workspaceId, projectId } = useParams<{
+    workspaceId: string;
+    projectId: string;
+  }>();
 
   // Create bucket mutation
   const create = useMutation({
@@ -29,6 +31,7 @@ export const useBucket = () => {
           id: projectId,
           name: "New project for Bucket",
           ownerId: projectId,
+          space: workspaceId,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },

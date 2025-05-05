@@ -3,9 +3,7 @@ import { revalidateTag } from "next/cache";
 import { Project, ProjectPayload } from "@/feature/shared/@types/projects";
 import { extractErrors } from "@/lib/utils";
 import { del, post, put } from "@/actions/core/api-client";
-import { CACHE_TAGS } from "../../../core/cache-config";
-import { getSession } from "../../../core/dal";
-
+import { CACHE_TAGS } from "@/actions/core/cache-config";
 
 export const createProject = async (
   payload: Pick<ProjectPayload, "name" | "spaceId">
@@ -19,7 +17,7 @@ export const createProject = async (
     throw new Error(extractErrors(error));
   }
 };
-//todo: improve error handling
+// TODO: improve error handling
 export const updateProject = async (
   payload: Pick<ProjectPayload, "name" | "id">
 ) => {
@@ -35,13 +33,12 @@ export const updateProject = async (
   }
 };
 
-export const deleteProject = async (payload: Pick<ProjectPayload, "id">) => {
-  //todo: add spaceId to payload
+export const deleteProject = async (
+  payload: Pick<ProjectPayload, "id" | "spaceId">
+) => {
   try {
-    const session = await getSession();
-    const { id } = payload;
-    await del<void>(`/v1/projects/${id}`);
-    revalidateTag(CACHE_TAGS.WORKSPACE.PROJECTS(session.userId as string));
+    await del<void>(`/v1/projects/${payload.id}`);
+    revalidateTag(CACHE_TAGS.WORKSPACE.PROJECTS(payload.spaceId));
   } catch (error) {
     console.error(`Error deleting project ${payload.id}:`, error);
     throw new Error(extractErrors(error));

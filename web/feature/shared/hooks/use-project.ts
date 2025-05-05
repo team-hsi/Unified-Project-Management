@@ -49,7 +49,8 @@ export const useProject = () => {
 
   // Delete project mutation
   const remove = useMutation({
-    mutationFn: deleteProject,
+    mutationFn: async (id: string) =>
+      await deleteProject({ id, spaceId: workspaceId }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [workspaceId, "projects"],

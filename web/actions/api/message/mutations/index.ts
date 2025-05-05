@@ -1,3 +1,4 @@
+"use server";
 import { Message, MessagePayload } from "@/feature/shared/@types/message";
 import { post } from "../../../core/api-client";
 import { extractErrors } from "@/lib/utils";

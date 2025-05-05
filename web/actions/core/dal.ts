@@ -14,7 +14,7 @@ export const verifySession = cache(async () => {
   if (!session?.userId) {
     redirect("/sign-in");
   }
-  //TODO: check if session is expired and refresh it
+  // TODO: check if session is expired and refresh it
   return {
     isAuth: true,
     activeSpace: session.activeSpace,

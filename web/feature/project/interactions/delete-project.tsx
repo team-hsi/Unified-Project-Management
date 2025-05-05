@@ -46,7 +46,7 @@ export const DeleteProjectDialog = ({
   const { remove } = useProject();
 
   const onSubmit = async () => {
-    await remove.mutateAsync({ id: project.id });
+    await remove.mutateAsync(project.id);
     form.reset();
     onOpenChange?.(false);
   };

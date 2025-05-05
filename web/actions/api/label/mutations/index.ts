@@ -28,12 +28,10 @@ export const updateLabel = async (payload: Omit<LabelPayload, "projectId">) => {
   }
 };
 
-export const deleteLabel = async (payload: Pick<LabelPayload, "id">) => {
-  //todo: add projectId to payload
+export const deleteLabel = async (payload: Pick<LabelPayload, "id" | "projectId">) => {
   try {
-    const { id } = payload;
-    await del<void>(`/v1/labels/${id}`);
-    // revalidateTag(CACHE_TAGS.PROJECT.LABELS(payload.projectId));
+    await del<void>(`/v1/labels/${payload.id}`);
+    revalidateTag(CACHE_TAGS.PROJECT.LABELS(payload.projectId));
     return true;
   } catch (error) {
     console.error("Error deleting label", error);

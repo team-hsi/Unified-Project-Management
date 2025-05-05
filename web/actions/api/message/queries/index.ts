@@ -1,3 +1,4 @@
+"use server";
 import { Chat, RoomPayload } from "@/feature/shared/@types/room";
 import { get } from "../../../core/api-client";
 import { extractErrors } from "@/lib/utils";
@@ -15,8 +16,8 @@ export const getAllMessages = async () => {
 
 export const getRoomMessages = async (payload: Pick<RoomPayload, "id">) => {
   try {
-    return await get<Chat>(`/v1/rooms/${payload.id}/messages`,{
-      next:{
+    return await get<Chat>(`/v1/rooms/${payload.id}/messages`, {
+      next: {
         revalidate: CACHE_LIFE.REALTIME,
         tags: [CACHE_TAGS.ROOM.MESSAGES(payload.id)],
       },

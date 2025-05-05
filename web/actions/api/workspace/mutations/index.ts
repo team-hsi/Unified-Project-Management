@@ -1,5 +1,4 @@
 "use server";
-
 import { post, put, del } from "../../../core/api-client";
 import {
   Workspace,
@@ -11,7 +10,6 @@ import { extractErrors } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import { CACHE_TAGS } from "../../../core/cache-config";
 import { getSession } from "../../../core/dal";
-
 
 export const createWorkspace = async (
   payload: Pick<WorkspacePayload, "name" | "description">
@@ -72,7 +70,9 @@ export const removeWorkspaceMembers = async (
 ) => {
   try {
     const { id, userId } = payload;
-    const result = await post<void>(`/v1/spaces/${id}/members/remove`, { userId });
+    const result = await post<void>(`/v1/spaces/${id}/members/remove`, {
+      userId,
+    });
     revalidateTag(CACHE_TAGS.WORKSPACE.MEMBERS(id));
     return result;
   } catch (error) {

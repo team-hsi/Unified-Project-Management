@@ -1,5 +1,4 @@
 "use server";
-
 import { cookies } from "next/headers";
 import { Locale, defaultLocale } from "@/i18n/config";
 

@@ -1,3 +1,4 @@
+"use server";
 import { Label, LabelPayload } from "@/feature/shared/@types/label";
 import { get } from "../../../core/api-client";
 import { extractErrors } from "@/lib/utils";
@@ -25,8 +26,8 @@ export const getLabelById = async (payload: Pick<LabelPayload, "id">) => {
 export const getProjectLabels = async (payload: Pick<ProjectPayload, "id">) => {
   const { id } = payload;
   try {
-    return await get<Label[]>(`/v1/projects/${id}/labels`,{
-      next:{
+    return await get<Label[]>(`/v1/projects/${id}/labels`, {
+      next: {
         revalidate: CACHE_LIFE.LONG,
         tags: [CACHE_TAGS.PROJECT.LABELS(id)],
       },

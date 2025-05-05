@@ -40,7 +40,11 @@ export const AddBucketItem = ({
     description?: string;
   }) => {
     onOpenChange?.(false);
-    await create.mutateAsync({ ...values, bucketId: bucket.id });
+    await create.mutateAsync({
+      ...values,
+      bucketId: bucket.id,
+      projectId: bucket.project.id,
+    });
   };
 
   return (
@@ -205,7 +209,7 @@ export const DeleteBucket = ({
   const { remove } = useBucket();
   const handleDeleteBucket = async () => {
     onOpenChange?.(false);
-    await remove.mutateAsync({ id: bucket.id });
+    await remove.mutateAsync({ id: bucket.id, projectId: bucket.project.id });
   };
 
   return (

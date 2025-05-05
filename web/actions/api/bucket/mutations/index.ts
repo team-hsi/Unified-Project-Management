@@ -18,7 +18,7 @@ export const createBucket = async (
     throw new Error(extractErrors(error));
   }
 };
-// Todo : Bucket Color is not updating in the backend
+// BUG : Bucket Color is not updating in the backend
 export const updateBucket = async (
   payload: Pick<BucketPayload, "id" | "name" | "color">
 ) => {
@@ -34,12 +34,12 @@ export const updateBucket = async (
   }
 };
 
-export const deleteBucket = async (payload: Pick<BucketPayload, "id">) => {
-  //todo: add projectId to payload
+export const deleteBucket = async (
+  payload: Pick<BucketPayload, "id" | "projectId">
+) => {
   try {
-    const { id } = payload;
-    const result = await del<void>(`/v1/buckets/${id}`);
-    // revalidateTag(CACHE_TAGS.PROJECT.BUCKETS(result.project.id));
+    const result = await del<void>(`/v1/buckets/${payload.id}`);
+    revalidateTag(CACHE_TAGS.PROJECT.BUCKETS(payload.projectId));
     return result;
   } catch (error) {
     console.error(`Error deleting bucket ${payload.id}:`, error);

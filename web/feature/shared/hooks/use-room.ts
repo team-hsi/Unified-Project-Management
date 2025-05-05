@@ -5,7 +5,10 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { getWorkspaceRooms, getRoomMembers } from "../../../actions/api/room/queries";
+import {
+  getWorkspaceRooms,
+  getRoomMembers,
+} from "../../../actions/api/room/queries";
 import {
   createRoom,
   updateRoom,
@@ -96,7 +99,8 @@ export const useRoom = () => {
   });
 
   const remove = useMutation({
-    mutationFn: deleteRoom,
+    mutationFn: async (id: string) =>
+      await deleteRoom({ id, spaceId: workspaceId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [workspaceId, "rooms"] });
     },
@@ -128,9 +132,9 @@ export const useRoom = () => {
   // Prefetching
   const prefetchRooms = useCallback(() => {
     if (!workspaceId) return;
-    
+
     console.log("Prefetching rooms for workspace:", workspaceId);
-    
+
     return queryClient.prefetchQuery({
       queryKey: [workspaceId, "rooms"],
       queryFn: () => getWorkspaceRooms({ id: workspaceId }),

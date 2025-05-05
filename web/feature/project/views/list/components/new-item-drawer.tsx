@@ -63,7 +63,7 @@ export function AddItemDrawer({ children }: AddItemDrawerProps) {
   });
   const { create } = useItem();
   const handleSubmit = async (values: FormValues) => {
-    await create.mutateAsync(values);
+    await create.mutateAsync({ ...values, projectId: params.projectId });
     setIsOpen(false);
   };
 

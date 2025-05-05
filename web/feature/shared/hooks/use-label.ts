@@ -42,7 +42,7 @@ export const useLabel = ({ projectId }: { projectId: string }) => {
   });
 
   const remove = useMutation({
-    mutationFn: deleteLabel,
+    mutationFn: (id: string) => deleteLabel({ id, projectId }),
     onSuccess: () => {
       toast.success("Label deleted successfully");
       queryClient.invalidateQueries({ queryKey: [projectId, "labels"] });

@@ -23,6 +23,7 @@ export const ItemBreadcrumb = ({
 }: {
   item: {
     id: string;
+    bucketId: string;
     projectId: string;
   };
   onClose: () => void;
@@ -79,7 +80,11 @@ export const ItemBreadcrumb = ({
           onClick={(e) => {
             e.stopPropagation();
             onClose();
-            remove.mutateAsync({ id: item.id });
+            remove.mutateAsync({
+              id: item.id,
+              bucketId: item.bucketId,
+              projectId: item.projectId,
+            });
           }}
         >
           <Trash size={16} strokeWidth={1} aria-hidden="true" />

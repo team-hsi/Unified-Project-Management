@@ -93,6 +93,7 @@ export const KanbanItem = ({ item, index }: KanbanCardProps) => {
             className="bg-muted"
             data={{
               itemId: item.id,
+              bucketId: item.bucket.id,
               projectId: item.bucket.project.id,
               status: item.status,
             }}

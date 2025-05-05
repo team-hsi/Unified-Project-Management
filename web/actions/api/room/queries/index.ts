@@ -1,3 +1,4 @@
+"use server";
 import { Room, RoomPayload } from "@/feature/shared/@types/room";
 import { get } from "../../../core/api-client";
 import { extractErrors } from "@/lib/utils";
@@ -32,7 +33,7 @@ export const getWorkspaceRooms = async (
   payload: Pick<WorkspacePayload, "id">
 ) => {
   try {
-    return await get<Room[]>(`/v1/spaces/${payload.id}/rooms`,{
+    return await get<Room[]>(`/v1/spaces/${payload.id}/rooms`, {
       next: {
         revalidate: CACHE_LIFE.MEDIUM,
         tags: [CACHE_TAGS.WORKSPACE.ROOMS(payload.id)],
@@ -47,7 +48,7 @@ export const getWorkspaceRooms = async (
 
 export const getRoomMembers = async (payload: Pick<RoomPayload, "id">) => {
   try {
-    return await get<Room>(`/v1/rooms/${payload.id}/members`,{
+    return await get<Room>(`/v1/rooms/${payload.id}/members`, {
       next: {
         revalidate: CACHE_LIFE.LONG,
         tags: [CACHE_TAGS.ROOM.MEMBERS(payload.id)],

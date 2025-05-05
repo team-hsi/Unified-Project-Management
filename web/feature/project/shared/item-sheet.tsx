@@ -37,7 +37,11 @@ export const ItemSheet = ({
         <ItemBreadcrumb
           segments={segments}
           unsavedForm={unsavedForm}
-          item={{ id: item.id, projectId: item.bucket.project.id }}
+          item={{
+            id: item.id,
+            bucketId: item.bucket.id,
+            projectId: item.bucket.project.id,
+          }}
           onClose={() => {
             setOpen(false);
           }}

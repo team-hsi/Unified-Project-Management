@@ -10,6 +10,7 @@ export const DualButton = ({
   className?: string;
   data: {
     itemId: string;
+    bucketId: string;
     projectId: string;
     status?: string;
   };
@@ -49,7 +50,11 @@ export const DualButton = ({
         aria-label="remove-item"
         onClick={(e) => {
           e.stopPropagation();
-          remove.mutateAsync({ id: data.itemId });
+          remove.mutateAsync({
+            id: data.itemId,
+            bucketId: data.bucketId,
+            projectId: data.projectId,
+          });
         }}
       >
         <Trash size={16} strokeWidth={1} aria-hidden="true" />
