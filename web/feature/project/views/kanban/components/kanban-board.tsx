@@ -1,5 +1,4 @@
 "use client";
-
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import { toast } from "sonner";
 import { useKanban } from "@/feature/shared/hooks/use-kanban";
@@ -77,9 +76,10 @@ export const KanbanBoard = () => {
         })
       );
 
-      toast.success(`Column "${items[0].name}" reordered`);
+      toast.success("Reorder", {
+        description: "Buckets have been reordered.",
+      });
       setBoard(items);
-      //Todo: trigger server action
       return;
     }
     if (type === "item") {
@@ -130,17 +130,15 @@ export const KanbanBoard = () => {
           reorderedItems,
           destination.index + 1
         );
-        toast.success(`
-          draggedItem: ${draggableId}
-          prevItemId: ${prevItemId}
-          nextItemId: ${nextItemId}`);
+        toast.success("Reorder", {
+          description: "Item has been reordered.",
+        });
         setBoard(newState);
         reorderItemMutation.mutateAsync({
           id: draggableId,
           prevItemId,
           nextItemId,
         });
-        // toast.success(`Moved "${srcBucket.items[0].name}"`);
       } else {
         // moving item to a different bucket
         // Remove the item from its source
@@ -162,12 +160,9 @@ export const KanbanBoard = () => {
           destBucket,
           destination.index + 1
         );
-        toast.success(`
-          movedBucket: ${srcBucket.name}
-          movedItem: ${movedItem.id}
-          destBucket: ${destBucket.name}
-          prevItemIdDest: ${prevItemIdDest}
-          nextItemIdDest: ${nextItemIdDest}`);
+        toast.success("Move", {
+          description: "Item moved to another bucket.",
+        });
         setBoard(newState);
         moveItemMutation.mutateAsync({
           id: movedItem.id,
