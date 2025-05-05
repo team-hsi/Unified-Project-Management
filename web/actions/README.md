@@ -8,48 +8,119 @@ This directory contains the core API infrastructure for the application. It foll
 
 ```
 actions/
-├── core/                    # Core services
-│   └── api-client.ts       # HTTP request handler with built-in caching
-├── api/                    # Domain-specific APIs
-│   ├── workspace/         # Workspace-related API
-│   ├── project/          # Project-related API
-│   ├── bucket/           # Bucket-related API
-│   └── item/             # Item-related API
-└── @types/               # Type definitions
-    └── project.ts        # Shared type definitions
+├── core/                         # Core services
+│   ├── api-client.ts            # HTTP request handler with built-in caching
+│   ├── cache-config.ts          # Centralized cache configuration
+│   ├── dal.ts                   # Data access layer
+│   ├── locale.ts                # Localization utilities
+│   └── session.ts               # Session management
+└── api/                         # Domain-specific APIs
+    ├── bucket/                  # Bucket-related API
+    │   ├── mutations/           # Mutation operations
+    │   └── queries/             # Query operations
+    ├── item/                    # Item-related API
+    ├── label/                   # Label-related API
+    ├── message/                 # Message-related API
+    ├── project/                 # Project-related API
+    ├── room/                    # Room-related API
+    ├── user/                    # User-related API
+    └── workspace/               # Workspace-related API
 ```
 
 ## Core Services
 
 ### 1. API Client (`api-client.ts`)
 
-The API client handles all HTTP requests with built-in caching and error handling.
+The API client provides a set of server actions for handling HTTP requests with built-in caching and error handling using a functional approach.
 
 ```typescript
 // Usage Example
-const result = await apiClient.get<Data>("/endpoint", {
-  tags: ["data-tag"],
-  revalidate: 60 * 2, // 2 minutes
+const result = await get<Data>("/endpoint", {
+  next: {
+    tags: ["data-tag"],
+    revalidate: 60 * 2, // 2 minutes
+  }
 });
 ```
 
 **Key Features:**
 
+- Server-side functions with "use server" directive
 - Automatic session management
 - Type-safe requests and responses
 - Built-in Next.js fetch caching
 - Centralized error handling
 
-**Methods:**
+**Functions:**
 
 - `get<T>(endpoint, options)`: GET request with caching
-- `post<T>(endpoint, data, options)`: POST request with caching
-- `put<T>(endpoint, data, options)`: PUT request with caching
-- `delete<T>(endpoint, options)`: DELETE request with caching
+- `post<T>(endpoint, data)`: POST request for data mutations
+- `put<T>(endpoint, data)`: PUT request for data updates
+- `del<T>(endpoint, data?)`: DELETE request for data removal
+- `auth<T>(endpoint, data)`: Special POST request for authentication
 
 ## Caching Strategy
 
-### 1. Built-in Fetch Caching
+### 1. Centralized Cache Configuration
+
+We use a centralized cache configuration (`cache-config.ts`) that defines standardized cache durations:
+
+```typescript
+// Example of cache configuration
+export const CACHE_DURATION = {
+  REALTIME: 30,           // 30 seconds
+  VERY_SHORT: 3 * 60,     // 3 minutes
+  SHORT: 5 * 60,          // 5 minutes
+  MEDIUM: 15 * 60,        // 15 minutes
+  LONG: 30 * 60,          // 30 minutes
+  HOUR: 60 * 60,          // 60 minutes
+  EXTENDED: 6 * 60 * 60,  // 6 hours
+};
+```
+
+### 2. Tag-based Cache Invalidation
+
+We implement a hierarchical tag structure for precise cache invalidation:
+
+```typescript
+// Example of cache tags hierarchy
+export const CACHE_TAGS = {
+  USER: {
+    WORKSPACES: 'user.workspaces',
+  },
+  WORKSPACE: {
+    ALL: 'workspaces.all',
+    ONE: (id: string) => `workspace.${id}`,
+    MEMBERS: (id: string) => `workspace.${id}.members`,
+    PROJECTS: (id: string) => `workspace.${id}.projects`,
+    ROOMS: (id: string) => `workspace.${id}.rooms`,
+  },
+  PROJECT: {
+    ALL: 'projects.all',
+    ONE: (id: string) => `project.${id}`,
+    BUCKETS: (id: string) => `project.${id}.buckets`,
+    ITEMS: (id: string) => `project.${id}.items`,
+    LABELS: (id: string) => `project.${id}.labels`,
+  },
+  BUCKET: {
+    ALL: 'buckets.all',
+    ONE: (id: string) => `bucket.${id}`,
+    ITEMS: (id: string) => `bucket.${id}.items`,
+  },
+  ITEM: {
+    ALL: 'items.all',
+    ONE: (id: string) => `item.${id}`,
+  },
+  ROOM: {
+    ALL: 'rooms.all',
+    ONE: (id: string) => `room.${id}`,
+    MEMBERS: (id: string) => `room.${id}.members`,
+    MESSAGES: (id: string) => `room.${id}.messages`,
+  },
+};
+```
+
+### 3. Built-in Fetch Caching
 
 We use Next.js's built-in fetch caching mechanism, which provides:
 
@@ -58,201 +129,29 @@ We use Next.js's built-in fetch caching mechanism, which provides:
 - Configurable revalidation times
 - Type safety
 
-### 2. Cache Implementation
+### 4. Cache Implementation
 
 ```typescript
 // Example of using fetch caching
 const getData = async () => {
-  return await apiClient.get<Data>("/endpoint", {
-    tags: ["data-tag"],
-    revalidate: 60 * 2, // 2 minutes
+  return await get<Data>("/endpoint", {
+    next: {
+      tags: ["data-tag"],
+      revalidate: 60 * 2, // 2 minutes
+    }
   });
 };
 ```
 
-### 3. Cache Invalidation
+### 5. Cache Invalidation
 
 Cache invalidation is handled through `revalidateTag`:
 
 ```typescript
 // In API methods
 const updateData = async (payload) => {
-  const result = await apiClient.post("/endpoint", payload, {
-    tags: ["data-tag"],
-  });
+  const result = await post("/endpoint", payload);
   revalidateTag("data-tag");
   return result;
 };
-```
-
-## API Layer
-
-### Domain-Specific APIs
-
-Each domain (workspace, project, bucket, item) has its own API implementation:
-
-```typescript
-// Example: Project API
-export const createProjectAPI = () => {
-  const getAllProjects = async () => {
-    return await apiClient.get<ProjectPayload[]>("/v1/projects/getAll", {
-      tags: [CACHE_TAGS.PROJECTS],
-    });
-  };
-
-  const createProject = async (payload) => {
-    const result = await apiClient.post("/v1/projects/create", payload, {
-      tags: [CACHE_TAGS.PROJECTS],
-    });
-    revalidateTag(CACHE_TAGS.PROJECTS);
-    return result;
-  };
-
-  return { getAllProjects, createProject };
-};
-```
-
-## Best Practices
-
-### 1. Caching
-
-- Use meaningful cache tags
-- Set appropriate revalidation times
-- Invalidate related caches on mutations
-- Use consistent tag naming conventions
-
-### 2. Error Handling
-
-- Let errors propagate to the UI layer
-- Use try-catch blocks in API methods
-- Provide meaningful error messages
-- Handle cache invalidation errors gracefully
-
-### 3. Type Safety
-
-- Define proper types for payloads and responses
-- Use generics for API responses
-- Validate data before sending
-- Use TypeScript's strict mode
-
-### 4. Performance
-
-- Cache frequently accessed data
-- Use appropriate revalidation times
-- Batch related operations
-- Minimize unnecessary API calls
-
-## Common Patterns
-
-### 1. CRUD Operations with Caching
-
-```typescript
-const createDomainAPI = () => {
-  // Create
-  const create = async (payload) => {
-    const result = await apiClient.post('/endpoint', payload, {
-      tags: ['domain']
-    });
-    revalidateTag('domain');
-    return result;
-  };
-
-  // Read with caching
-  const getAll = async () => {
-    return await apiClient.get('/endpoint', {
-      tags: ['domain'],
-      revalidate: 60 * 5
-    });
-  };
-
-  // Update with cache invalidation
-  const update = async (payload) => {
-    const result = await apiClient.put(`/endpoint/${payload.id}`, payload, {
-      tags: ['domain']
-    });
-    revalidateTag('domain');
-    return result;
-  };
-
-  // Delete with cache invalidation
-  const delete = async (id) => {
-    const result = await apiClient.delete(`/endpoint/${id}`, {
-      tags: ['domain']
-    });
-    revalidateTag('domain');
-    return result;
-  };
-
-  return { create, getAll, update, delete };
-};
-```
-
-### 2. Batch Operations with Cache Management
-
-```typescript
-const batchUpdate = async (items) => {
-  const results = await Promise.all(
-    items.map((item) =>
-      apiClient.put(`/endpoint/${item.id}`, item, {
-        tags: ["domain"],
-      })
-    )
-  );
-  revalidateTag("domain");
-  return results;
-};
-```
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Cache Not Updating:**
-
-   - Verify cache tags are correctly set
-   - Check revalidateTag calls
-   - Verify revalidation times
-   - Check for cache key collisions
-
-2. **Type Errors:**
-
-   - Verify payload and response types
-   - Check generic type parameters
-   - Update type definitions as needed
-
-3. **API Errors:**
-   - Check error handling implementation
-   - Verify API endpoints
-   - Check authentication
-   - Review error messages
-
-## Testing
-
-### API Tests
-
-```typescript
-describe("DomainAPI", () => {
-  it("should fetch and cache data", async () => {
-    const result = await domainAPI.getAll();
-    expect(result).toBeDefined();
-  });
-
-  it("should invalidate cache on update", async () => {
-    await domainAPI.update({ id: "1", name: "test" });
-    // Verify cache invalidation
-  });
-});
-```
-
-### Cache Tests
-
-```typescript
-describe("Cache", () => {
-  it("should cache data with tags", async () => {
-    const data = await apiClient.get("/endpoint", {
-      tags: ["test"],
-    });
-    expect(data).toBeDefined();
-  });
-});
 ```
