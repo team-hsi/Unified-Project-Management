@@ -1,9 +1,9 @@
 "use server";
 import { Message, MessagePayload } from "@/feature/shared/@types/message";
 import { post } from "../../../core/api-client";
-import { extractErrors } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import { CACHE_TAGS } from "../../../core/cache-config";
+import { handleError } from "@/lib/errors";
 
 export const createMessage = async (payload: Omit<MessagePayload, "id">) => {
   try {
@@ -11,7 +11,6 @@ export const createMessage = async (payload: Omit<MessagePayload, "id">) => {
     revalidateTag(CACHE_TAGS.ROOM.MESSAGES(payload.roomId));
     return result;
   } catch (error) {
-    console.error("Error creating message", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };

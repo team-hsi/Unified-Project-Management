@@ -9,6 +9,8 @@ import { Chat } from "@/feature/shared/@types/room";
 import { useParams } from "next/navigation";
 import { createMessage } from "@/actions/api/message/mutations";
 import { getRoomMessages } from "@/actions/api/message/queries";
+import { useUtils } from "@/feature/shared/hooks/use-utils";
+import { BaseError } from "../errors";
 
 // --- Types
 type ChatContextType = {
@@ -23,6 +25,7 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = getQueryClient();
   const { chatId } = useParams<{ chatId: string }>();
   const { user } = useUser();
+  const { isValidResponse, toastUnknownError } = useUtils();
 
   const { data: chat, isLoading } = useQuery({
     queryKey: [chatId, "chat"],
@@ -65,12 +68,13 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
       if (context?.previousMessages) {
         queryClient.setQueryData([chatId, "chat"], context.previousMessages);
       }
-      toast.error(JSON.stringify(error));
-      toast.error("Failed to send message. Please try again later.");
+      toastUnknownError(error as BaseError);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [chatId, "chat"] });
-      toast.success("Message sent successfully!");
+      if (isValidResponse(response)) {
+        toast.success("Message sent successfully!");
+      }
     },
   });
 

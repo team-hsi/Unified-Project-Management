@@ -1,22 +1,10 @@
 import { getUserWorkspaces } from "@/actions/api/workspace/queries";
-import { getSession } from "@/actions/core/dal";
 import SelectWorkspace from "@/feature/shared/components/workspace/select-space";
-import { getQueryClient } from "@/lib/query-client/get-query-client";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 const page = async () => {
-  const session = await getSession();
-  const queryClient = getQueryClient();
+  const workspaces = await getUserWorkspaces();
 
-  queryClient.prefetchQuery({
-    queryKey: [session?.userId, "workspaces"],
-    queryFn: getUserWorkspaces,
-  });
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <SelectWorkspace />
-    </HydrationBoundary>
-  );
+  return <SelectWorkspace workspaces={workspaces} />;
 };
 
 export default page;

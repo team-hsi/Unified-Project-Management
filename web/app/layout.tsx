@@ -32,14 +32,14 @@ const RootLayout = async ({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextTopLoader
           showSpinner={false}
           color={"var(--toploader)"}
           height={3}
         />
-        <Toaster richColors position="top-right" />
+        <Toaster richColors position="top-right" expand={true} />
         <QueryProvider>
           <ThemeProvider
             attribute="class"

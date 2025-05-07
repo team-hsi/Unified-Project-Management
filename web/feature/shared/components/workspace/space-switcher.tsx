@@ -19,7 +19,7 @@ import {
 import { useWorkspace } from "@/feature/shared/hooks/use-workspace";
 import type { Workspace } from "@/feature/shared/@types/space";
 import { AddSpaceDialog } from "./add-space";
-import { notFound, useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import Link from "next/link";
 
 export const SpaceSwitcher = () => {
@@ -42,7 +42,7 @@ export const SpaceSwitcher = () => {
     (space: Workspace) => space.id === workspaceId
   );
   if (!activeWorkspace) {
-    return notFound();
+    redirect("/not-found?type=workspace&redirect=/workspaces");
   }
   const handleMenuItemSelect = () => {
     focusRef.current = dropdownTriggerRef.current;

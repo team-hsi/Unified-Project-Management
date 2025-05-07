@@ -1,11 +1,10 @@
 "use server";
 
-import { post, put, del } from "../../../core/api-client";
+import { post, put, del } from "@/actions/core/api-client";
 import { Bucket, BucketPayload } from "@/feature/shared/@types/bucket";
-import { extractErrors } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
-import { CACHE_TAGS } from "../../../core/cache-config";
-
+import { CACHE_TAGS } from "@/actions/core/cache-config";
+import { handleError } from "@/lib/errors";
 export const createBucket = async (
   payload: Pick<BucketPayload, "name" | "projectId" | "color">
 ) => {
@@ -14,8 +13,7 @@ export const createBucket = async (
     revalidateTag(CACHE_TAGS.PROJECT.BUCKETS(payload.projectId));
     return result;
   } catch (error) {
-    console.error("Error creating bucket:", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 // BUG : Bucket Color is not updating in the backend
@@ -29,8 +27,7 @@ export const updateBucket = async (
     revalidateTag(CACHE_TAGS.BUCKET.ONE(id));
     return result;
   } catch (error) {
-    console.error(`Error updating bucket ${id}:`, error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
@@ -42,7 +39,6 @@ export const deleteBucket = async (
     revalidateTag(CACHE_TAGS.PROJECT.BUCKETS(payload.projectId));
     return result;
   } catch (error) {
-    console.error(`Error deleting bucket ${payload.id}:`, error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };

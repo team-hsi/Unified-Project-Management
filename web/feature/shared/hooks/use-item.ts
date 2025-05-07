@@ -11,10 +11,12 @@ import {
 } from "../../../actions/api/item/mutations";
 import { Bucket } from "../@types/bucket";
 import { Item } from "../@types/item";
-
+import { useUtils } from "./use-utils";
+import { BaseError } from "@/lib/errors";
 export const useItem = () => {
   const queryClient = getQueryClient();
   const { projectId } = useParams<{ projectId: string }>();
+  const { isValidResponse, toastUnknownError } = useUtils();
 
   // Create item mutation
   const create = useMutation({
@@ -67,13 +69,13 @@ export const useItem = () => {
       if (context?.previousItems) {
         queryClient.setQueryData([projectId, "items"], context.previousItems);
       }
-      toast.error(error.name, {
-        description: error.message,
-      });
+      toastUnknownError(error as BaseError);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
-      toast.success("Item created successfully!");
+      if (isValidResponse(response)) {
+        toast.success("Item created successfully!");
+      }
     },
   });
 
@@ -109,13 +111,13 @@ export const useItem = () => {
       if (context?.previousItems) {
         queryClient.setQueryData([projectId, "items"], context.previousItems);
       }
-      toast.error(error.name, {
-        description: error.message,
-      });
+      toastUnknownError(error as BaseError);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
-      toast.success("Item updated successfully!");
+      if (isValidResponse(response)) {
+        toast.success("Item updated successfully!");
+      }
     },
   });
 
@@ -134,11 +136,13 @@ export const useItem = () => {
       if (context?.previousItems) {
         queryClient.setQueryData([projectId, "items"], context.previousItems);
       }
-      toast.error(error.message || "Failed to delete item");
+      toastUnknownError(error as BaseError);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
-      toast.success("Item deleted successfully!");
+      if (isValidResponse(response)) {
+        toast.success("Item deleted successfully!");
+      }
     },
   });
 
