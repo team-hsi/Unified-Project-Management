@@ -1,10 +1,10 @@
 "use server";
-import { extractErrors } from "@/lib/utils";
 import { auth } from "@/actions/core/api-client";
 import { UserPayload, UserWithToken } from "@/feature/shared/@types/user";
 import { createSession, deleteSession } from "@/actions/core/session";
 import { redirect } from "next/navigation";
 import { getSession, getUser } from "@/actions/core/dal";
+import { handleError } from "@/lib/errors";
 
 export const createUser = async (
   payload: Omit<UserPayload, "id" | "activeSpaceId">
@@ -19,10 +19,9 @@ export const createUser = async (
       refreshToken: tokens.refreshToken,
     };
     await createSession(session);
-    return user;
+    return { data: user };
   } catch (error) {
-    console.error("Error creating user:", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
@@ -39,13 +38,12 @@ export const loginUser = async (
       refreshToken: tokens.refreshToken,
     };
     await createSession(session);
-    return user;
+    return { data: user };
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(`Error logging in user:`, message);
-    throw new Error(message);
+    return handleError(error);
   }
 };
+
 export const logoutUser = async () => {
   await deleteSession();
   redirect("/sign-in");
@@ -55,6 +53,7 @@ export async function getCurrentSession() {
   const session = await getSession();
   return session;
 }
+
 export async function getSessionUser() {
   const user = await getUser();
   return user;

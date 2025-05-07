@@ -1,57 +1,59 @@
-import { AppError } from "./app-error";
+import { BaseError } from "./base-error";
 
-interface ErrorLog {
-  message: string;
-  stack?: string;
-  code?: string;
-  statusCode?: number;
-  timestamp: string;
-  path?: string;
-  userId?: string;
-}
+type LogLevel = "error" | "warn" | "info" | "debug";
 
 class ErrorLogger {
   private static instance: ErrorLogger;
-  private logs: ErrorLog[] = [];
+  private readonly environment: "development" | "production" | "test";
 
-  private constructor() {}
+  private constructor() {
+    this.environment = process.env.NODE_ENV as
+      | "development"
+      | "production"
+      | "test";
+  }
 
-  static getInstance(): ErrorLogger {
+  public static getInstance(): ErrorLogger {
     if (!ErrorLogger.instance) {
       ErrorLogger.instance = new ErrorLogger();
     }
     return ErrorLogger.instance;
   }
 
-  log(error: Error | AppError, context?: { path?: string; userId?: string }) {
-    const errorLog: ErrorLog = {
-      message: error.message,
-      stack: error.stack,
-      timestamp: new Date().toISOString(),
-      ...context,
-    };
-
-    if (error instanceof AppError) {
-      errorLog.code = error.code;
-      errorLog.statusCode = error.statusCode;
+  private formatError(error: Error | BaseError): string {
+    if (error instanceof BaseError) {
+      return JSON.stringify(error.toJSON(), null, 2);
     }
-
-    this.logs.push(errorLog);
-    console.error("Error logged:", errorLog);
-
-    // In production, you would send this to an error tracking service
-    if (process.env.NODE_ENV === "production") {
-      // Example: send to error tracking service
-      // this.sendToErrorTrackingService(errorLog);
-    }
+    return JSON.stringify(
+      {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      },
+      null,
+      2
+    );
   }
 
-  getLogs(): ErrorLog[] {
-    return this.logs;
+  public log(error: Error | BaseError, level: LogLevel = "error"): void {
+    const formattedError = this.formatError(error);
+    console[level](formattedError);
   }
 
-  clearLogs() {
-    this.logs = [];
+  public error(error: Error | BaseError): void {
+    this.log(error, "error");
+  }
+
+  public warn(error: Error | BaseError): void {
+    this.log(error, "warn");
+  }
+
+  public info(error: Error | BaseError): void {
+    this.log(error, "info");
+  }
+
+  public debug(error: Error | BaseError): void {
+    this.log(error, "debug");
   }
 }
 

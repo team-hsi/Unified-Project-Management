@@ -5,9 +5,9 @@ import {
   ItemDnDPayload,
   ItemPayload,
 } from "@/feature/shared/@types/item";
-import { extractErrors } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import { CACHE_TAGS } from "../../../core/cache-config";
+import { handleError } from "@/lib/errors";
 
 export const createItem = async (
   payload: {
@@ -22,8 +22,7 @@ export const createItem = async (
     revalidateTag(CACHE_TAGS.BUCKET.ITEMS(payload.bucketId));
     return result;
   } catch (error) {
-    console.error("Error creating item:", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
@@ -39,8 +38,7 @@ export const updateItem = async (
     revalidateTag(CACHE_TAGS.ITEM.ONE(id));
     return result;
   } catch (error) {
-    console.error(`Error updating item ${payload.id}:`, error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
@@ -53,8 +51,7 @@ export const deleteItem = async (
     revalidateTag(CACHE_TAGS.PROJECT.ITEMS(payload.projectId));
     return true;
   } catch (error) {
-    console.error(`Error deleting item ${payload.id}:`, error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
@@ -73,8 +70,7 @@ export const moveItem = async (payload: ItemDnDPayload) => {
     revalidateTag(CACHE_TAGS.ITEM.ONE(id));
     return result;
   } catch (error) {
-    console.error("Error moving item:", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
@@ -95,7 +91,6 @@ export const reorderItems = async (
     revalidateTag(CACHE_TAGS.ITEM.ONE(id));
     return result;
   } catch (error) {
-    console.error("Error reordering items:", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };

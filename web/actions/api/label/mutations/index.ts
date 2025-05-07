@@ -1,9 +1,9 @@
 "use server";
 import { Label, LabelPayload } from "@/feature/shared/@types/label";
 import { post, put, del } from "../../../core/api-client";
-import { extractErrors } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import { CACHE_TAGS } from "../../../core/cache-config";
+import { handleError } from "@/lib/errors";
 
 export const createLabel = async (payload: Omit<LabelPayload, "id">) => {
   try {
@@ -11,8 +11,7 @@ export const createLabel = async (payload: Omit<LabelPayload, "id">) => {
     revalidateTag(CACHE_TAGS.PROJECT.LABELS(payload.projectId));
     return result;
   } catch (error) {
-    console.error("Error creating label:", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
@@ -23,18 +22,18 @@ export const updateLabel = async (payload: Omit<LabelPayload, "projectId">) => {
     revalidateTag(CACHE_TAGS.PROJECT.LABELS(result.project.id));
     return result;
   } catch (error) {
-    console.error("Error updating label", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
-export const deleteLabel = async (payload: Pick<LabelPayload, "id" | "projectId">) => {
+export const deleteLabel = async (
+  payload: Pick<LabelPayload, "id" | "projectId">
+) => {
   try {
     await del<void>(`/v1/labels/${payload.id}`);
     revalidateTag(CACHE_TAGS.PROJECT.LABELS(payload.projectId));
     return true;
   } catch (error) {
-    console.error("Error deleting label", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };

@@ -4,6 +4,7 @@ import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { BaseError, isErrorResponse } from "@/lib/errors";
 
 export function useLogin() {
   const router = useRouter();
@@ -11,7 +12,15 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: loginUser,
-    onSuccess: (user) => {
+    onSuccess: (response) => {
+      if (isErrorResponse(response)) {
+        console.log("response=>", response);
+        toast.error(response.error.displayName, {
+          description: response.error.message,
+        });
+        return;
+      }
+      const user = response.data;
       if (!user.activeSpace) {
         router.push("/select-workspace");
       } else {
@@ -22,9 +31,8 @@ export function useLogin() {
         description: "Logged in successfully!",
       });
     },
-    onError: (error: Error) => {
-      console.error("Login error =>:", error);
-      toast.error("Auth", {
+    onError: (error: BaseError) => {
+      toast.error(error.displayName, {
         description: error.message,
       });
     },
@@ -37,7 +45,14 @@ export const useSignup = () => {
 
   return useMutation({
     mutationFn: createUser,
-    onSuccess: (user) => {
+    onSuccess: (response) => {
+      if (isErrorResponse(response)) {
+        toast.error(response.error.displayName, {
+          description: response.error.message,
+        });
+        return;
+      }
+      const user = response.data;
       queryClient.setQueryData(["user"], user);
       toast.success("Account created successfully!");
       if (user.activeSpace) {
@@ -46,8 +61,10 @@ export const useSignup = () => {
         router.push("/select-workspace");
       }
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: (error: BaseError) => {
+      toast.error(error.displayName, {
+        description: error.message,
+      });
     },
   });
 };
@@ -60,8 +77,10 @@ export const useLogout = () => {
       queryClient.setQueryData(["currentUser"], null);
       queryClient.clear();
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: (error: BaseError) => {
+      toast.error(error.displayName, {
+        description: error.message,
+      });
     },
   });
 };

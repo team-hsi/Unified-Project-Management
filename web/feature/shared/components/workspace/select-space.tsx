@@ -14,7 +14,7 @@ import {
 import { ArrowRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { Workspace } from "../../@types/space";
-import { updateUserActiveSpace } from "@/actions/api/user/mutations";
+import { updateActiveSpace } from "@/actions/api/workspace/mutations";
 
 const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {
   return (
@@ -35,8 +35,7 @@ const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {
                 variant="ghost"
                 className="w-full justify-between h-16 rounded-none border-b last:border-b-0 first:border-t hover:bg-accent group"
                 onClick={async () => {
-                  await updateUserActiveSpace(workspace.id);
-                  // Handle workspace selection if needed
+                  await updateActiveSpace(workspace.id);
                 }}
               >
                 <div className="flex items-center gap-4">

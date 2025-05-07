@@ -19,25 +19,25 @@ export default async function middleware(req: NextRequest) {
   }
 
   // If user is authenticated but has no active workspace, redirect to select-workspace
-  // if (
-  //   session?.userId &&
-  //   !session?.activeSpace &&
-  //   !path.startsWith("/select-workspace")
-  // ) {
-  //   return NextResponse.redirect(new URL("/select-workspace", req.nextUrl));
-  // }
+  if (
+    session?.userId &&
+    !session?.activeSpace &&
+    !path.startsWith("/select-workspace")
+  ) {
+    return NextResponse.redirect(new URL("/select-workspace", req.nextUrl));
+  }
 
   // If user is authenticated and has an active workspace, ensure path starts with active workspace
-  // if (
-  //   session?.userId &&
-  //   session?.activeSpace &&
-  //   !path.startsWith(`/${session.activeSpace}`) &&
-  //   !path.startsWith("/select-workspace")
-  // ) {
-  //   return NextResponse.redirect(
-  //     new URL(`/${session.activeSpace}/projects`, req.nextUrl)
-  //   );
-  // }
+  if (
+    session?.userId &&
+    session?.activeSpace &&
+    !path.startsWith(`/${session.activeSpace}`) &&
+    !path.startsWith("/not-found")
+  ) {
+    return NextResponse.redirect(
+      new URL(`/${session.activeSpace}/projects`, req.nextUrl)
+    );
+  }
 
   return NextResponse.next();
 }

@@ -1,9 +1,9 @@
 "use server";
 import { Room, RoomPayload } from "@/feature/shared/@types/room";
 import { post, put, del } from "@/actions/core/api-client";
-import { extractErrors } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import { CACHE_TAGS } from "@/actions/core/cache-config";
+import { handleError } from "@/lib/errors";
 
 export const createRoom = async (
   payload: Pick<RoomPayload, "name" | "spaceId">
@@ -13,8 +13,7 @@ export const createRoom = async (
     revalidateTag(CACHE_TAGS.WORKSPACE.ROOMS(payload.spaceId));
     return result;
   } catch (error) {
-    console.error("Error creating room", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
@@ -26,8 +25,7 @@ export const updateRoom = async (payload: Pick<RoomPayload, "id" | "name">) => {
     revalidateTag(CACHE_TAGS.ROOM.ONE(payload.id));
     return result;
   } catch (error) {
-    console.error("Error updating room", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
@@ -39,8 +37,7 @@ export const deleteRoom = async (
     revalidateTag(CACHE_TAGS.WORKSPACE.ROOMS(payload.spaceId));
     return result;
   } catch (error) {
-    console.error("Error deleting room", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
@@ -56,8 +53,7 @@ export const addRoomMember = async (
     // revalidateTag(CACHE_TAGS.WORKSPACE.ROOMS(result.spaceId));
     return result;
   } catch (error) {
-    console.error("Error adding room member", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
@@ -75,7 +71,6 @@ export const removeRoomMember = async (
     // revalidateTag(CACHE_TAGS.WORKSPACE.ROOMS(spaceId));
     return result;
   } catch (error) {
-    console.error("Error removing room member", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };

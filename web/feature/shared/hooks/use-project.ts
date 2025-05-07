@@ -3,17 +3,19 @@
 import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
-import { getWorkspaceProjects } from "../../../actions/api/project/queries";
+import { getWorkspaceProjects } from "@/actions/api/project/queries";
 import {
   createProject,
   updateProject,
   deleteProject,
-} from "../../../actions/api/project/mutations";
-import { getProjectBuckets } from "../../../actions/api/bucket/queries";
-import { getProjectItems } from "../../../actions/api/item/queries";
+} from "@/actions/api/project/mutations";
+import { getProjectBuckets } from "@/actions/api/bucket/queries";
+import { getProjectItems } from "@/actions/api/item/queries";
+import { useUtils } from "./use-utils";
 
 export const useProject = () => {
   const queryClient = getQueryClient();
+  const { isValidResponse, toastUnknownError } = useUtils();
   const { workspaceId } = useParams<{ workspaceId: string }>();
 
   // Get workspace projects
@@ -30,32 +32,38 @@ export const useProject = () => {
   const create = useMutation({
     mutationFn: async (data: { name: string }) =>
       await createProject({ ...data, spaceId: workspaceId }),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({
         queryKey: [workspaceId, "projects"],
       });
     },
+    onError: toastUnknownError,
   });
 
   // Update project mutation
   const update = useMutation({
     mutationFn: updateProject,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({
         queryKey: [workspaceId, "projects"],
       });
     },
+    onError: toastUnknownError,
   });
 
   // Delete project mutation
   const remove = useMutation({
     mutationFn: async (id: string) =>
       await deleteProject({ id, spaceId: workspaceId }),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({
         queryKey: [workspaceId, "projects"],
       });
     },
+    onError: toastUnknownError,
   });
 
   // Prefetch projects data

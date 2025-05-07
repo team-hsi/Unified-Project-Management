@@ -1,9 +1,9 @@
 "use server";
 import { revalidateTag } from "next/cache";
 import { Project, ProjectPayload } from "@/feature/shared/@types/projects";
-import { extractErrors } from "@/lib/utils";
 import { del, post, put } from "@/actions/core/api-client";
 import { CACHE_TAGS } from "@/actions/core/cache-config";
+import { handleError } from "@/lib/errors";
 
 export const createProject = async (
   payload: Pick<ProjectPayload, "name" | "spaceId">
@@ -13,8 +13,7 @@ export const createProject = async (
     revalidateTag(CACHE_TAGS.WORKSPACE.PROJECTS(payload.spaceId));
     return result;
   } catch (error) {
-    console.error("Error creating project:", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 // TODO: improve error handling
@@ -28,8 +27,7 @@ export const updateProject = async (
     revalidateTag(CACHE_TAGS.PROJECT.ONE(id));
     return result;
   } catch (error) {
-    console.error(`Error updating project ${payload.id}:`, error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 
@@ -40,7 +38,6 @@ export const deleteProject = async (
     await del<void>(`/v1/projects/${payload.id}`);
     revalidateTag(CACHE_TAGS.WORKSPACE.PROJECTS(payload.spaceId));
   } catch (error) {
-    console.error(`Error deleting project ${payload.id}:`, error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
