@@ -2,7 +2,6 @@ import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useUser } from "@/lib/auth/auth-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import {
-  // getAllWorkspaces,
   getUserWorkspaces,
   getWorkspaceMembers,
 } from "@/actions/api/workspace/queries";
@@ -13,11 +12,13 @@ import {
   addWorkspaceMembers,
 } from "@/actions/api/workspace/mutations";
 import { updateUserActiveSpace } from "@/actions/api/user/mutations";
+import { useUtils } from "./use-utils";
 import { toast } from "sonner";
 
 export const useWorkspace = () => {
   const queryClient = getQueryClient();
   const { session } = useUser();
+  const { isValidResponse, toastUnknownError } = useUtils();
 
   // Get user's workspaces
   const {
@@ -43,41 +44,53 @@ export const useWorkspace = () => {
   // Create workspace mutation
   const create = useMutation({
     mutationFn: createWorkspace,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({
         queryKey: [session?.userId, "workspaces"],
       });
+      toast.success("Workspace created successfully!");
     },
+    onError: toastUnknownError,
   });
 
   // Update workspace mutation
   const update = useMutation({
     mutationFn: updateWorkspace,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({
         queryKey: [session?.userId, "workspaces"],
       });
+      toast.success("Workspace updated successfully!");
     },
+    onError: toastUnknownError,
   });
 
   // Delete workspace mutation
   const remove = useMutation({
     mutationFn: deleteWorkspace,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({
         queryKey: ["workspaces"],
       });
+      toast.success("Workspace deleted successfully!");
     },
+    onError: toastUnknownError,
   });
 
   // Add workspace members mutation
   const inviteMember = useMutation({
     mutationFn: addWorkspaceMembers,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({
         queryKey: [session?.activeSpace, "ws-members"],
       });
+      toast.success("Member added successfully!");
     },
+    onError: toastUnknownError,
   });
 
   // mutate active workspace
@@ -89,6 +102,7 @@ export const useWorkspace = () => {
       });
       toast.success("Workspace changed!");
     },
+    onError: toastUnknownError,
   });
 
   // Prefetch workspace data

@@ -9,9 +9,11 @@ import {
   deleteBucket,
 } from "@/actions/api/bucket/mutations";
 import { Bucket } from "../@types/bucket";
-
+import { useUtils } from "./use-utils";
+import { BaseError } from "@/lib/errors";
 export const useBucket = () => {
   const queryClient = getQueryClient();
+  const { isValidResponse, toastUnknownError } = useUtils();
   const { workspaceId, projectId } = useParams<{
     workspaceId: string;
     projectId: string;
@@ -51,11 +53,10 @@ export const useBucket = () => {
           context.previousBuckets
         );
       }
-      toast.error(error.name, {
-        description: error.message,
-      });
+      toastUnknownError(error as BaseError);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      void isValidResponse(response);
       queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
     },
   });
@@ -86,13 +87,13 @@ export const useBucket = () => {
           context.previousBuckets
         );
       }
-      toast.error(error.name, {
-        description: error.message,
-      });
+      toastUnknownError(error as BaseError);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
-      toast.success("Bucket updated!");
+      if (isValidResponse(response)) {
+        toast.success("Bucket updated!");
+      }
     },
   });
 
@@ -114,13 +115,13 @@ export const useBucket = () => {
           context.previousBuckets
         );
       }
-      toast.error(error.name, {
-        description: error.message,
-      });
+      toastUnknownError(error as BaseError);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
-      toast.success("Bucket deleted!");
+      if (isValidResponse(response)) {
+        toast.success("Bucket deleted!");
+      }
     },
   });
 

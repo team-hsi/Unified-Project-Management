@@ -4,13 +4,14 @@ import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useMutation, useSuspenseQueries } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import * as React from "react";
-import { toast } from "sonner";
-import { moveItem, reorderItems } from "../../../actions/api/item/mutations";
-import { getProjectBuckets } from "../../../actions/api/bucket/queries";
-import { getProjectItems } from "../../../actions/api/item/queries";
+import { moveItem, reorderItems } from "@/actions/api/item/mutations";
+import { getProjectBuckets } from "@/actions/api/bucket/queries";
+import { getProjectItems } from "@/actions/api/item/queries";
+import { useUtils } from "./use-utils";
 
 export const useKanban = () => {
   const { projectId } = useParams<{ projectId: string }>();
+  const { isValidResponse, toastUnknownError } = useUtils();
 
   const queryClient = getQueryClient();
   const [
@@ -43,32 +44,22 @@ export const useKanban = () => {
   // Mutations for updating data
   const moveItemMutation = useMutation({
     mutationFn: moveItem,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      void isValidResponse(response);
       queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
     },
-    onError: (error) => {
-      toast.error(
-        `Failed to move card: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
-    },
+    onError: toastUnknownError,
   });
 
   const reorderItemMutation = useMutation({
     mutationFn: reorderItems,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      void isValidResponse(response);
       queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
     },
-    onError: (error) => {
-      toast.error(
-        `Failed to reorder card: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
-    },
+    onError: toastUnknownError,
   });
   const [board, setBoard] = React.useState<Bucket[] | null>(null);
   React.useEffect(() => {

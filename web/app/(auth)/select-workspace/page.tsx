@@ -3,7 +3,6 @@ import SelectWorkspace from "@/feature/shared/components/workspace/select-space"
 
 const page = async () => {
   const workspaces = await getUserWorkspaces();
-  console.log("workspaces-page", workspaces);
 
   return <SelectWorkspace workspaces={workspaces} />;
 };

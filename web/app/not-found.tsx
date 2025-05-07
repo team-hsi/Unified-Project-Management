@@ -3,10 +3,48 @@ import Link from "next/link";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "404 - Page Not Found",
+  title: "404 - Not Found",
   description: "The page you are looking for could not be found.",
 };
-const NotFoundPage = async () => {
+
+const NotFoundPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: "workspace" | "project"; redirect?: string }>;
+}) => {
+  const type = (await searchParams)?.type;
+  const redirect = (await searchParams)?.redirect;
+
+  const isWorkspaceError = type === "workspace";
+  const isProjectError = type === "project";
+  const redirectPath = redirect || "/";
+
+  const getErrorMessage = () => {
+    if (isWorkspaceError) {
+      return {
+        title: "Workspace Not Found",
+        message:
+          "The workspace you're trying to access no longer exists or you don't have access to it.",
+        buttonText: "Choose Workspace",
+      };
+    }
+    if (isProjectError) {
+      return {
+        title: "Project Not Found",
+        message:
+          "The project you're trying to access no longer exists or you don't have access to it.",
+        buttonText: "Go to Workspace",
+      };
+    }
+    return {
+      title: "Look like you're lost",
+      message: "The page you are looking for is not available!",
+      buttonText: "Take me home",
+    };
+  };
+
+  const notFoundInfo = getErrorMessage();
+
   return (
     <section className="bg-white font-serif min-h-screen flex items-center justify-center">
       <div className="container mx-auto">
@@ -23,13 +61,11 @@ const NotFoundPage = async () => {
 
             <div className="mt-[-50px]">
               <h3 className="text-2xl text-black sm:text-3xl font-bold mb-4">
-                Look like you&apos;re lost
+                {notFoundInfo.title}
               </h3>
-              <p className="mb-6 text-black sm:mb-5">
-                The page you are looking for is not available!
-              </p>
-              <Link href="/">
-                <Button className="my-5 ">Take me home</Button>
+              <p className="mb-6 text-black sm:mb-5">{notFoundInfo.message}</p>
+              <Link href={redirectPath}>
+                <Button className="my-5">{notFoundInfo.buttonText}</Button>
               </Link>
             </div>
           </div>

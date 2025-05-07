@@ -6,9 +6,11 @@ import {
   updateLabel,
   deleteLabel,
 } from "@/actions/api/label/mutations";
+import { useUtils } from "./use-utils";
 
 export const useLabel = ({ projectId }: { projectId: string }) => {
   const queryClient = useQueryClient();
+  const { isValidResponse, toastUnknownError } = useUtils();
   // Queries
   const {
     data: labels,
@@ -21,35 +23,32 @@ export const useLabel = ({ projectId }: { projectId: string }) => {
   // Mutations
   const create = useMutation({
     mutationFn: createLabel,
-    onSuccess: () => {
-      toast.success("Label created successfully");
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({ queryKey: [projectId, "labels"] });
+      toast.success("Label created successfully");
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+    onError: toastUnknownError,
   });
 
   const update = useMutation({
     mutationFn: updateLabel,
-    onSuccess: () => {
-      toast.success("Label updated successfully");
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({ queryKey: [projectId, "labels"] });
+      toast.success("Label updated successfully");
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+    onError: toastUnknownError,
   });
 
   const remove = useMutation({
     mutationFn: (id: string) => deleteLabel({ id, projectId }),
-    onSuccess: () => {
-      toast.success("Label deleted successfully");
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({ queryKey: [projectId, "labels"] });
+      toast.success("Label deleted successfully");
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+    onError: toastUnknownError,
   });
 
   return {

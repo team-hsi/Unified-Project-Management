@@ -1,6 +1,12 @@
 "use server";
 import { getSession } from "./dal";
-import { extractErrors } from "@/lib/utils";
+import {
+  AuthenticationError,
+  APIError,
+  NotFoundError,
+  BadRequestError,
+  AuthorizationError,
+} from "@/lib/errors";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 type FetchOptions = {
@@ -25,8 +31,23 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
   }
   const data = await response.json();
   if (!response.ok) {
-    console.log("error=>", extractErrors(data.error));
-    throw new Error(extractErrors(data.error));
+    if (response.status === 400) {
+      throw new BadRequestError(data.error);
+    }
+    if (response.status === 401) {
+      throw new AuthenticationError(data.error);
+    }
+    if (response.status === 403) {
+      throw new AuthorizationError(data.error);
+    }
+    if (response.status === 404) {
+      throw new NotFoundError(data.error);
+    }
+    throw new APIError(data.error || "Something went wrong", {
+      code: data.error?.code || "API_ERROR",
+      status: response.status,
+      displayName: response.statusText,
+    });
   }
   return data;
 };

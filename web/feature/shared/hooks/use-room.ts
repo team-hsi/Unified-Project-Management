@@ -20,9 +20,12 @@ import { useParams } from "next/navigation";
 import { Room, RoomPayload } from "../@types/room";
 import { useUser } from "@/lib/auth/auth-provider";
 import { useCallback } from "react";
+import { useUtils } from "./use-utils";
+import { BaseError } from "@/lib/errors";
 
 export const useRoom = () => {
   const queryClient = useQueryClient();
+  const { isValidResponse, toastUnknownError } = useUtils();
   const { user } = useUser();
   const { workspaceId, chatId } = useParams<{
     workspaceId: string;
@@ -74,59 +77,60 @@ export const useRoom = () => {
       });
       return { previousRooms };
     },
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({
+        queryKey: [workspaceId, "rooms"],
+      });
+      if (isValidResponse(response)) {
+        toast.success("Room created successfully!");
+      }
+    },
     onError: (error, variables, context) => {
       if (context?.previousRooms) {
         queryClient.setQueryData([workspaceId, "rooms"], context.previousRooms);
       }
-      toast.error(JSON.stringify(error));
-    },
-    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [workspaceId, "rooms"],
       });
-      toast.success("Room created successfully!");
+      toastUnknownError(error as BaseError);
     },
   });
 
   const update = useMutation({
     mutationFn: updateRoom,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({ queryKey: [workspaceId, "rooms"] });
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+    onError: toastUnknownError,
   });
 
   const remove = useMutation({
     mutationFn: async (id: string) =>
       await deleteRoom({ id, spaceId: workspaceId }),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({ queryKey: [workspaceId, "rooms"] });
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+    onError: toastUnknownError,
   });
 
   const addMember = useMutation({
     mutationFn: addRoomMember,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({ queryKey: [chatId, "room-members"] });
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+    onError: toastUnknownError,
   });
 
   const removeMember = useMutation({
     mutationFn: removeRoomMember,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({ queryKey: [chatId, "room-members"] });
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+    onError: toastUnknownError,
   });
 
   // Prefetching
