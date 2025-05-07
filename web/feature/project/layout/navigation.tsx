@@ -18,6 +18,8 @@ import { Workspace } from "@/feature/shared/@types/space";
 import { NavUser } from "@/feature/user/nav-user";
 import { useProject } from "@/feature/shared/hooks/use-project";
 import { Project } from "@/feature/shared/@types/projects";
+import { Notification } from "@/feature/notification/notification";
+// import { ConnectionManager } from "@/feature/notification/connection-manager";
 
 export const ProjectNavigation = () => {
   const { workspaceProjects } = useProject();
@@ -67,8 +69,12 @@ export const ProjectNavigation = () => {
             })}
           </BreadcrumbList>
         </Breadcrumb>
+        {/* <ConnectionManager /> */}
       </div>
-      <NavUser />
+      <div className="flex items-center gap-2">
+        <Notification />
+        <NavUser />
+      </div>
     </header>
   );
 };
