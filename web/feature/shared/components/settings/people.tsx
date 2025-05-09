@@ -29,12 +29,12 @@ interface TeamMember {
 export const PeopleView = () => {
   const { workspaceMembers, isLoadingWsMembers, errorWsMembers, inviteMember } =
     useWorkspace();
-    const { workspaceId} = useParams<{workspaceId: string}>()
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<string | null>(null);
   const [invite, setInvite] = useState<{
     email: string;
-    role: Member['role']
+    role: Member["role"];
   }>({
     email: "",
     role: "member",
@@ -88,7 +88,11 @@ export const PeopleView = () => {
       ...prev,
       email: "",
     }));
-    await inviteMember.mutateAsync({ userId: invite.email, role: invite.role , id: workspaceId});
+    await inviteMember.mutateAsync({
+      userId: invite.email,
+      role: invite.role,
+      id: workspaceId,
+    });
   };
 
   return (
@@ -99,10 +103,10 @@ export const PeopleView = () => {
           Manage team members and permissions.
         </p>
       </div>
-      <Card className="mb-6 overflow-hidden bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-purple-100 dark:border-purple-800/30">
+      <Card className="mb-6 overflow-hidden bg-gradient-to-r from-accent/10 to-primary/10 dark:from-accent/20 dark:to-primary/20 border-border">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-4 items-center">
-            <div className="flex items-center gap-3 text-purple-700 dark:text-purple-300">
+            <div className="flex items-center gap-3 text-primary">
               <Mail className="h-5 w-5" />
               <h3 className="font-medium">Invite team members</h3>
             </div>
@@ -110,7 +114,7 @@ export const PeopleView = () => {
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Input
-                    className="pr-20 bg-white dark:bg-gray-800 border-purple-200 dark:border-purple-800/50"
+                    className="pr-20 bg-background border-input"
                     placeholder="colleague@example.com"
                     value={invite.email}
                     // type="email"
@@ -123,11 +127,11 @@ export const PeopleView = () => {
 
                 <Select
                   value={invite.role}
-                  onValueChange={(value: Member['role']) =>
+                  onValueChange={(value: Member["role"]) =>
                     setInvite({ ...invite, role: value })
                   }
                 >
-                  <SelectTrigger className="w-[120px] bg-white dark:bg-gray-800 border-purple-200 dark:border-purple-800/50">
+                  <SelectTrigger className="w-[120px] bg-background border-input">
                     <SelectValue placeholder="Role" />
                   </SelectTrigger>
                   <SelectContent>
@@ -137,7 +141,7 @@ export const PeopleView = () => {
                   </SelectContent>
                 </Select>
                 <Button
-                  className="bg-purple-600 hover:bg-purple-700 text-accent-foreground"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
                   onClick={handleInvite}
                 >
                   <Send className="h-4 w-4 mr-1" />
@@ -189,34 +193,46 @@ export const PeopleView = () => {
         ) : (
           filteredMembers.map((member, index) => (
             <div key={member.id}>
-              <div className="flex items-center justify-between p-4 group">
+              <div className="flex items-center justify-between p-4 group hover:bg-accent/5 transition-colors duration-200">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarFallback>{member.avatarFallback}</AvatarFallback>
+                  <Avatar className="h-10 w-10 ring-1 ring-background group-hover:ring-accent/20 transition-all duration-200">
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {member.avatarFallback}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h4 className="font-medium">{member.name}</h4>
-                    <p className="text-sm text-muted-foreground">
+                    <h4 className="font-medium group-hover:text-primary transition-colors duration-200">
+                      {member.name}
+                    </h4>
+                    <p className="text-sm text-muted-foreground group-hover:text-muted-foreground/80 transition-colors duration-200">
                       {member.email}
                     </p>
                   </div>
                 </div>
-                <div></div>
-                <Select
-                  defaultValue={member.role}
-                  onValueChange={(value: "admin" | "guest" | "member") => handleRoleChange(member.id, value)}
-                >
-                  <SelectTrigger className="w-[120px]">
-                    <SelectValue placeholder="Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="member">Member</SelectItem>
-                    <SelectItem value="guest">Guest</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-muted-foreground hidden md:inline-block">
+                    {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                  </span>
+                  <Select
+                    defaultValue={member.role}
+                    onValueChange={(value: "admin" | "guest" | "member") =>
+                      handleRoleChange(member.id, value)
+                    }
+                  >
+                    <SelectTrigger className="w-[120px] bg-background hover:bg-accent/5 transition-colors duration-200">
+                      <SelectValue placeholder="Role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="member">Member</SelectItem>
+                      <SelectItem value="guest">Guest</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              {index < filteredMembers.length - 1 && <Separator />}
+              {index < filteredMembers.length - 1 && (
+                <Separator className="bg-border/50" />
+              )}
             </div>
           ))
         )}

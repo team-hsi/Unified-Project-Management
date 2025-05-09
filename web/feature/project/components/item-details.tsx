@@ -9,8 +9,10 @@ import {
   CalendarRange,
   ChevronsUp,
   Loader,
+  Loader2,
   Newspaper,
   Plus,
+  Tag,
   Users,
 } from "lucide-react";
 import { Textarea } from "@/feature/shared/ui/textarea";
@@ -53,6 +55,7 @@ import { useLabel } from "@/feature/shared/hooks/use-label";
 import { Item } from "@/feature/shared/@types/item";
 import { Label } from "@/feature/shared/@types/label";
 import { itemFormSchema } from "../shared/schema";
+import MultipleSelector from "@/feature/shared/ui/multiselect";
 
 const MetadataField = ({
   icon: Icon,
@@ -63,10 +66,10 @@ const MetadataField = ({
   label: string;
   children: React.ReactNode;
 }) => (
-  <div className="flex items-center gap-2 flex-auto">
+  <div className="flex items-center gap-2 flex-1 min-w-[200px]">
     <div className="flex items-center gap-2">
       <Icon size={15} className="text-muted-foreground" />
-      <p className="w-24 text-sm text-muted-foreground">{label}</p>
+      <p className="text-sm text-muted-foreground">{label}</p>
     </div>
     {children}
   </div>
@@ -136,10 +139,10 @@ export const ItemDetails = ({
   };
 
   return (
-    <div className="w-4/5 mx-auto">
-      <div className="flex flex-col gap-6 lg:px-6">
+    <div className="overflow-auto">
+      <div className="flex flex-col gap-3 p-4">
         {/* Item title with inline editing */}
-        <div className="font-bold text-xl md:text-2xl xl:text-3xl mt-4">
+        <div className="font-bold text-xl">
           <InlineEdit
             text={item.name}
             textStyle="cursor-pointer"
@@ -155,7 +158,7 @@ export const ItemDetails = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <section className="flex flex-col flex-wrap gap-4">
+            <section className="flex flex-wrap gap-3">
               {/* Status Field */}
               <MetadataField icon={Loader} label="Status">
                 <FormField
@@ -174,7 +177,9 @@ export const ItemDetails = ({
                             }}
                             className="rounded-full data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600 border-foreground cursor-pointer"
                           />
-                          <span className="capitalize">{field.value}</span>
+                          <span className="capitalize text-sm">
+                            {field.value}
+                          </span>
                         </div>
                       </FormControl>
                     </FormItem>
@@ -197,7 +202,7 @@ export const ItemDetails = ({
                               variant="ghost"
                               size="sm"
                               className={cn(
-                                "p-1 font-normal",
+                                "p-1 font-normal text-sm",
                                 !field.value && ""
                               )}
                             >
@@ -284,11 +289,11 @@ export const ItemDetails = ({
                         defaultValue={field.value || undefined}
                       >
                         <FormControl>
-                          <SelectTrigger className="border-0 h-auto shadow-none">
+                          <SelectTrigger className="border-0 h-auto shadow-none text-sm">
                             <SelectValue placeholder="set priority" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent className="">
+                        <SelectContent>
                           <SelectItem value="low">Low</SelectItem>
                           <SelectItem value="medium">Medium</SelectItem>
                           <SelectItem value="high">High</SelectItem>
@@ -298,11 +303,9 @@ export const ItemDetails = ({
                   )}
                 />
               </MetadataField>
+
               {/* Labels Field */}
-              {/*
-                testing out the new multiselect component
-                */}
-              {/* <MetadataField icon={TagIcon} label="Labels">
+              <MetadataField icon={Tag} label="Labels">
                 <FormField
                   control={form.control}
                   name="labels"
@@ -314,14 +317,13 @@ export const ItemDetails = ({
                           commandProps={{
                             label: "Add labels",
                           }}
-                          // isPending={labels.isPending}
                           loadingIndicator={
                             <div className="flex w-full p-1 items-center justify-center">
                               <Loader2 className="h-4 w-4 animate-spin" />
                             </div>
                           }
                           defaultOptions={labelOptions}
-                          className=" border-0"
+                          className="border-0"
                           placeholder="Add Labels..."
                           hideClearAllButton
                           emptyIndicator={
@@ -329,24 +331,24 @@ export const ItemDetails = ({
                               No results found
                             </p>
                           }
-                          value={field.value} //fix here too
+                          value={field.value}
                           onChange={field.onChange}
                         />
                       </FormControl>
                     </FormItem>
                   )}
                 />
-              </MetadataField> */}
+              </MetadataField>
             </section>
 
             {/* Description Section */}
-            <section>
+            <section className="mt-3">
               <Accordion type="single" collapsible defaultValue="description">
                 <AccordionItem value="description">
-                  <AccordionTrigger>
+                  <AccordionTrigger className="py-2">
                     <div className="flex items-center gap-2">
                       <Newspaper size={15} className="text-muted-foreground" />
-                      <p className="w-24 text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground">
                         Description
                       </p>
                     </div>
@@ -374,7 +376,7 @@ export const ItemDetails = ({
 
             {/* Save Button - only shown when form is dirty */}
             {unsavedForm && (
-              <Button type="submit" className="mt-4">
+              <Button type="submit" className="mt-3" size="sm">
                 {update.isPending ? (
                   <Loader className="mr-2 h-4 w-4 animate-spin" />
                 ) : (

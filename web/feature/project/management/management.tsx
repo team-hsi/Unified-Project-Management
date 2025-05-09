@@ -11,7 +11,7 @@ export const Management = ({ project }: { project: Project }) => {
   const [currentView, setCurrentView] = useState<ManagementsView>("general");
 
   return (
-    <DialogContent className="flex h-[80vh] p-0 sm:max-w-[90vw] md:max-w-[90vw] lg:max-w-[90vw]">
+    <DialogContent className="flex h-[90vh] p-0 sm:max-w-[95vw]">
       <div className="flex h-full w-full">
         {/* Sidebar */}
         <ManagementSidebar

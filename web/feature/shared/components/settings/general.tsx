@@ -13,6 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/feature/shared/ui/select";
+import { Button } from "@/feature/shared/ui/button";
+import { Textarea } from "@/feature/shared/ui/textarea";
+import { AlertCircle, Globe, Lock } from "lucide-react";
 
 export function GeneralView() {
   return (
@@ -41,16 +44,45 @@ export function GeneralView() {
             </div>
 
             <div>
-              <h4 className="font-medium">Workspace URL</h4>
-              <div className="mt-2 flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  https://app.example.com/
-                </span>
-                <input
-                  type="text"
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  defaultValue="my-workspace"
+              <h4 className="font-medium">Description</h4>
+              <div className="mt-2">
+                <Textarea
+                  placeholder="Describe your workspace..."
+                  className="min-h-[100px] resize-none"
                 />
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-medium">Visibility</h4>
+              <div className="mt-2">
+                <Select defaultValue="private">
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select visibility" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem
+                      value="private"
+                      className="flex items-center gap-2"
+                    >
+                      <Lock className="h-4 w-4" />
+                      <span>Private</span>
+                      <span className="text-sm text-muted-foreground ml-auto">
+                        Only members can access
+                      </span>
+                    </SelectItem>
+                    <SelectItem
+                      value="public"
+                      className="flex items-center gap-2"
+                    >
+                      <Globe className="h-4 w-4" />
+                      <span>Public</span>
+                      <span className="text-sm text-muted-foreground ml-auto">
+                        Anyone can view
+                      </span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
@@ -90,6 +122,34 @@ export function GeneralView() {
                   <SelectItem value="never">Never</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div>
+          <h3 className="text-lg font-medium text-destructive">Danger Zone</h3>
+          <div className="mt-4 p-4 rounded-lg border border-destructive/20 bg-destructive/5">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
+                <div>
+                  <h4 className="font-medium text-destructive">
+                    Delete Workspace
+                  </h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Permanently delete your workspace and all of its contents.
+                    This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="destructive"
+                className="bg-destructive hover:bg-destructive/90"
+              >
+                Delete Workspace
+              </Button>
             </div>
           </div>
         </div>
