@@ -1,9 +1,8 @@
 "use client";
 
-import { type ReactNode, createContext, useContext } from "react";
+import { type ReactNode, createContext, useContext, useEffect } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getQueryClient } from "../query-client/get-query-client";
-import { toast } from "sonner";
 import { useUser } from "../auth/auth-provider";
 import { Chat } from "@/feature/shared/@types/room";
 import { useParams } from "next/navigation";
@@ -11,6 +10,8 @@ import { createMessage } from "@/actions/api/message/mutations";
 import { getRoomMessages } from "@/actions/api/message/queries";
 import { useUtils } from "@/feature/shared/hooks/use-utils";
 import { BaseError } from "../errors";
+import { getSocket } from "@/lib/notification/socket";
+import { Message } from "@/feature/shared/@types/message";
 
 // --- Types
 type ChatContextType = {
@@ -31,7 +32,45 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
     queryKey: [chatId, "chat"],
     queryFn: () => getRoomMessages({ id: chatId }),
     enabled: !!chatId,
+    staleTime: 3000, // 3 seconds
   });
+
+  // Handle incoming socket messages
+  useEffect(() => {
+    if (!chatId || !user) return;
+
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleNewMessage = (message: Message) => {
+      // Skip if message is from current user or not for current chat
+      if (message.roomId !== chatId || message.senderId === user.id) return;
+
+      queryClient.setQueryData(
+        [chatId, "chat"],
+        (oldChat: Chat | undefined) => {
+          if (!oldChat) return oldChat;
+
+          // Check if message already exists to prevent duplicates
+          const messageExists = oldChat.messages.some(
+            (m) => m.id === message.id
+          );
+          if (messageExists) return oldChat;
+
+          return {
+            ...oldChat,
+            messages: [...oldChat.messages, message],
+          };
+        }
+      );
+    };
+
+    socket.on("new-message", handleNewMessage);
+
+    return () => {
+      socket.off("new-message", handleNewMessage);
+    };
+  }, [chatId, queryClient, user]);
 
   const sendAction = useMutation({
     mutationFn: createMessage,
@@ -45,11 +84,11 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
       queryClient.setQueryData(
         [roomId, "chat"],
         (oldChat: Chat | undefined) => {
-          console.log("oldchat=>", oldChat);
+          if (!oldChat) return oldChat;
           return {
             ...oldChat,
             messages: [
-              ...(oldChat?.messages || []),
+              ...oldChat.messages,
               {
                 id: `temp-${Math.random().toString(36).substring(2, 9)}`,
                 content: content,
@@ -72,9 +111,7 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [chatId, "chat"] });
-      if (isValidResponse(response)) {
-        toast.success("Message sent successfully!");
-      }
+      void isValidResponse(response);
     },
   });
 
