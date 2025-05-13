@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, createContext, useContext, useEffect } from "react";
+import { type ReactNode, createContext, useContext } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getQueryClient } from "../query-client/get-query-client";
 import { useUser } from "../auth/auth-provider";
@@ -10,14 +10,15 @@ import { createMessage } from "@/actions/api/message/mutations";
 import { getRoomMessages } from "@/actions/api/message/queries";
 import { useUtils } from "@/feature/shared/hooks/use-utils";
 import { BaseError } from "../errors";
-import { getSocket } from "@/lib/notification/socket";
 import { Message } from "@/feature/shared/@types/message";
+import { useWebSocket } from "@/feature/notification/hooks/use-web-socket";
 
 // --- Types
 type ChatContextType = {
   chat: Chat;
   isLoading: boolean;
   sendMessage: (content: string) => Promise<void>;
+  isSocketConnected: boolean;
 };
 
 const ChatStoreContext = createContext<ChatContextType | undefined>(undefined);
@@ -35,42 +36,22 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
     staleTime: 3000, // 3 seconds
   });
 
-  // Handle incoming socket messages
-  useEffect(() => {
+  const isConnected = useWebSocket("new-message", (message: Message) => {
     if (!chatId || !user) return;
+    if (message.roomId !== chatId || message.senderId === user.id) return;
 
-    const socket = getSocket();
-    if (!socket) return;
+    queryClient.setQueryData([chatId, "chat"], (oldChat: Chat | undefined) => {
+      if (!oldChat) return oldChat;
 
-    const handleNewMessage = (message: Message) => {
-      // Skip if message is from current user or not for current chat
-      if (message.roomId !== chatId || message.senderId === user.id) return;
+      const messageExists = oldChat.messages.some((m) => m.id === message.id);
+      if (messageExists) return oldChat;
 
-      queryClient.setQueryData(
-        [chatId, "chat"],
-        (oldChat: Chat | undefined) => {
-          if (!oldChat) return oldChat;
-
-          // Check if message already exists to prevent duplicates
-          const messageExists = oldChat.messages.some(
-            (m) => m.id === message.id
-          );
-          if (messageExists) return oldChat;
-
-          return {
-            ...oldChat,
-            messages: [...oldChat.messages, message],
-          };
-        }
-      );
-    };
-
-    socket.on("new-message", handleNewMessage);
-
-    return () => {
-      socket.off("new-message", handleNewMessage);
-    };
-  }, [chatId, queryClient, user]);
+      return {
+        ...oldChat,
+        messages: [...oldChat.messages, message],
+      };
+    });
+  });
 
   const sendAction = useMutation({
     mutationFn: createMessage,
@@ -125,6 +106,7 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
         chat: chat as Chat,
         isLoading,
         sendMessage,
+        isSocketConnected: isConnected,
       }}
     >
       {children}
