@@ -2,7 +2,8 @@ export type SettingsView =
   | "preferences"
   | "notifications"
   | "general"
-  | "people";
+  | "people"
+  | "account";
 
 // | "sites"
 // | "emoji"

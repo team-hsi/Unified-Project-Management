@@ -5,6 +5,7 @@ import { PeopleView } from "./people";
 import { PreferencesView } from "./preferences";
 import { NotificationsView } from "./notifications";
 import { GeneralView } from "./general";
+import { AccountView } from "./account";
 
 interface SettingsContentProps {
   currentView: SettingsView;
@@ -16,7 +17,8 @@ export function SettingsContent({ currentView }: SettingsContentProps) {
     preferences: <PreferencesView />,
     notifications: <NotificationsView />,
     general: <GeneralView />,
-    people: <PeopleView />, // Placeholder for PeopleView
+    people: <PeopleView />,
+    account: <AccountView />,
   };
 
   return viewComponents[currentView] || <PreferencesView />;

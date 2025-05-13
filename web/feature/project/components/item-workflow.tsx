@@ -7,10 +7,11 @@ import {
 } from "@/feature/shared/ui/tabs";
 import { CheckList } from "./check-list";
 import { Item } from "@/feature/shared/@types/item";
+
 export const ItemWorkflow = ({ item }: { item: Item }) => {
   return (
-    <div className=" w-4/5 mx-auto">
-      <Tabs defaultValue="subtasks">
+    <div className="h-full flex flex-col">
+      <Tabs defaultValue="subtasks" className="flex-1 flex flex-col">
         <TabsList className="h-auto rounded-none border-b border-border bg-transparent w-full pb-0">
           <TabsTrigger
             value="subtasks"
@@ -31,19 +32,24 @@ export const ItemWorkflow = ({ item }: { item: Item }) => {
             Activities
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="subtasks" className="flex flex-col gap-3">
-          <CheckList lists={item.checklist} itemId={item.id} />
-        </TabsContent>
-        <TabsContent value="comments">
-          <p className="p-4 text-center text-xs text-muted-foreground">
-            Content for Tab 2
-          </p>
-        </TabsContent>
-        <TabsContent value="activities">
-          <p className="p-4 text-center text-xs text-muted-foreground">
-            Content for Tab 3
-          </p>
-        </TabsContent>
+        <div className="flex-1 overflow-auto">
+          <TabsContent
+            value="subtasks"
+            className="flex flex-col gap-3 px-4 py-2 m-0 h-full"
+          >
+            <CheckList lists={item.checklist} itemId={item.id} />
+          </TabsContent>
+          <TabsContent value="comments" className="p-4 m-0 h-full">
+            <p className="text-center text-sm text-muted-foreground">
+              Content for Tab 2
+            </p>
+          </TabsContent>
+          <TabsContent value="activities" className="p-4 m-0 h-full">
+            <p className="text-center text-sm text-muted-foreground">
+              Content for Tab 3
+            </p>
+          </TabsContent>
+        </div>
       </Tabs>
     </div>
   );

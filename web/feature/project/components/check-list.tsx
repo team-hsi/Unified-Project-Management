@@ -60,12 +60,16 @@ export const CheckList = ({
   const completed = checklist.filter(
     (task) => task.isCompleted === true
   ).length;
+  const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   return (
-    <Card className="w-full max-w-xl rounded-xl border p-6 pt-3 mb-2 shadow-md">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>
+    <Card className="w-full  rounded-2xl border-none bg-gradient-to-br from-background/80 to-accent/30 shadow-lg p-0 mb-2">
+      <div className="flex items-center justify-between px-6 pt-5 pb-2">
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-muted-foreground font-medium tracking-wide">
+            Checklist
+          </span>
+          <span className="text-sm font-semibold">
             Completed {completed}/{total}
           </span>
         </div>
@@ -76,31 +80,56 @@ export const CheckList = ({
               currentList={checklist}
               setCheckList={(value) => setCheckList(value)}
             >
-              <Plus className="hover:cursor-pointer" />
+              <Button
+                size="icon"
+                className="rounded-full bg-primary/90 hover:bg-primary text-primary-foreground shadow-md transition-all duration-200"
+              >
+                <Plus className="h-5 w-5" />
+              </Button>
             </CreateCheckList>
           </TooltipTrigger>
           <TooltipContent>Add New</TooltipContent>
         </Tooltip>
       </div>
-
-      <CardContent className="space-y-4 p-0">
+      {/* Progress Bar */}
+      <div className="px-6 pb-2">
+        <div className="w-full h-2 bg-accent/30 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full transition-all duration-300"
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+      </div>
+      <CardContent className="space-y-3 px-3 pt-2 pb-5">
         {checklist.map((list, index) => (
-          <div key={index} className="space-y-2">
-            <label className="flex items-start gap-2 cursor-pointer">
-              <Checkbox
-                checked={list.isCompleted}
-                onCheckedChange={() => handleToggle(index)}
-                className="mt-1 border-white"
-              />
-              <span
-                className={cn(
-                  "text-base",
-                  list.isCompleted && "line-through text-muted-foreground"
-                )}
-              >
-                {list.description}
-              </span>
-            </label>
+          <div
+            key={index}
+            className={cn(
+              "flex items-center gap-3 px-4 py-3 bg-white/90 dark:bg-background/80 border border-primary/20 rounded-xl shadow-sm transition-all duration-200",
+              list.isCompleted
+                ? "line-through text-muted-foreground opacity-70"
+                : "text-foreground hover:border-primary/40"
+            )}
+            style={{
+              boxShadow: list.isCompleted
+                ? "0 1px 4px 0 rgba(80,80,80,0.04)"
+                : "0 2px 8px 0 rgba(80,80,80,0.08)",
+            }}
+          >
+            <Checkbox
+              checked={list.isCompleted}
+              onCheckedChange={() => handleToggle(index)}
+              className={cn(
+                "border-2 h-5 w-5 rounded-full shadow-none transition-all duration-200",
+                list.isCompleted
+                  ? "bg-primary/80 border-primary"
+                  : "bg-white dark:bg-background border-primary/40 hover:border-primary"
+              )}
+              style={{ accentColor: "var(--primary)" }}
+            />
+            <span className="text-base font-medium flex-1 truncate">
+              {list.description}
+            </span>
           </div>
         ))}
       </CardContent>
