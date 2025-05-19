@@ -23,7 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/feature/shared/ui/form";
-import { DeleteProjectDialog } from "../interactions/delete-project";
+import { DeleteProjectDialog } from "../overlays/delete-project";
 import { Card } from "@/feature/shared/ui/card";
 
 export function GeneralView({ project }: { project: Project }) {

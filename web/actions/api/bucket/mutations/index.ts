@@ -9,7 +9,7 @@ export const createBucket = async (
   payload: Pick<BucketPayload, "name" | "projectId" | "color">
 ) => {
   try {
-    const result = await post<Bucket>("/v1/buckets/create", payload);
+    const result = await post<Bucket>("/buckets/create", payload);
     revalidateTag(CACHE_TAGS.PROJECT.BUCKETS(payload.projectId));
     return result;
   } catch (error) {
@@ -22,7 +22,7 @@ export const updateBucket = async (
 ) => {
   const { id, ...rest } = payload;
   try {
-    const result = await put<Bucket>(`/v1/buckets/${id}`, rest);
+    const result = await put<Bucket>(`/buckets/${id}`, rest);
     revalidateTag(CACHE_TAGS.PROJECT.BUCKETS(result.project.id));
     revalidateTag(CACHE_TAGS.BUCKET.ONE(id));
     return result;
@@ -35,7 +35,7 @@ export const deleteBucket = async (
   payload: Pick<BucketPayload, "id" | "projectId">
 ) => {
   try {
-    const result = await del<void>(`/v1/buckets/${payload.id}`);
+    const result = await del<void>(`/buckets/${payload.id}`);
     revalidateTag(CACHE_TAGS.PROJECT.BUCKETS(payload.projectId));
     return result;
   } catch (error) {

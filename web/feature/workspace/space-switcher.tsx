@@ -18,9 +18,10 @@ import {
 } from "@/feature/shared/ui/sidebar";
 import { useWorkspace } from "@/feature/shared/hooks/use-workspace";
 import type { Workspace } from "@/feature/shared/@types/space";
-import { AddSpaceDialog } from "./add-space";
+import { AddSpaceDialog } from "./overlays/add-space";
 import { redirect, useParams } from "next/navigation";
 import Link from "next/link";
+import { updateActiveSpace } from "@/actions/api/workspace/mutations";
 
 export const SpaceSwitcher = () => {
   const { isMobile } = useSidebar();
@@ -42,7 +43,7 @@ export const SpaceSwitcher = () => {
     (space: Workspace) => space.id === workspaceId
   );
   if (!activeWorkspace) {
-    redirect("/not-found?type=workspace&redirect=/workspaces");
+    redirect("/select-workspace");
   }
   const handleMenuItemSelect = () => {
     focusRef.current = dropdownTriggerRef.current;
@@ -97,6 +98,9 @@ export const SpaceSwitcher = () => {
                   <DropdownMenuItem
                     // onMouseEnter={() => prefetchWorkspace(space.id)}
                     // onFocus={() => prefetchWorkspace(space.id)}
+                    onClick={async () => {
+                      await updateActiveSpace(space.id);
+                    }}
                     className="gap-2 p-2"
                   >
                     <div className="flex size-6 items-center justify-center rounded-sm border">

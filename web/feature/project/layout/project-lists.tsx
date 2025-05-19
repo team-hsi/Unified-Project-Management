@@ -24,8 +24,8 @@ import { CustomDialog } from "@/feature/shared/components/custom-dialog";
 import { useProject } from "@/feature/shared/hooks/use-project";
 import { Project } from "@/feature/shared/@types/projects";
 import { Management } from "../management/management";
-import { DeleteProjectDialog } from "../interactions/delete-project";
-import { CreateProjectDialog } from "../interactions/create-project";
+import { DeleteProjectDialog } from "../overlays/delete-project";
+import { CreateProjectDialog } from "../overlays/create-project";
 
 export const NavProjects = () => {
   const { workspaceProjects, prefetchProject } = useProject();

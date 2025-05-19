@@ -17,9 +17,9 @@ import { Input } from "@/feature/shared/ui/input";
 import { useState } from "react";
 import { useProject } from "@/feature/shared/hooks/use-project";
 import { useParams } from "next/navigation";
-import { CreateProjectDialog } from "@/feature/project/interactions/create-project";
+import { CreateProjectDialog } from "@/feature/project/overlays/create-project";
 import { EmptyProjects } from "@/feature/project/shared/empty-projetcs";
-import { ScrollArea } from "../../ui/scroll-area";
+import { ScrollArea } from "../shared/ui/scroll-area";
 
 interface Project {
   id: string;

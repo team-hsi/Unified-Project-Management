@@ -14,8 +14,7 @@ export interface WorkspacePayload {
   id: string;
   name: string;
   description?: string;
-  visibility?: "private" | "public";
-  members?: string[];
+  visibility: "private" | "public";
 }
 
 export interface WorkspaceWithMembers extends Workspace {

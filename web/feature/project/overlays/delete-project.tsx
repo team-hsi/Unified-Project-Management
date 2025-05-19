@@ -22,22 +22,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useProject } from "@/feature/shared/hooks/use-project";
 import { ProjectDialogProps } from "../shared/types";
+import { projectDeleteSchema } from "../shared/schema";
 
 export const DeleteProjectDialog = ({
   project,
   onOpenChange,
 }: ProjectDialogProps) => {
-  const projectDeleteSchema = z.object({
-    name: z
-      .string()
-      .min(1, "Project name is required")
-      .refine((value) => value === project.name, {
-        message: "Project name does not match",
-      }),
-  });
-
-  const form = useForm<z.infer<typeof projectDeleteSchema>>({
-    resolver: zodResolver(projectDeleteSchema),
+  const form = useForm<z.infer<ReturnType<typeof projectDeleteSchema>>>({
+    resolver: zodResolver(projectDeleteSchema(project.name)),
     defaultValues: {
       name: "",
     },

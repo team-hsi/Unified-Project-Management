@@ -9,7 +9,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { getWorkspaceProjects } from "@/actions/api/project/queries";
 import { getSessionUser } from "@/actions/api/user/auth";
-import { SpaceSync } from "@/feature/shared/components/workspace/space-sync";
+import { SpaceSync } from "@/feature/workspace/space-sync";
 
 const WorkspaceLayout = async ({
   children,

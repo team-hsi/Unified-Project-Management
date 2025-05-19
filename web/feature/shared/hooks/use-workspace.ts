@@ -14,6 +14,7 @@ import {
 import { updateUserActiveSpace } from "@/actions/api/user/mutations";
 import { useUtils } from "./use-utils";
 import { toast } from "sonner";
+import { redirect } from "next/navigation";
 
 export const useWorkspace = () => {
   const queryClient = getQueryClient();
@@ -75,7 +76,7 @@ export const useWorkspace = () => {
       queryClient.invalidateQueries({
         queryKey: ["workspaces"],
       });
-      toast.success("Workspace deleted successfully!");
+      redirect("/select-workspace");
     },
     onError: toastUnknownError,
   });

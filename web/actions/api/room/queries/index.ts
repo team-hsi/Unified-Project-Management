@@ -7,7 +7,7 @@ import { CACHE_LIFE, CACHE_TAGS } from "../../../core/cache-config";
 
 export const getAllRooms = async () => {
   try {
-    return await get<Room[]>(`/v1/rooms/getAll`);
+    return await get<Room[]>(`/rooms/getAll`);
   } catch (error) {
     console.error("Error fetching all rooms", error);
     throw new Error(extractErrors(error));
@@ -16,7 +16,7 @@ export const getAllRooms = async () => {
 
 export const getRoomById = async (payload: Pick<RoomPayload, "id">) => {
   try {
-    return await get<Room>(`/v1/rooms/${payload.id}`, {
+    return await get<Room>(`/rooms/${payload.id}`, {
       next: {
         revalidate: CACHE_LIFE.MEDIUM,
         tags: [CACHE_TAGS.ROOM.ONE(payload.id)],
@@ -33,7 +33,7 @@ export const getWorkspaceRooms = async (
   payload: Pick<WorkspacePayload, "id">
 ) => {
   try {
-    return await get<Room[]>(`/v1/spaces/${payload.id}/rooms`, {
+    return await get<Room[]>(`/spaces/${payload.id}/rooms`, {
       next: {
         revalidate: CACHE_LIFE.MEDIUM,
         tags: [CACHE_TAGS.WORKSPACE.ROOMS(payload.id)],
@@ -48,7 +48,7 @@ export const getWorkspaceRooms = async (
 
 export const getRoomMembers = async (payload: Pick<RoomPayload, "id">) => {
   try {
-    return await get<Room>(`/v1/rooms/${payload.id}/members`, {
+    return await get<Room>(`/rooms/${payload.id}/members`, {
       next: {
         revalidate: CACHE_LIFE.LONG,
         tags: [CACHE_TAGS.ROOM.MEMBERS(payload.id)],

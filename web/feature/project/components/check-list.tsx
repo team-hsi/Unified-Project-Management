@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/feature/shared/ui/card";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import { Button } from "@/feature/shared/ui/button";
-import { CreateCheckList } from "../interactions/create-check-list";
+import { CreateCheckList } from "../overlays/create-check-list";
 import type { CheckList as Check } from "@/feature/shared/@types/check-list";
 import { toast } from "sonner";
 import {

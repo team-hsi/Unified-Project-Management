@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
 import { useRoom } from "@/feature/shared/hooks/use-room";
-import { NewChat } from "../interactions/new-chat";
+import { NewChat } from "../overlays/new-chat";
 import { ChatList } from "../components/chat-list";
 import { ChatListLoading } from "../shared/chat-loadings";
 

@@ -1,5 +1,5 @@
 import { getWorkspaceById } from "@/actions/api/workspace/queries";
-import { WorkspaceProjects } from "@/feature/shared/components/workspace/workspace-projects";
+import { WorkspaceProjects } from "@/feature/workspace/workspace-projects";
 import { Metadata } from "next";
 
 type Props = {
