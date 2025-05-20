@@ -11,30 +11,37 @@ import {
 } from "@/feature/shared/ui/select";
 import { Input } from "@/feature/shared/ui/input";
 import { Avatar, AvatarFallback } from "@/feature/shared/ui/avatar";
-import { Mail, Search, Send, Users } from "lucide-react";
+import { Mail, Search, Send, Trash2, Users } from "lucide-react";
 import { Member } from "@/feature/shared/@types/user";
 import { Card, CardContent } from "@/feature/shared/ui/card";
 import { toast } from "sonner";
 import { useWorkspace } from "../../hooks/use-workspace";
 import { useParams } from "next/navigation";
+import { ActionButton } from "../action-button";
 
 interface TeamMember {
   id: string;
   name: string;
   email: string;
-  role: string;
+  role: Member["role"];
   avatarFallback: string;
 }
 
 export const PeopleView = () => {
-  const { workspaceMembers, isLoadingWsMembers, errorWsMembers, inviteMember } =
-    useWorkspace();
-    const { workspaceId} = useParams<{workspaceId: string}>()
+  const {
+    workspaceMembers,
+    isLoadingWsMembers,
+    errorWsMembers,
+    inviteMember,
+    updateMembership,
+    removeMember,
+  } = useWorkspace();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<string | null>(null);
+  const [roleFilter, setRoleFilter] = useState<Member["role"] | null>(null);
   const [invite, setInvite] = useState<{
     email: string;
-    role: Member['role']
+    role: Member["role"];
   }>({
     email: "",
     role: "member",
@@ -49,11 +56,12 @@ export const PeopleView = () => {
 
   const mappedMembers: TeamMember[] =
     workspaceMembers?.members?.map((member: Member) => {
+      console.log(member);
       const user = member.user;
       const initials = `${user.firstname.charAt(0)}${user.lastname.charAt(0)}`;
 
       return {
-        id: member.id,
+        id: user.id,
         name: `${user.firstname} ${user.lastname}`,
         email: user.email,
         role: member.role,
@@ -61,13 +69,20 @@ export const PeopleView = () => {
       };
     }) || [];
   // Handle role change
-  const handleRoleChange = (memberId: string, newRole: string) => {
-    // Here you would typically call an API to update the role
-    // For now we'll just log it
-    console.log(`Changing role for member ${memberId} to ${newRole}`);
-
-    // You would implement the actual role update logic here
-    // e.g., updateMemberRole(memberId, newRole);
+  const handleRoleChange = async (
+    memberId: string,
+    newRole: Member["role"]
+  ) => {
+    console.log({
+      id: workspaceId,
+      userId: memberId,
+      role: newRole,
+    });
+    await updateMembership.mutateAsync({
+      id: workspaceId,
+      userId: memberId,
+      role: newRole,
+    });
   };
 
   // Filter members based on search query and role filter
@@ -88,7 +103,11 @@ export const PeopleView = () => {
       ...prev,
       email: "",
     }));
-    await inviteMember.mutateAsync({ userId: invite.email, role: invite.role , id: workspaceId});
+    await inviteMember.mutateAsync({
+      userId: invite.email,
+      role: invite.role,
+      id: workspaceId,
+    });
   };
 
   return (
@@ -99,10 +118,10 @@ export const PeopleView = () => {
           Manage team members and permissions.
         </p>
       </div>
-      <Card className="mb-6 overflow-hidden bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-purple-100 dark:border-purple-800/30">
+      <Card className="mb-6 overflow-hidden bg-gradient-to-r from-accent/10 to-primary/10 dark:from-accent/20 dark:to-primary/20 border-border">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-4 items-center">
-            <div className="flex items-center gap-3 text-purple-700 dark:text-purple-300">
+            <div className="flex items-center gap-3 text-primary">
               <Mail className="h-5 w-5" />
               <h3 className="font-medium">Invite team members</h3>
             </div>
@@ -110,7 +129,7 @@ export const PeopleView = () => {
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Input
-                    className="pr-20 bg-white dark:bg-gray-800 border-purple-200 dark:border-purple-800/50"
+                    className="pr-20 bg-background border-input"
                     placeholder="colleague@example.com"
                     value={invite.email}
                     // type="email"
@@ -122,12 +141,12 @@ export const PeopleView = () => {
                 </div>
 
                 <Select
-                  value={invite.role}
-                  onValueChange={(value: Member['role']) =>
+                  value={invite.role as string}
+                  onValueChange={(value: Member["role"]) =>
                     setInvite({ ...invite, role: value })
                   }
                 >
-                  <SelectTrigger className="w-[120px] bg-white dark:bg-gray-800 border-purple-200 dark:border-purple-800/50">
+                  <SelectTrigger className="w-[120px] bg-background border-input">
                     <SelectValue placeholder="Role" />
                   </SelectTrigger>
                   <SelectContent>
@@ -137,7 +156,7 @@ export const PeopleView = () => {
                   </SelectContent>
                 </Select>
                 <Button
-                  className="bg-purple-600 hover:bg-purple-700 text-accent-foreground"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
                   onClick={handleInvite}
                 >
                   <Send className="h-4 w-4 mr-1" />
@@ -159,7 +178,7 @@ export const PeopleView = () => {
           />
         </div>
         <Select
-          value={roleFilter || "all"}
+          value={(roleFilter as string) || "all"}
           onValueChange={(value) =>
             setRoleFilter(value === "all" ? null : value)
           }
@@ -189,34 +208,54 @@ export const PeopleView = () => {
         ) : (
           filteredMembers.map((member, index) => (
             <div key={member.id}>
-              <div className="flex items-center justify-between p-4 group">
+              <div className="flex items-center justify-between p-4 group hover:bg-accent/5 transition-colors duration-200">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarFallback>{member.avatarFallback}</AvatarFallback>
+                  <Avatar className="h-10 w-10 ring-1 ring-background group-hover:ring-accent/20 transition-all duration-200">
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {member.avatarFallback}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h4 className="font-medium">{member.name}</h4>
-                    <p className="text-sm text-muted-foreground">
+                    <h4 className="font-medium group-hover:text-primary transition-colors duration-200">
+                      {member.name}
+                    </h4>
+                    <p className="text-sm text-muted-foreground group-hover:text-muted-foreground/80 transition-colors duration-200">
                       {member.email}
                     </p>
                   </div>
                 </div>
-                <div></div>
-                <Select
-                  defaultValue={member.role}
-                  onValueChange={(value: "admin" | "guest" | "member") => handleRoleChange(member.id, value)}
-                >
-                  <SelectTrigger className="w-[120px]">
-                    <SelectValue placeholder="Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="member">Member</SelectItem>
-                    <SelectItem value="guest">Guest</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center gap-4">
+                  <Select
+                    defaultValue={member.role as string}
+                    onValueChange={(value: Member["role"]) =>
+                      handleRoleChange(member.id, value)
+                    }
+                  >
+                    <SelectTrigger className="w-[120px] bg-background hover:bg-accent/5 transition-colors duration-200">
+                      <SelectValue placeholder="Role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="member">Member</SelectItem>
+                      <SelectItem value="guest">Guest</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <ActionButton
+                    isLoading={removeMember.isPending}
+                    variant="destructive"
+                    label={<Trash2 />}
+                    onClick={async () => {
+                      await removeMember.mutateAsync({
+                        id: workspaceId,
+                        userId: member.id,
+                      });
+                    }}
+                  />
+                </div>
               </div>
-              {index < filteredMembers.length - 1 && <Separator />}
+              {index < filteredMembers.length - 1 && (
+                <Separator className="bg-border/50" />
+              )}
             </div>
           ))
         )}

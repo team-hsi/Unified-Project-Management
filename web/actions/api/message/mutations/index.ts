@@ -7,7 +7,7 @@ import { handleError } from "@/lib/errors";
 
 export const createMessage = async (payload: Omit<MessagePayload, "id">) => {
   try {
-    const result = await post<Message>("/v1/messages", payload);
+    const result = await post<Message>("/messages", payload);
     revalidateTag(CACHE_TAGS.ROOM.MESSAGES(payload.roomId));
     return result;
   } catch (error) {

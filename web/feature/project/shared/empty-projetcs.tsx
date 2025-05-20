@@ -1,7 +1,7 @@
 import { FolderPlus, PlusCircle } from "lucide-react";
 import React from "react";
 import { Button } from "@/feature/shared/ui/button";
-import { CreateProjectDialog } from "../interactions/create-project";
+import { CreateProjectDialog } from "../overlays/create-project";
 
 export const EmptyProjects = () => {
   return (

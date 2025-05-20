@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useParams } from "next/navigation";
-import { useWorkspace } from "../../hooks/use-workspace";
+import { useWorkspace } from "../shared/hooks/use-workspace";
 import { useUser } from "@/lib/auth/auth-provider";
 
 export function SpaceSync() {

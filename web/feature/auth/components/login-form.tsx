@@ -73,6 +73,7 @@ export const LoginForm = () => {
                     <FormControl>
                       <Input
                         placeholder="you@example.com"
+                        data-testid="email-input"
                         type="email"
                         {...field}
                       />
@@ -96,7 +97,11 @@ export const LoginForm = () => {
                       </Link>
                     </div>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input
+                        type="password"
+                        data-testid="password-input"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -104,6 +109,7 @@ export const LoginForm = () => {
               />
               <Button
                 type="submit"
+                data-testid="login-button"
                 className="w-full"
                 disabled={login.isPending}
               >

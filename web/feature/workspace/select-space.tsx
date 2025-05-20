@@ -13,7 +13,7 @@ import {
 } from "@/feature/shared/ui/avatar";
 import { ArrowRight, Plus } from "lucide-react";
 import Link from "next/link";
-import { Workspace } from "../../@types/space";
+import { Workspace } from "../shared/@types/space";
 import { updateActiveSpace } from "@/actions/api/workspace/mutations";
 
 const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {

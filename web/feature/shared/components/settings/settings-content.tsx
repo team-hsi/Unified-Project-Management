@@ -5,18 +5,27 @@ import { PeopleView } from "./people";
 import { PreferencesView } from "./preferences";
 import { NotificationsView } from "./notifications";
 import { GeneralView } from "./general";
+import { AccountView } from "./account";
+import { PermissionsView } from "./permissions";
+import { Workspace } from "../../@types/space";
 
 interface SettingsContentProps {
   currentView: SettingsView;
+  workspace: Workspace;
 }
 
-export function SettingsContent({ currentView }: SettingsContentProps) {
+export function SettingsContent({
+  currentView,
+  workspace,
+}: SettingsContentProps) {
   // Map views to components
   const viewComponents: Record<SettingsView, React.ReactNode> = {
     preferences: <PreferencesView />,
     notifications: <NotificationsView />,
-    general: <GeneralView />,
-    people: <PeopleView />, // Placeholder for PeopleView
+    general: <GeneralView workspace={workspace} />,
+    people: <PeopleView />,
+    account: <AccountView />,
+    permissions: <PermissionsView workspace={workspace} />,
   };
 
   return viewComponents[currentView] || <PreferencesView />;

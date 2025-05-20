@@ -9,7 +9,7 @@ export const createProject = async (
   payload: Pick<ProjectPayload, "name" | "spaceId">
 ) => {
   try {
-    const result = await post<Project>("/v1/projects/create", payload);
+    const result = await post<Project>("/projects/create", payload);
     revalidateTag(CACHE_TAGS.WORKSPACE.PROJECTS(payload.spaceId));
     return result;
   } catch (error) {
@@ -22,7 +22,7 @@ export const updateProject = async (
 ) => {
   try {
     const { id, ...rest } = payload;
-    const result = await put<Project>(`/v1/projects/${id}`, rest);
+    const result = await put<Project>(`/projects/${id}`, rest);
     revalidateTag(CACHE_TAGS.WORKSPACE.PROJECTS(result.space));
     revalidateTag(CACHE_TAGS.PROJECT.ONE(id));
     return result;
@@ -35,7 +35,7 @@ export const deleteProject = async (
   payload: Pick<ProjectPayload, "id" | "spaceId">
 ) => {
   try {
-    await del<void>(`/v1/projects/${payload.id}`);
+    await del<void>(`/projects/${payload.id}`);
     revalidateTag(CACHE_TAGS.WORKSPACE.PROJECTS(payload.spaceId));
   } catch (error) {
     return handleError(error);

@@ -8,7 +8,7 @@ import {
   AuthorizationError,
 } from "@/lib/errors";
 
-const API = process.env.NEXT_PUBLIC_API_URL;
+const API = process.env.API_URL;
 type FetchOptions = {
   next?: {
     tags?: string[];

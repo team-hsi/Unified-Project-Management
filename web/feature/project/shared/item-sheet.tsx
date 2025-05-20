@@ -27,31 +27,39 @@ export const ItemSheet = ({
     <Sheet onOpenChange={setOpen}>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent
-        className={`rounded-xl overflow-auto ${
+        className={`rounded-xl overflow-hidden ${
           isMobile ? "h-full" : "max-w-lg md:max-w-xl lg:max-w-2xl"
         }`}
         side={isMobile ? "bottom" : "right"}
         hideClose
       >
-        <SheetTitle className="sr-only"> task detail side sheet</SheetTitle>
-        <ItemBreadcrumb
-          segments={segments}
-          unsavedForm={unsavedForm}
-          item={{
-            id: item.id,
-            bucketId: item.bucket.id,
-            projectId: item.bucket.project.id,
-          }}
-          onClose={() => {
-            setOpen(false);
-          }}
-        />
-        <ItemDetails
-          item={item}
-          setUnsavedForm={setUnsavedForm}
-          unsavedForm={unsavedForm}
-        />
-        <ItemWorkflow item={item} />
+        <SheetTitle className="sr-only">task detail side sheet</SheetTitle>
+        <div className="flex flex-col h-full">
+          <ItemBreadcrumb
+            segments={segments}
+            unsavedForm={unsavedForm}
+            item={{
+              id: item.id,
+              bucketId: item.bucket.id,
+              projectId: item.bucket.project.id,
+            }}
+            onClose={() => {
+              setOpen(false);
+            }}
+          />
+          <div className="flex-1 overflow-auto">
+            <div className="flex flex-col">
+              <ItemDetails
+                item={item}
+                setUnsavedForm={setUnsavedForm}
+                unsavedForm={unsavedForm}
+              />
+              <div className="border-t border-border">
+                <ItemWorkflow item={item} />
+              </div>
+            </div>
+          </div>
+        </div>
       </SheetContent>
     </Sheet>
   );

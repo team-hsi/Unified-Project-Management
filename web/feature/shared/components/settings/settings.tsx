@@ -6,6 +6,9 @@ import { DialogTrigger } from "@radix-ui/react-dialog";
 import { SettingsView } from "./types";
 import { SettingsSidebar } from "./settings-sidebar";
 import { SettingsContent } from "./settings-content";
+import { useWorkspace } from "../../hooks/use-workspace";
+import { useParams } from "next/navigation";
+import { Workspace } from "../../@types/space";
 
 interface SettingsDialogProps {
   children: React.ReactNode;
@@ -13,6 +16,8 @@ interface SettingsDialogProps {
 
 export function SettingsDialog({ children }: SettingsDialogProps) {
   const [currentView, setCurrentView] = useState<SettingsView>("preferences");
+  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const { userWorkspaces } = useWorkspace();
 
   return (
     <Dialog>
@@ -29,7 +34,14 @@ export function SettingsDialog({ children }: SettingsDialogProps) {
           {/* Main content */}
           <div className="flex-1">
             <ScrollArea className="h-full">
-              <SettingsContent currentView={currentView} />
+              <SettingsContent
+                currentView={currentView}
+                workspace={
+                  userWorkspaces.find(
+                    (workspace) => workspace.id === workspaceId
+                  ) as Workspace
+                }
+              />
             </ScrollArea>
           </div>
         </div>

@@ -7,7 +7,7 @@ import { handleError } from "@/lib/errors";
 
 export const createLabel = async (payload: Omit<LabelPayload, "id">) => {
   try {
-    const result = await post<Label>("/v1/labels/create", payload);
+    const result = await post<Label>("/labels/create", payload);
     revalidateTag(CACHE_TAGS.PROJECT.LABELS(payload.projectId));
     return result;
   } catch (error) {
@@ -18,7 +18,7 @@ export const createLabel = async (payload: Omit<LabelPayload, "id">) => {
 export const updateLabel = async (payload: Omit<LabelPayload, "projectId">) => {
   try {
     const { id, ...rest } = payload;
-    const result = await put<Label>(`/v1/labels/${id}`, rest);
+    const result = await put<Label>(`/labels/${id}`, rest);
     revalidateTag(CACHE_TAGS.PROJECT.LABELS(result.project.id));
     return result;
   } catch (error) {
@@ -30,7 +30,7 @@ export const deleteLabel = async (
   payload: Pick<LabelPayload, "id" | "projectId">
 ) => {
   try {
-    await del<void>(`/v1/labels/${payload.id}`);
+    await del<void>(`/labels/${payload.id}`);
     revalidateTag(CACHE_TAGS.PROJECT.LABELS(payload.projectId));
     return true;
   } catch (error) {

@@ -1,7 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Button } from "@/feature/shared/ui/button";
 import {
   DialogContent,
@@ -22,18 +21,8 @@ import { Input } from "@/feature/shared/ui/input";
 import { Textarea } from "@/feature/shared/ui/textarea";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useWorkspace } from "@/feature/shared/hooks/use-workspace";
-import { CustomDialog } from "../custom-dialog";
-
-// Define the validation schema using Zod
-const spaceFormSchema = z.object({
-  name: z.string().min(2, {
-    message: "Space name must be at least 2 characters.",
-  }),
-  description: z.string().optional(), // Description is optional
-});
-
-// Infer the type from the schema
-type SpaceFormValues = z.infer<typeof spaceFormSchema>;
+import { CustomDialog } from "../../shared/components/custom-dialog";
+import { spaceFormSchema, SpaceFormValues } from "../shared/schema";
 
 interface AddSpaceDialogProps {
   children: React.ReactNode;

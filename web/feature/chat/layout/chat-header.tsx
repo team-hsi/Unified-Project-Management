@@ -6,7 +6,7 @@ import { useMemo } from "react";
 import { Room } from "@/feature/shared/@types/room";
 import { useParams } from "next/navigation";
 import { ChatDetails } from "../components/info/chat-details";
-import { ChatDropdown } from "../interactions/chat-dropdown";
+import { ChatDropdown } from "../overlays/chat-dropdown";
 
 export function ChatHeader() {
   const { chatId } = useParams<{ chatId: string }>();

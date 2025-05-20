@@ -1,5 +1,5 @@
 "use client";
-import { Bell, Settings, User, Users } from "lucide-react";
+import { Bell, Settings, Users, UserCircle, Shield } from "lucide-react";
 import type React from "react";
 
 import { Button } from "@/feature/shared/ui/button";
@@ -34,6 +34,11 @@ export function SettingsSidebar({
       title: "Account",
       items: [
         {
+          id: "account",
+          label: "Profile",
+          icon: <UserCircle className="h-4 w-4" />,
+        },
+        {
           id: "preferences",
           label: "Preferences",
           icon: <Settings className="h-4 w-4" />,
@@ -58,6 +63,11 @@ export function SettingsSidebar({
           label: "People",
           icon: <Users className="h-4 w-4" />,
         },
+        {
+          id: "permissions",
+          label: "Permissions",
+          icon: <Shield className="h-4 w-4" />,
+        },
       ],
     },
   ];
@@ -66,14 +76,6 @@ export function SettingsSidebar({
     <div className="w-[240px] border-r bg-muted/40">
       <ScrollArea className="h-full">
         <div className="p-4">
-          <div className="mb-4">
-            <h3 className="text-sm font-medium">Account</h3>
-            <div className="mt-2 flex items-center gap-2 rounded-md px-2 py-1.5">
-              <User className="h-4 w-4" />
-              <span className="text-sm">Hunde D</span>
-            </div>
-          </div>
-
           {sidebarSections.map((section, index) => (
             <div key={index}>
               {section.title && (
@@ -91,9 +93,7 @@ export function SettingsSidebar({
                     key={item.id}
                     variant={currentView === item.id ? "secondary" : "ghost"}
                     className={`w-full justify-start gap-2 ${
-                      item.id === "preferences" && currentView === "preferences"
-                        ? "font-medium"
-                        : ""
+                      currentView === item.id ? "font-medium" : ""
                     }`}
                     onClick={() => setCurrentView(item.id)}
                   >

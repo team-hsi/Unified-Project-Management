@@ -11,7 +11,7 @@ export const updateUser = async (
 ) => {
   try {
     const session = await getSession();
-    return await put<User>(`/v1/users/${session.userId}`, payload);
+    return await put<User>(`/users/${session.userId}`, payload);
   } catch (error) {
     console.error("Error fetching user:", error);
     throw new Error(extractErrors(error));

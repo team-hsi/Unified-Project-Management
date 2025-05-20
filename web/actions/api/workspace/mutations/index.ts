@@ -5,7 +5,7 @@ import {
   WorkspacePayload,
   WorkspaceWithMembers,
 } from "@/feature/shared/@types/space";
-import { MemberPayload } from "@/feature/shared/@types/user";
+import { MemberPayload, MemberWithSpace } from "@/feature/shared/@types/user";
 import { revalidateTag } from "next/cache";
 import { CACHE_TAGS } from "@/actions/core/cache-config";
 import { getSession } from "@/actions/core/dal";
@@ -17,7 +17,7 @@ export const createWorkspace = async (
 ) => {
   try {
     const session = await getSession();
-    const result = await post<Workspace>("/v1/spaces/create", payload);
+    const result = await post<Workspace>("/spaces/create", payload);
     revalidateTag(CACHE_TAGS.USER.WORKSPACES(session.userId as string));
     return result;
   } catch (error) {
@@ -25,11 +25,13 @@ export const createWorkspace = async (
   }
 };
 
-export const updateWorkspace = async (payload: WorkspacePayload) => {
+export const updateWorkspace = async (
+  payload: { id: string } & Partial<Omit<WorkspacePayload, "id">>
+) => {
   try {
     const { id, ...rest } = payload;
     const session = await getSession();
-    const result = await put<Workspace>(`/v1/spaces/${id}`, rest);
+    const result = await put<Workspace>(`/spaces/${id}`, rest);
     revalidateTag(CACHE_TAGS.USER.WORKSPACES(session.userId as string));
     revalidateTag(CACHE_TAGS.WORKSPACE.ONE(id));
     return result;
@@ -41,7 +43,7 @@ export const updateWorkspace = async (payload: WorkspacePayload) => {
 export const deleteWorkspace = async (id: string) => {
   try {
     const session = await getSession();
-    const result = await del<void>(`/v1/spaces/${id}`);
+    const result = await del<void>(`/spaces/${id}`);
     revalidateTag(CACHE_TAGS.USER.WORKSPACES(session.userId as string));
     return result;
   } catch (error) {
@@ -52,10 +54,26 @@ export const deleteWorkspace = async (id: string) => {
 export const addWorkspaceMembers = async (payload: MemberPayload) => {
   try {
     const result = await post<WorkspaceWithMembers>(
-      `/v1/spaces/${payload.id}/members/add`,
+      `/spaces/${payload.id}/members/add`,
       payload
     );
     revalidateTag(CACHE_TAGS.WORKSPACE.MEMBERS(payload.id));
+    return result;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const updateWorkspaceMemberRole = async (payload: MemberPayload) => {
+  try {
+    const { id, ...rest } = payload;
+    console.log("payload=>", payload, `/spaces/${id}/membership`);
+    const result = await put<MemberWithSpace>(`/spaces/${id}/membership`, {
+      userId: rest.userId,
+      role: rest.role,
+    });
+    revalidateTag(CACHE_TAGS.WORKSPACE.MEMBERS(payload.id));
+    console.log("result", result);
     return result;
   } catch (error) {
     return handleError(error);
@@ -67,7 +85,7 @@ export const removeWorkspaceMembers = async (
 ) => {
   try {
     const { id, userId } = payload;
-    const result = await post<void>(`/v1/spaces/${id}/members/remove`, {
+    const result = await del<void>(`/spaces/${id}/members/remove`, {
       userId,
     });
     revalidateTag(CACHE_TAGS.WORKSPACE.MEMBERS(id));

@@ -10,7 +10,7 @@ export const createUser = async (
   payload: Omit<UserPayload, "id" | "activeSpaceId">
 ) => {
   try {
-    const result = await auth<UserWithToken>("/v1/users/create", payload);
+    const result = await auth<UserWithToken>("/users/create", payload);
     const { user, tokens } = result;
     const session = {
       userId: user.id,
@@ -29,7 +29,7 @@ export const loginUser = async (
   payload: Pick<UserPayload, "email" | "password">
 ) => {
   try {
-    const result = await auth<UserWithToken>(`/v1/users/login`, payload);
+    const result = await auth<UserWithToken>(`/users/login`, payload);
     const { user, tokens } = result;
     const session = {
       userId: user.id,

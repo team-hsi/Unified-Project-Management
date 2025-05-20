@@ -7,7 +7,7 @@ import { CACHE_LIFE, CACHE_TAGS } from "../../../core/cache-config";
 
 export const getAllLabels = async () => {
   try {
-    return await get<Label[]>(`/v1/labels/getAll`);
+    return await get<Label[]>(`/labels/getAll`);
   } catch (error) {
     console.error("Error fetching all labels", error);
     throw new Error(extractErrors(error));
@@ -16,7 +16,7 @@ export const getAllLabels = async () => {
 
 export const getLabelById = async (payload: Pick<LabelPayload, "id">) => {
   try {
-    return await get<Label>(`/v1/labels/${payload.id}`);
+    return await get<Label>(`/labels/${payload.id}`);
   } catch (error) {
     console.error("Error fetching label by id", error);
     throw new Error(extractErrors(error));
@@ -26,7 +26,7 @@ export const getLabelById = async (payload: Pick<LabelPayload, "id">) => {
 export const getProjectLabels = async (payload: Pick<ProjectPayload, "id">) => {
   const { id } = payload;
   try {
-    return await get<Label[]>(`/v1/projects/${id}/labels`, {
+    return await get<Label[]>(`/projects/${id}/labels`, {
       next: {
         revalidate: CACHE_LIFE.LONG,
         tags: [CACHE_TAGS.PROJECT.LABELS(id)],

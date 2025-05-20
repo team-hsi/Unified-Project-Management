@@ -34,6 +34,7 @@ export const useBucket = () => {
           name: "New project for Bucket",
           ownerId: projectId,
           space: workspaceId,
+          permissions: {},
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
