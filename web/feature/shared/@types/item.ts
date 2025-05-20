@@ -1,5 +1,6 @@
 import { CheckList } from "@/feature/shared/@types/check-list";
 import { Label } from "@/feature/shared/@types/label";
+import { User } from "./user";
 
 export type ItemPayload = {
   name: string;
@@ -45,7 +46,20 @@ export interface Item {
   startDate: string | null;
   dueDate: string | null;
   checklist: CheckList[] | null;
+  activities?: Activity[];
   labels: Label[];
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ItemById extends Item {
+  activities: Activity[];
+}
+
+export type Activity = {
+  id: string;
+  actor: Omit<User, "activeSpace">;
+  activityType: "created" | "updated" | "deleted" | "commented" | "reply";
+  timestamp: string;
+  metadata: Record<string, string>;
+};

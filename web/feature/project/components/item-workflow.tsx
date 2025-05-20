@@ -7,8 +7,19 @@ import {
 } from "@/feature/shared/ui/tabs";
 import { CheckList } from "./check-list";
 import { Item } from "@/feature/shared/@types/item";
+import { useQuery } from "@tanstack/react-query";
+import { getItemById } from "@/actions/api/item/queries";
+import { ItemActivity } from "./item-activity";
 
 export const ItemWorkflow = ({ item }: { item: Item }) => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: [item.bucket.project.id, "item"],
+    queryFn: () => getItemById({ id: item.id }),
+  });
+  if (error) {
+    <div> error happended</div>;
+  }
+
   return (
     <div className="h-full flex flex-col">
       <Tabs defaultValue="subtasks" className="flex-1 flex flex-col">
@@ -45,9 +56,15 @@ export const ItemWorkflow = ({ item }: { item: Item }) => {
             </p>
           </TabsContent>
           <TabsContent value="activities" className="p-4 m-0 h-full">
-            <p className="text-center text-sm text-muted-foreground">
-              Content for Tab 3
-            </p>
+            <div className="h-full">
+              {isLoading ? (
+                <div className="flex items-center justify-center p-4">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                </div>
+              ) : (
+                <ItemActivity activities={data?.activities} name={item.name} />
+              )}
+            </div>
           </TabsContent>
         </div>
       </Tabs>

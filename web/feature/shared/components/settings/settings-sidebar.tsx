@@ -1,5 +1,5 @@
 "use client";
-import { Bell, Settings, Users, UserCircle } from "lucide-react";
+import { Bell, Settings, Users, UserCircle, Shield } from "lucide-react";
 import type React from "react";
 
 import { Button } from "@/feature/shared/ui/button";
@@ -62,6 +62,11 @@ export function SettingsSidebar({
           id: "people",
           label: "People",
           icon: <Users className="h-4 w-4" />,
+        },
+        {
+          id: "permissions",
+          label: "Permissions",
+          icon: <Shield className="h-4 w-4" />,
         },
       ],
     },

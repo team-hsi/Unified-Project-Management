@@ -156,7 +156,7 @@ export function GeneralView({ workspace }: { workspace: Workspace }) {
             <ActionButton
               isLoading={update.isPending}
               label="Save Changes"
-              props={{ type: "submit" }}
+              type="submit"
             />
           </div>
         </form>

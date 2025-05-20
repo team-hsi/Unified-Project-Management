@@ -2,7 +2,7 @@
 
 import { BucketPayload } from "@/feature/shared/@types/bucket";
 import { get } from "../../../core/api-client";
-import { Item, ItemPayload } from "@/feature/shared/@types/item";
+import { Item, ItemById, ItemPayload } from "@/feature/shared/@types/item";
 import { extractErrors } from "@/lib/utils";
 import { ProjectPayload } from "@/feature/shared/@types/projects";
 import { CACHE_LIFE, CACHE_TAGS } from "../../../core/cache-config";
@@ -18,7 +18,7 @@ export const getAllItem = async () => {
 
 export const getItemById = async (payload: Pick<ItemPayload, "id">) => {
   try {
-    return await get<Item>(`/items/${payload.id}`, {
+    return await get<ItemById>(`/items/${payload.id}`, {
       next: {
         revalidate: CACHE_LIFE.SHORT,
         tags: [CACHE_TAGS.ITEM.ONE(payload.id)],

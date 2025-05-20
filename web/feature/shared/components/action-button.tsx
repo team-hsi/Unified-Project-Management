@@ -1,17 +1,11 @@
 import { Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
-export const ActionButton = ({
-  isLoading,
-  label = "Save",
-  loadingLabel = "Saving...",
-  variant = "default",
-  className,
-  size = "default",
-  ...props
-}: {
-  className?: string;
+import { ReactElement } from "react";
+
+interface ActionButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading: boolean;
-  label?: string;
+  label?: string | ReactElement;
   loadingLabel?: string;
   variant?:
     | "link"
@@ -21,15 +15,24 @@ export const ActionButton = ({
     | "destructive"
     | "secondary";
   size?: "default" | "sm" | "lg";
-  props: React.ComponentProps<"button">;
-}) => {
+}
+
+export const ActionButton = ({
+  isLoading,
+  label = "Save",
+  loadingLabel = "Saving...",
+  variant = "default",
+  className,
+  size = "default",
+  ...props
+}: ActionButtonProps) => {
   return (
     <Button
       disabled={isLoading}
-      {...props}
       variant={variant}
       size={size}
       className={className}
+      {...props}
     >
       {isLoading ? (
         <>

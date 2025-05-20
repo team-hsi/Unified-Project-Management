@@ -11,27 +11,34 @@ import {
 } from "@/feature/shared/ui/select";
 import { Input } from "@/feature/shared/ui/input";
 import { Avatar, AvatarFallback } from "@/feature/shared/ui/avatar";
-import { Mail, Search, Send, Users } from "lucide-react";
+import { Mail, Search, Send, Trash2, Users } from "lucide-react";
 import { Member } from "@/feature/shared/@types/user";
 import { Card, CardContent } from "@/feature/shared/ui/card";
 import { toast } from "sonner";
 import { useWorkspace } from "../../hooks/use-workspace";
 import { useParams } from "next/navigation";
+import { ActionButton } from "../action-button";
 
 interface TeamMember {
   id: string;
   name: string;
   email: string;
-  role: string;
+  role: Member["role"];
   avatarFallback: string;
 }
 
 export const PeopleView = () => {
-  const { workspaceMembers, isLoadingWsMembers, errorWsMembers, inviteMember } =
-    useWorkspace();
+  const {
+    workspaceMembers,
+    isLoadingWsMembers,
+    errorWsMembers,
+    inviteMember,
+    updateMembership,
+    removeMember,
+  } = useWorkspace();
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<string | null>(null);
+  const [roleFilter, setRoleFilter] = useState<Member["role"] | null>(null);
   const [invite, setInvite] = useState<{
     email: string;
     role: Member["role"];
@@ -49,11 +56,12 @@ export const PeopleView = () => {
 
   const mappedMembers: TeamMember[] =
     workspaceMembers?.members?.map((member: Member) => {
+      console.log(member);
       const user = member.user;
       const initials = `${user.firstname.charAt(0)}${user.lastname.charAt(0)}`;
 
       return {
-        id: member.id,
+        id: user.id,
         name: `${user.firstname} ${user.lastname}`,
         email: user.email,
         role: member.role,
@@ -61,13 +69,20 @@ export const PeopleView = () => {
       };
     }) || [];
   // Handle role change
-  const handleRoleChange = (memberId: string, newRole: string) => {
-    // Here you would typically call an API to update the role
-    // For now we'll just log it
-    console.log(`Changing role for member ${memberId} to ${newRole}`);
-
-    // You would implement the actual role update logic here
-    // e.g., updateMemberRole(memberId, newRole);
+  const handleRoleChange = async (
+    memberId: string,
+    newRole: Member["role"]
+  ) => {
+    console.log({
+      id: workspaceId,
+      userId: memberId,
+      role: newRole,
+    });
+    await updateMembership.mutateAsync({
+      id: workspaceId,
+      userId: memberId,
+      role: newRole,
+    });
   };
 
   // Filter members based on search query and role filter
@@ -126,7 +141,7 @@ export const PeopleView = () => {
                 </div>
 
                 <Select
-                  value={invite.role}
+                  value={invite.role as string}
                   onValueChange={(value: Member["role"]) =>
                     setInvite({ ...invite, role: value })
                   }
@@ -163,7 +178,7 @@ export const PeopleView = () => {
           />
         </div>
         <Select
-          value={roleFilter || "all"}
+          value={(roleFilter as string) || "all"}
           onValueChange={(value) =>
             setRoleFilter(value === "all" ? null : value)
           }
@@ -210,12 +225,9 @@ export const PeopleView = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-sm text-muted-foreground hidden md:inline-block">
-                    {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
-                  </span>
                   <Select
-                    defaultValue={member.role}
-                    onValueChange={(value: "admin" | "guest" | "member") =>
+                    defaultValue={member.role as string}
+                    onValueChange={(value: Member["role"]) =>
                       handleRoleChange(member.id, value)
                     }
                   >
@@ -228,6 +240,17 @@ export const PeopleView = () => {
                       <SelectItem value="guest">Guest</SelectItem>
                     </SelectContent>
                   </Select>
+                  <ActionButton
+                    isLoading={removeMember.isPending}
+                    variant="destructive"
+                    label={<Trash2 />}
+                    onClick={async () => {
+                      await removeMember.mutateAsync({
+                        id: workspaceId,
+                        userId: member.id,
+                      });
+                    }}
+                  />
                 </div>
               </div>
               {index < filteredMembers.length - 1 && (

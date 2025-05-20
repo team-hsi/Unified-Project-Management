@@ -1,0 +1,164 @@
+.editor-container {
+  margin: 0;
+  position: relative;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+.editor-inner {
+  background: #fff;
+  position: relative;
+  border-radius: 0.5rem;
+}
+
+.editor-content-container {
+  min-height: 150px;
+  max-height: 500px;
+  overflow-y: auto;
+  position: relative;
+  border-top: 1px solid #e2e8f0;
+}
+
+.editor-content {
+  min-height: 150px;
+  padding: 1rem;
+  resize: none;
+  font-size: 15px;
+  caret-color: rgb(5, 5, 5);
+  position: relative;
+  tab-size: 1;
+  outline: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.editor-placeholder {
+  color: #999;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  top: 1rem;
+  left: 1rem;
+  user-select: none;
+  white-space: nowrap;
+  display: inline-block;
+  pointer-events: none;
+}
+
+.toolbar {
+  display: flex;
+  margin-bottom: 1px;
+  padding: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  overflow-x: auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 1.5rem;
+  background-color: #e2e8f0;
+  margin: 0 0.5rem;
+}
+
+/* Editor theme styles */
+.editor-paragraph {
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.editor-heading-h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.editor-heading-h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.editor-heading-h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.editor-quote {
+  padding-left: 16px;
+  margin-left: 0;
+  border-left: 4px solid #e2e8f0;
+  color: #4a5568;
+  font-style: italic;
+}
+
+.editor-list-ol {
+  padding-left: 0;
+  margin: 0;
+  list-style-position: inside;
+}
+
+.editor-list-ul {
+  padding-left: 0;
+  margin: 0;
+  list-style-position: inside;
+}
+
+.editor-listitem {
+  margin: 0 32px;
+}
+
+.editor-nested-listitem {
+  list-style-type: none;
+}
+
+/* Text formatting */
+.editor-text-bold {
+  font-weight: bold;
+}
+
+.editor-text-italic {
+  font-style: italic;
+}
+
+.editor-text-underline {
+  text-decoration: underline;
+}
+
+.editor-text-strikethrough {
+  text-decoration: line-through;
+}
+
+.editor-text-superscript {
+  vertical-align: super;
+  font-size: smaller;
+}
+
+.editor-text-subscript {
+  vertical-align: sub;
+  font-size: smaller;
+}
+
+.editor-link {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.editor-code {
+  background-color: #f3f4f6;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: monospace;
+}

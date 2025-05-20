@@ -6,6 +6,7 @@ import { PreferencesView } from "./preferences";
 import { NotificationsView } from "./notifications";
 import { GeneralView } from "./general";
 import { AccountView } from "./account";
+import { PermissionsView } from "./permissions";
 import { Workspace } from "../../@types/space";
 
 interface SettingsContentProps {
@@ -24,6 +25,7 @@ export function SettingsContent({
     general: <GeneralView workspace={workspace} />,
     people: <PeopleView />,
     account: <AccountView />,
+    permissions: <PermissionsView workspace={workspace} />,
   };
 
   return viewComponents[currentView] || <PreferencesView />;
