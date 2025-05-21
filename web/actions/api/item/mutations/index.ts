@@ -55,9 +55,11 @@ export const deleteItem = async (
   }
 };
 
-export const moveItem = async (payload: ItemDnDPayload) => {
+export const moveItem = async (
+  payload: ItemDnDPayload & { projectId: string; srcBucketId: string }
+) => {
   try {
-    const { id, ...rest } = payload;
+    const { id, projectId, srcBucketId, ...rest } = payload;
     if (rest.prevItemId === null) {
       delete (rest as { prevItemId?: string | null }).prevItemId;
     }
@@ -65,8 +67,9 @@ export const moveItem = async (payload: ItemDnDPayload) => {
       delete (rest as { nextItemId?: string | null }).nextItemId;
     }
     const result = await put<Item>(`/items/${id}/change_bucket`, rest);
-    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(result.bucket.id));
-    revalidateTag(CACHE_TAGS.PROJECT.ITEMS(result.bucket.project.id));
+    revalidateTag(CACHE_TAGS.PROJECT.ITEMS(projectId));
+    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(payload.bucketId));
+    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(srcBucketId));
     revalidateTag(CACHE_TAGS.ITEM.ONE(id));
     return result;
   } catch (error) {
@@ -75,10 +78,10 @@ export const moveItem = async (payload: ItemDnDPayload) => {
 };
 
 export const reorderItems = async (
-  payload: Omit<ItemDnDPayload, "bucketId">
+  payload: ItemDnDPayload & { projectId: string }
 ) => {
   try {
-    const { id, ...rest } = payload;
+    const { id, projectId, bucketId, ...rest } = payload;
     if (rest.prevItemId === null) {
       delete (rest as { prevItemId?: string | null }).prevItemId;
     }
@@ -86,8 +89,8 @@ export const reorderItems = async (
       delete (rest as { nextItemId?: string | null }).nextItemId;
     }
     const result = await put<Item>(`/items/${id}/reorder`, rest);
-    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(result.bucket.id));
-    revalidateTag(CACHE_TAGS.PROJECT.ITEMS(result.bucket.project.id));
+    revalidateTag(CACHE_TAGS.PROJECT.ITEMS(projectId));
+    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(bucketId));
     revalidateTag(CACHE_TAGS.ITEM.ONE(id));
     return result;
   } catch (error) {

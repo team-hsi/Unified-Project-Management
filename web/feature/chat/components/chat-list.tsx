@@ -5,15 +5,30 @@ import { Room } from "@/feature/shared/@types/room";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import React from "react";
 
 export const ChatList = () => {
   const { rooms } = useRoom();
+  console.log("rooms", rooms);
   const { workspaceId, chatId } = useParams<{
     workspaceId: string;
     chatId: string;
   }>();
 
-  if (!rooms.length) {
+  // Filter out duplicate rooms and rooms not belonging to the current workspace
+  const uniqueRooms = React.useMemo(() => {
+    const seen = new Set<string>();
+    return rooms.filter((room: Room) => {
+      // Filter by workspaceId first
+      if (room.spaceId !== workspaceId) return false;
+      // Then filter out duplicates
+      if (seen.has(room.id)) return false;
+      seen.add(room.id);
+      return true;
+    });
+  }, [rooms, workspaceId]);
+
+  if (!uniqueRooms.length) {
     return (
       <div className="p-4 text-muted-foreground text-sm">
         No rooms available.
@@ -23,7 +38,7 @@ export const ChatList = () => {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      {rooms.map((room: Room) => (
+      {uniqueRooms.map((room: Room) => (
         <Link href={`/${workspaceId}/chat/${room.id}`} key={room.id}>
           <div
             className={cn(

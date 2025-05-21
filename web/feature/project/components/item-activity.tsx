@@ -16,17 +16,17 @@ export const ItemActivity = ({
     const texts: Record<Activity["activityType"], ReactElement> = {
       created: (
         <span>
-          created a new task <span className="font-bold">{name}</span>
+          created a new <span className="font-bold">{name}</span>
         </span>
       ),
       updated: (
         <span>
-          updated task <span className="font-bold">{name}</span>
+          updated <span className="font-bold">{name}&apos;s</span>
         </span>
       ),
       deleted: (
         <span>
-          deleted task <span className="font-bold">{name}</span>
+          deleted <span className="font-bold">{name}</span>
         </span>
       ),
       commented: (
@@ -63,19 +63,19 @@ export const ItemActivity = ({
                   <span className="font-medium">
                     {activity.actor.firstname} {activity.actor.lastname}
                   </span>
-                  <span className="text-sm text-muted-foreground">
-                    {getActionText(activity.activityType, name)}
-                  </span>
+                  <p className="text-sm text-muted-foreground">
+                    {getActionText(activity.activityType, name)}{" "}
+                    {activity.metadata &&
+                      Object.entries(activity.metadata).map(([key]) => (
+                        <span
+                          key={key}
+                          className="text-sm text-muted-foreground"
+                        >
+                          {key}
+                        </span>
+                      ))}
+                  </p>
                 </div>
-                {activity.metadata &&
-                  Object.entries(activity.metadata).map(([key, value]) => (
-                    <p key={key} className="text-sm text-muted-foreground">
-                      {key}:{" "}
-                      {typeof value === "object"
-                        ? JSON.stringify(value)
-                        : value}
-                    </p>
-                  ))}
                 <p className="text-xs text-muted-foreground">
                   {formatDistanceToNow(new Date(activity.timestamp), {
                     addSuffix: true,

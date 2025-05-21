@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import {
   getWorkspaceRooms,
   getRoomMembers,
+  getUserRooms,
 } from "../../../actions/api/room/queries";
 import {
   createRoom,
@@ -26,7 +27,7 @@ import { BaseError } from "@/lib/errors";
 export const useRoom = () => {
   const queryClient = useQueryClient();
   const { isValidResponse, toastUnknownError } = useUtils();
-  const { user } = useUser();
+  const { session, user } = useUser();
   const { workspaceId, chatId } = useParams<{
     workspaceId: string;
     chatId: string;
@@ -38,8 +39,8 @@ export const useRoom = () => {
     isPending: isPendingRooms,
     error: errorRooms,
   } = useSuspenseQuery({
-    queryKey: [workspaceId, "rooms"],
-    queryFn: () => getWorkspaceRooms({ id: workspaceId }),
+    queryKey: [session?.userId, "rooms"],
+    queryFn: () => getUserRooms(),
   });
 
   const {
@@ -54,19 +55,28 @@ export const useRoom = () => {
 
   // Mutations
   const create = useMutation({
-    mutationFn: ({ name }: { name: string }) =>
-      createRoom({ name, spaceId: workspaceId }),
+    mutationFn: async ({ name }: { name: string }) =>
+      await createRoom({
+        name,
+        spaceId: workspaceId,
+      }),
     onMutate: async (payload: Pick<RoomPayload, "name">) => {
       await queryClient.cancelQueries({
-        queryKey: [workspaceId, "rooms"],
+        queryKey: [session?.userId, "rooms"],
       });
-      const previousRooms = queryClient.getQueryData([workspaceId, "rooms"]);
+      console.log("seId", session?.userId);
+      const previousRooms = queryClient.getQueryData([
+        session?.userId,
+        "rooms",
+      ]);
 
-      queryClient.setQueryData([workspaceId, "rooms"], (old: Room[]) => {
+      queryClient.setQueryData([session?.userId, "rooms"], (old: Room[]) => {
         return [
           ...old,
           {
-            id: `temp-${Math.random().toString(36).substring(2, 9)}`,
+            id: `temp-${Date.now()}-${Math.random()
+              .toString(36)
+              .substring(2, 9)}`,
             name: payload.name,
             type: "GROUP",
             owner: user,
@@ -79,7 +89,7 @@ export const useRoom = () => {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({
-        queryKey: [workspaceId, "rooms"],
+        queryKey: [session?.userId, "rooms"],
       });
       if (isValidResponse(response)) {
         toast.success("Room created successfully!");
@@ -87,10 +97,13 @@ export const useRoom = () => {
     },
     onError: (error, variables, context) => {
       if (context?.previousRooms) {
-        queryClient.setQueryData([workspaceId, "rooms"], context.previousRooms);
+        queryClient.setQueryData(
+          [session?.userId, "rooms"],
+          context.previousRooms
+        );
       }
       queryClient.invalidateQueries({
-        queryKey: [workspaceId, "rooms"],
+        queryKey: [session?.userId, "rooms"],
       });
       toastUnknownError(error as BaseError);
     },
@@ -100,7 +113,7 @@ export const useRoom = () => {
     mutationFn: updateRoom,
     onSuccess: (response) => {
       if (!isValidResponse(response)) return;
-      queryClient.invalidateQueries({ queryKey: [workspaceId, "rooms"] });
+      queryClient.invalidateQueries({ queryKey: [session?.userId, "rooms"] });
     },
     onError: toastUnknownError,
   });
@@ -110,7 +123,7 @@ export const useRoom = () => {
       await deleteRoom({ id, spaceId: workspaceId }),
     onSuccess: (response) => {
       if (!isValidResponse(response)) return;
-      queryClient.invalidateQueries({ queryKey: [workspaceId, "rooms"] });
+      queryClient.invalidateQueries({ queryKey: [session?.userId, "rooms"] });
     },
     onError: toastUnknownError,
   });
@@ -135,16 +148,16 @@ export const useRoom = () => {
 
   // Prefetching
   const prefetchRooms = useCallback(() => {
-    if (!workspaceId) return;
+    if (!session?.userId) return;
 
     console.log("Prefetching rooms for workspace:", workspaceId);
 
     return queryClient.prefetchQuery({
-      queryKey: [workspaceId, "rooms"],
-      queryFn: () => getWorkspaceRooms({ id: workspaceId }),
-      staleTime: 60000, // Consider data fresh for 1 minute
+      queryKey: [session?.userId, "rooms"],
+      queryFn: () => getUserRooms(),
+      staleTime: 60000,
     });
-  }, [workspaceId, queryClient]);
+  }, [session?.userId, queryClient]);
 
   return {
     // Queries

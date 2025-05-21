@@ -138,6 +138,8 @@ export const KanbanBoard = () => {
           id: draggableId,
           prevItemId,
           nextItemId,
+          bucketId: srcBucket.id,
+          projectId: srcBucket.project.id,
         });
       } else {
         // moving item to a different bucket
@@ -169,6 +171,8 @@ export const KanbanBoard = () => {
           bucketId: destBucket.id,
           prevItemId: prevItemIdDest,
           nextItemId: nextItemIdDest,
+          projectId: srcBucket.project.id,
+          srcBucketId: srcBucket.id,
         });
       }
     }

@@ -29,6 +29,7 @@ export const loginUser = async (
   payload: Pick<UserPayload, "email" | "password">
 ) => {
   try {
+    console.log("payload=>", payload);
     const result = await auth<UserWithToken>(`/users/login`, payload);
     const { user, tokens } = result;
     const session = {

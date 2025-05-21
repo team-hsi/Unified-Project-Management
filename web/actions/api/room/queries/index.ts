@@ -4,7 +4,7 @@ import { get } from "../../../core/api-client";
 import { extractErrors } from "@/lib/utils";
 import { WorkspacePayload } from "@/feature/shared/@types/space";
 import { CACHE_LIFE, CACHE_TAGS } from "../../../core/cache-config";
-import { User } from "@/feature/shared/@types/user";
+import { getSession } from "@/actions/core/dal";
 
 export const getAllRooms = async () => {
   try {
@@ -30,12 +30,13 @@ export const getRoomById = async (payload: Pick<RoomPayload, "id">) => {
   }
 };
 
-export const getUserRooms = async (payload: Pick<User, "id">) => {
+export const getUserRooms = async () => {
   try {
-    return await get<Room[]>(`/user/${payload.id}/rooms`, {
+    const session = await getSession();
+    return await get<Room[]>(`/users/rooms`, {
       next: {
         revalidate: CACHE_LIFE.MEDIUM,
-        tags: [CACHE_TAGS.USER.ROOMS(payload.id)],
+        tags: [CACHE_TAGS.USER.ROOMS(session.userId as string)],
       },
       cache: "force-cache",
     });

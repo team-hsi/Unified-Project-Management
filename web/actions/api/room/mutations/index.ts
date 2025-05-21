@@ -4,13 +4,15 @@ import { post, put, del } from "@/actions/core/api-client";
 import { revalidateTag } from "next/cache";
 import { CACHE_TAGS } from "@/actions/core/cache-config";
 import { handleError } from "@/lib/errors";
+import { getSession } from "@/actions/core/dal";
 
 export const createRoom = async (
   payload: Pick<RoomPayload, "name" | "spaceId">
 ) => {
   try {
+    const session = await getSession();
     const result = await post<Room>("/rooms/create", payload);
-    revalidateTag(CACHE_TAGS.WORKSPACE.ROOMS(payload.spaceId));
+    revalidateTag(CACHE_TAGS.USER.ROOMS(session.userId as string));
     return result;
   } catch (error) {
     return handleError(error);

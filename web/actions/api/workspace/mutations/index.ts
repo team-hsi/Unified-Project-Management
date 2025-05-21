@@ -16,6 +16,7 @@ export const createWorkspace = async (
   payload: Pick<WorkspacePayload, "name" | "description">
 ) => {
   try {
+    console.log("pay", payload);
     const session = await getSession();
     const result = await post<Workspace>("/spaces/create", payload);
     revalidateTag(CACHE_TAGS.USER.WORKSPACES(session.userId as string));

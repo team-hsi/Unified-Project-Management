@@ -4,24 +4,19 @@ import { ChatStoreProvider } from "@/lib/stores/chat-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Chat } from "@/feature/chat/layout/chat";
-import { getWorkspaceRooms } from "@/actions/api/room/queries";
+import { getUserRooms } from "@/actions/api/room/queries";
+import { verifySession } from "@/actions/core/dal";
 export const metadata: Metadata = {
   title: "Chat",
   description: "Collaboration chat page",
 };
 
-const ChatLayout = async ({
-  params,
-  children,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ workspaceId: string }>;
-}) => {
-  const { workspaceId } = await params;
+const ChatLayout = async ({ children }: { children: React.ReactNode }) => {
+  const session = await verifySession();
   const queryClient = getQueryClient();
   queryClient.prefetchQuery({
-    queryKey: [workspaceId, "rooms"],
-    queryFn: () => getWorkspaceRooms({ id: workspaceId }),
+    queryKey: [session.userId, "rooms"],
+    queryFn: () => getUserRooms({ id: session?.userId as string }),
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
