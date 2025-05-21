@@ -28,8 +28,7 @@ export const useDocument = () => {
 
   // Create project mutation
   const create = useMutation({
-    mutationFn: async (data: { name: string }) =>
-      await createDocument({ ...data, projectId: projectId }),
+    mutationFn: createDocument,
     onSuccess: (response) => {
       if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({

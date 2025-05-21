@@ -5,9 +5,7 @@ import { CACHE_TAGS } from "@/actions/core/cache-config";
 import { handleError } from "@/lib/errors";
 import { Document, DocumentPayload } from "@/feature/shared/@types/document";
 
-export const createDocument = async (
-  payload: Pick<DocumentPayload, "name" | "projectId">
-) => {
+export const createDocument = async (payload: Omit<DocumentPayload, "id">) => {
   try {
     const result = await post<Document>("/documents/create", payload);
     revalidateTag(CACHE_TAGS.PROJECT.DOCUMENTS(payload.projectId));

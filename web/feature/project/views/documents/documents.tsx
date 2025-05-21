@@ -27,9 +27,10 @@ export const DocumentsView = () => {
   if (!projectDocuments || projectDocuments.length === 0) {
     return <div className="text-gray-500 p-4">No documents found</div>;
   }
+  console.log(projectDocuments);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 flex flex-wrap gap-2">
       {projectDocuments.map((doc) => (
         <DocumentCard doc={doc} workspaceId={workspaceId} key={doc.id} />
       ))}

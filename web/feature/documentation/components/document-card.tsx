@@ -11,7 +11,7 @@ export const DocumentCard = ({
   doc: Document;
 }) => {
   return (
-    <Link href={`${workspaceId}/${doc.projectId}/${doc.id}`} className="block">
+    <Link href={`/${workspaceId}/${doc.projetId}/${doc.id}`} className="block">
       <div className="border w-xs rounded-lg overflow-hidden hover:border-primary transition-colors">
         <div className="aspect-video bg-muted flex items-center justify-center">
           <FileText className="h-8 w-8 text-muted-foreground" />

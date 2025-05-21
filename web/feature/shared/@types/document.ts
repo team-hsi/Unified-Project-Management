@@ -2,7 +2,7 @@ export type Document = {
   id: string;
   name: string;
   content: string;
-  projectId: string;
+  projetId: string;
   createdAt: string;
   updatedAt: string;
 };
