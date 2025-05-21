@@ -15,7 +15,7 @@ jobs:
       run:
         working-directory: web
     env:
-      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+      API_URL: ${{ secrets.API_URL }}
 
     steps:
       - uses: actions/checkout@v4
