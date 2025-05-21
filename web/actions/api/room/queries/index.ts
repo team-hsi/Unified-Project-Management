@@ -4,6 +4,7 @@ import { get } from "../../../core/api-client";
 import { extractErrors } from "@/lib/utils";
 import { WorkspacePayload } from "@/feature/shared/@types/space";
 import { CACHE_LIFE, CACHE_TAGS } from "../../../core/cache-config";
+import { User } from "@/feature/shared/@types/user";
 
 export const getAllRooms = async () => {
   try {
@@ -29,6 +30,20 @@ export const getRoomById = async (payload: Pick<RoomPayload, "id">) => {
   }
 };
 
+export const getUserRooms = async (payload: Pick<User, "id">) => {
+  try {
+    return await get<Room[]>(`/user/${payload.id}/rooms`, {
+      next: {
+        revalidate: CACHE_LIFE.MEDIUM,
+        tags: [CACHE_TAGS.USER.ROOMS(payload.id)],
+      },
+      cache: "force-cache",
+    });
+  } catch (error) {
+    console.error("Error fetching user rooms", error);
+    throw new Error(extractErrors(error));
+  }
+};
 export const getWorkspaceRooms = async (
   payload: Pick<WorkspacePayload, "id">
 ) => {

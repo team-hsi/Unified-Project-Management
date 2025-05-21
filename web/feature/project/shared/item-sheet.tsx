@@ -55,7 +55,7 @@ export const ItemSheet = ({
                 unsavedForm={unsavedForm}
               />
               <div className="border-t border-border">
-                <ItemWorkflow item={item} />
+                <ItemWorkflow itemId={item.id} />
               </div>
             </div>
           </div>

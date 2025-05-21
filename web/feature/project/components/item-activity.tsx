@@ -70,7 +70,10 @@ export const ItemActivity = ({
                 {activity.metadata &&
                   Object.entries(activity.metadata).map(([key, value]) => (
                     <p key={key} className="text-sm text-muted-foreground">
-                      {key}: {value}
+                      {key}:{" "}
+                      {typeof value === "object"
+                        ? JSON.stringify(value)
+                        : value}
                     </p>
                   ))}
                 <p className="text-xs text-muted-foreground">

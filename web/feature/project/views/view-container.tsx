@@ -3,6 +3,7 @@ import { KanbanBoard } from "./kanban/components/kanban-board";
 import { KanbanBoardSkeleton } from "./kanban/shared/skeletons";
 import { ListView } from "./list/components/list";
 import { ListViewSkeleton } from "./list/shared/skeletons";
+import { DocumentsView } from "./documents/documents";
 
 //TODO: Implement dynamic imports for code splitting
 /*
@@ -36,10 +37,10 @@ const VIEWS = {
     component: ListView,
     skeleton: ListViewSkeleton,
   },
-  // timeline: {
-  //   component: () => <div>Timeline View Component</div>,
-  //   skeleton: () => <div>TimelineViewSkeleton Component</div>,
-  // },
+  documents: {
+    component: () => <DocumentsView />,
+    skeleton: () => <div>Document skeleton Component</div>,
+  },
 };
 
 type ViewKey = keyof typeof VIEWS;

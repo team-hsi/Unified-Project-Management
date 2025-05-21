@@ -14,9 +14,10 @@ import { Button } from "@/feature/shared/ui/button";
 import { Input } from "@/feature/shared/ui/input";
 import { Checkbox } from "@/feature/shared/ui/checkbox";
 import { Label } from "@/feature/shared/ui/label";
-import { useItem } from "@/feature/shared/hooks/use-item";
-import { toast } from "sonner";
+// import { useItem } from "@/feature/shared/hooks/use-item";
+// import { toast } from "sonner";
 import type { CheckList } from "@/feature/shared/@types/check-list";
+import { useItemOne } from "@/feature/shared/hooks/use-item-one";
 
 const checkListSchema = z.object({
   description: z
@@ -51,7 +52,7 @@ export const CreateCheckList = ({
       isCompleted: false,
     },
   });
-  const { update } = useItem();
+  const { update } = useItemOne(itemId);
 
   const onSubmit = async (data: FormValues) => {
     const checklist = [...(currentList ?? []), data];
@@ -59,9 +60,6 @@ export const CreateCheckList = ({
       setCheckList(checklist);
       setIsOpen(false);
       await update.mutateAsync({ checklist, id: itemId });
-      toast.success("Create", {
-        description: "Your checklist has been created.",
-      });
       reset();
     } catch (error) {
       console.error("Submission failed:", error);

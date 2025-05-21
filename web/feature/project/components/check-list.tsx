@@ -8,13 +8,12 @@ import { Plus } from "lucide-react";
 import { Button } from "@/feature/shared/ui/button";
 import { CreateCheckList } from "../overlays/create-check-list";
 import type { CheckList as Check } from "@/feature/shared/@types/check-list";
-import { toast } from "sonner";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/feature/shared/ui/tooltip";
-import { useItem } from "@/feature/shared/hooks/use-item";
+import { useItemOne } from "@/feature/shared/hooks/use-item-one";
 
 export const CheckList = ({
   lists,
@@ -22,24 +21,21 @@ export const CheckList = ({
 }: {
   lists: Check[] | null;
   itemId: string;
+  projectId: string;
 }) => {
   const [checklist, setCheckList] = React.useState(lists || []);
-  const { update } = useItem();
+  const { update } = useItemOne(itemId);
 
   React.useEffect(() => {
     setCheckList(lists || []);
   }, [lists]);
 
   const handleToggle = async (index: number) => {
-    setCheckList((prev) =>
-      prev.map((item, idx) =>
-        idx === index ? { ...item, isCompleted: !item.isCompleted } : item
-      )
+    const updatedChecklist = checklist.map((item, idx) =>
+      idx === index ? { ...item, isCompleted: !item.isCompleted } : item
     );
-    await update.mutateAsync({ checklist, id: itemId });
-    toast.success("Update", {
-      description: "Checklist updated successfully!",
-    });
+    setCheckList(updatedChecklist);
+    await update.mutateAsync({ checklist: updatedChecklist, id: itemId });
   };
   if (!checklist || checklist.length === 0) {
     return (
@@ -74,19 +70,21 @@ export const CheckList = ({
           </span>
         </div>
         <Tooltip>
-          <TooltipTrigger>
-            <CreateCheckList
-              itemId={itemId}
-              currentList={checklist}
-              setCheckList={(value) => setCheckList(value)}
-            >
-              <Button
-                size="icon"
-                className="rounded-full bg-primary/90 hover:bg-primary text-primary-foreground shadow-md transition-all duration-200"
+          <TooltipTrigger asChild>
+            <div>
+              <CreateCheckList
+                itemId={itemId}
+                currentList={checklist}
+                setCheckList={(value) => setCheckList(value)}
               >
-                <Plus className="h-5 w-5" />
-              </Button>
-            </CreateCheckList>
+                <Button
+                  size="icon"
+                  className="rounded-full bg-primary/90 hover:bg-primary text-primary-foreground shadow-md transition-all duration-200"
+                >
+                  <Plus className="h-5 w-5" />
+                </Button>
+              </CreateCheckList>
+            </div>
           </TooltipTrigger>
           <TooltipContent>Add New</TooltipContent>
         </Tooltip>
