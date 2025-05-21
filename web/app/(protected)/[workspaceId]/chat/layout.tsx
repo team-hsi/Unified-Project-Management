@@ -16,7 +16,7 @@ const ChatLayout = async ({ children }: { children: React.ReactNode }) => {
   const queryClient = getQueryClient();
   queryClient.prefetchQuery({
     queryKey: [session.userId, "rooms"],
-    queryFn: () => getUserRooms({ id: session?.userId as string }),
+    queryFn: () => getUserRooms(),
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
