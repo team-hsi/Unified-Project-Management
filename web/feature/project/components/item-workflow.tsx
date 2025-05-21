@@ -6,18 +6,24 @@ import {
   TabsTrigger,
 } from "@/feature/shared/ui/tabs";
 import { CheckList } from "./check-list";
-import { Item } from "@/feature/shared/@types/item";
-import { useQuery } from "@tanstack/react-query";
-import { getItemById } from "@/actions/api/item/queries";
 import { ItemActivity } from "./item-activity";
+import { useItemOne } from "@/feature/shared/hooks/use-item-one";
+import { Button } from "@/feature/shared/ui/button";
 
-export const ItemWorkflow = ({ item }: { item: Item }) => {
-  const { data, isLoading, error } = useQuery({
-    queryKey: [item.bucket.project.id, "item"],
-    queryFn: () => getItemById({ id: item.id }),
-  });
+export const ItemWorkflow = ({ itemId }: { itemId: string }) => {
+  const { item, isLoading, error } = useItemOne(itemId);
+
   if (error) {
-    <div> error happended</div>;
+    return (
+      <div className="h-full flex flex-col items-center justify-center gap-4 p-4">
+        <div className="text-destructive font-medium">
+          Failed to load item details
+        </div>
+        <Button variant="outline" onClick={() => window.location.reload()}>
+          Try Again
+        </Button>
+      </div>
+    );
   }
 
   return (
@@ -48,7 +54,17 @@ export const ItemWorkflow = ({ item }: { item: Item }) => {
             value="subtasks"
             className="flex flex-col gap-3 px-4 py-2 m-0 h-full"
           >
-            <CheckList lists={item.checklist} itemId={item.id} />
+            {isLoading ? (
+              <div className="flex items-center justify-center p-4">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              </div>
+            ) : (
+              <CheckList
+                lists={item?.checklist ?? null}
+                itemId={itemId}
+                projectId={item?.bucket.project.id ?? ""}
+              />
+            )}
           </TabsContent>
           <TabsContent value="comments" className="p-4 m-0 h-full">
             <p className="text-center text-sm text-muted-foreground">
@@ -62,7 +78,10 @@ export const ItemWorkflow = ({ item }: { item: Item }) => {
                   <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                 </div>
               ) : (
-                <ItemActivity activities={data?.activities} name={item.name} />
+                <ItemActivity
+                  activities={item?.activities}
+                  name={item?.name ?? ""}
+                />
               )}
             </div>
           </TabsContent>

@@ -2,7 +2,13 @@
 
 import React from "react";
 
-import { MoreHorizontal, Plus, Settings2, Trash2 } from "lucide-react";
+import {
+  FileText,
+  MoreHorizontal,
+  Plus,
+  Settings2,
+  Trash2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +32,7 @@ import { Project } from "@/feature/shared/@types/projects";
 import { Management } from "../management/management";
 import { DeleteProjectDialog } from "../overlays/delete-project";
 import { CreateProjectDialog } from "../overlays/create-project";
+import { NewDocument } from "@/feature/documentation/overlays/new-doc";
 
 export const NavProjects = () => {
   const { workspaceProjects, prefetchProject } = useProject();
@@ -118,6 +125,20 @@ export const NavProjects = () => {
                   }
                 }}
               >
+                <CustomDialog
+                  triggerChildren={
+                    <>
+                      <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <span>New Doc</span>
+                    </>
+                  }
+                  onSelect={() => handleDialogItemSelect(project.id)}
+                  onOpenChange={(open) =>
+                    handleDialogItemOpenChange(project.id, open)
+                  }
+                >
+                  <NewDocument projectId={project.id} />
+                </CustomDialog>
                 <CustomDialog
                   triggerChildren={
                     <>

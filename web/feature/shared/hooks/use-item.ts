@@ -115,6 +115,7 @@ export const useItem = () => {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
+      queryClient.invalidateQueries({ queryKey: [projectId, "item"] });
       if (isValidResponse(response)) {
         toast.success("Item updated successfully!");
       }

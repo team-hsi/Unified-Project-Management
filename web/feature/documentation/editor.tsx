@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+// import { useState } from "react";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
@@ -8,15 +8,19 @@ import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { EditorState } from "lexical";
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import type { EditorThemeClasses } from "lexical";
 import ToolbarPlugin from "./toolbar";
-// import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin";
+import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin";
 import "./styles.css";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getDocumentById } from "@/actions/api/document/queries";
+import { useParams } from "next/navigation";
+
+export const emptyValue =
+  '{"root":{"children":[{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
 
 function Placeholder() {
   return (
@@ -31,22 +35,57 @@ function onError(error: Error) {
 }
 
 const Editor = () => {
-  const [editorState, setEditorState] = useState<string | null>(null);
+  // const [editorState, setEditorState] = useState<string | null>(null);
+  const { projectId, docId } = useParams<{
+    projectId: string;
+    docId: string;
+  }>();
+  const {
+    data: document,
+    isPending,
+    error,
+  } = useSuspenseQuery({
+    queryKey: [projectId, "documents", docId],
+    queryFn: () => getDocumentById({ id: docId }),
+  });
+
+  if (isPending) {
+    return (
+      <div className="flex justify-center items-center min-h-[200px]">
+        Loading editor...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-red-500 p-4">
+        Error loading document: {error.message}
+      </div>
+    );
+  }
 
   const initialConfig = {
     namespace: "MyRichTextEditor",
     theme: EditorTheme,
     onError,
     nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, LinkNode],
+    editorState: document.content || emptyValue,
   };
 
-  const onChange = (state: EditorState) => {
-    state.read(() => {
-      const json = JSON.stringify(state.toJSON());
-      setEditorState(json);
-    });
-    console.log(editorState);
-  };
+  // const onChange = (state: EditorState) => {
+  //   state.read(() => {
+  //     const json = JSON.stringify(state.toJSON());
+  //     setEditorState(json);
+  //   });
+  // };
+  // const onSave = async () => {
+  //   await update.mutateAsync({
+  //     id: document.id,
+  //     projectId: document.projectId,
+  //     content: editorState || "",
+  //   });
+  // };
 
   return (
     <div className="editor-container">
@@ -57,14 +96,15 @@ const Editor = () => {
             <RichTextPlugin
               contentEditable={<ContentEditable className="editor-content" />}
               placeholder={<Placeholder />}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               ErrorBoundary={LexicalErrorBoundary as any}
             />
             <HistoryPlugin />
             <AutoFocusPlugin />
             <ListPlugin />
             <LinkPlugin />
-            {/* <ListMaxIndentLevelPlugin maxDepth={7} /> */}
-            <OnChangePlugin onChange={onChange} />
+            <ListMaxIndentLevelPlugin maxDepth={7} />
+            {/* <OnChangePlugin onChange={onChange} /> */}
           </div>
         </div>
       </LexicalComposer>
