@@ -3,8 +3,9 @@ import { auth } from "@/actions/core/api-client";
 import { UserPayload, UserWithToken } from "@/feature/shared/@types/user";
 import { createSession, deleteSession } from "@/actions/core/session";
 import { redirect } from "next/navigation";
-import { getSession, getUser } from "@/actions/core/dal";
+import { getSession } from "@/actions/core/dal";
 import { handleError } from "@/lib/errors";
+import { getUser } from "../queries";
 
 export const createUser = async (
   payload: Omit<UserPayload, "id" | "activeSpaceId">

@@ -11,11 +11,18 @@ export function SpaceSync() {
   const { session } = useUser();
 
   useEffect(() => {
-    if (!session) return;
-    if (!setActive) return;
-    if (session.activeSpace === workspaceId) return;
-    setActive.mutateAsync(workspaceId);
-  }, [workspaceId]);
+    if (!session || !setActive || session.activeSpace === workspaceId) return;
+
+    const syncSpace = async () => {
+      try {
+        await setActive.mutateAsync(workspaceId);
+      } catch (error) {
+        console.error("Failed to sync workspace:", error);
+      }
+    };
+
+    syncSpace();
+  }, [workspaceId, session, setActive]);
 
   return null;
 }

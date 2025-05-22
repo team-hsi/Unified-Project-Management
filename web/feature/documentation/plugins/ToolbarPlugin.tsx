@@ -41,6 +41,14 @@ import {
   getDefaultCodeLanguage,
   getCodeLanguages,
 } from "@lexical/code";
+import { useDebounceCallback } from "usehooks-ts";
+import { useMutation } from "@tanstack/react-query";
+import { updateDocument } from "@/actions/api/document/mutations";
+import { getQueryClient } from "@/lib/query-client/get-query-client";
+import { toast } from "sonner";
+import { useParams } from "next/navigation";
+import { useUtils } from "@/feature/shared/hooks/use-utils";
+import { emptyValue } from "../editor";
 
 const LowPriority = 1;
 
@@ -441,6 +449,12 @@ function BlockOptionsDropdownList({
 }
 
 export default function ToolbarPlugin() {
+  const queryClient = getQueryClient();
+  const { isValidResponse, toastUnknownError } = useUtils();
+  const { projectId, docId } = useParams<{
+    projectId: string;
+    docId: string;
+  }>();
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [canUndo, setCanUndo] = useState(false);
@@ -503,14 +517,41 @@ export default function ToolbarPlugin() {
       }
     }
   }, [editor]);
+  // save to db
+  const update = useMutation({
+    mutationFn: updateDocument,
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
+      queryClient.invalidateQueries({
+        queryKey: [projectId, "documents", docId],
+      });
+      toast.success("saved");
+    },
+    onError: toastUnknownError,
+  });
+
+  const handleSave = useDebounceCallback(async (state: string) => {
+    console.log("state", state);
+    await update.mutateAsync({
+      id: docId,
+      projectId: projectId,
+      content: state || emptyValue,
+    });
+  }, 2000);
 
   useEffect(() => {
     return mergeRegister(
-      editor.registerUpdateListener(({ editorState }) => {
-        editorState.read(() => {
-          updateToolbar();
-        });
-      }),
+      editor.registerUpdateListener(
+        ({ editorState, dirtyElements, dirtyLeaves }) => {
+          editorState.read(() => {
+            updateToolbar();
+          });
+          if (dirtyElements.size === 0 && dirtyLeaves.size === 0) {
+            return;
+          }
+          handleSave(JSON.stringify(editorState));
+        }
+      ),
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
         () => {
