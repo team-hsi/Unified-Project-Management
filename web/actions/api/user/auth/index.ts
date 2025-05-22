@@ -3,14 +3,15 @@ import { auth } from "@/actions/core/api-client";
 import { UserPayload, UserWithToken } from "@/feature/shared/@types/user";
 import { createSession, deleteSession } from "@/actions/core/session";
 import { redirect } from "next/navigation";
-import { getSession, getUser } from "@/actions/core/dal";
+import { getSession } from "@/actions/core/dal";
 import { handleError } from "@/lib/errors";
+import { getUser } from "../queries";
 
 export const createUser = async (
   payload: Omit<UserPayload, "id" | "activeSpaceId">
 ) => {
   try {
-    const result = await auth<UserWithToken>("/v1/users/create", payload);
+    const result = await auth<UserWithToken>("/users/create", payload);
     const { user, tokens } = result;
     const session = {
       userId: user.id,
@@ -29,7 +30,8 @@ export const loginUser = async (
   payload: Pick<UserPayload, "email" | "password">
 ) => {
   try {
-    const result = await auth<UserWithToken>(`/v1/users/login`, payload);
+    console.log("payload=>", payload);
+    const result = await auth<UserWithToken>(`/users/login`, payload);
     const { user, tokens } = result;
     const session = {
       userId: user.id,

@@ -1,3 +1,5 @@
+import { Permission } from "./space";
+
 export type ProjectPayload = {
   id: string;
   name: string;
@@ -9,6 +11,7 @@ export type Project = {
   name: string;
   ownerId: string;
   space: string;
+  permissions: Permission;
   createdAt: string;
   updatedAt: string;
 };

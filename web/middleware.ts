@@ -28,16 +28,16 @@ export default async function middleware(req: NextRequest) {
   }
 
   // If user is authenticated and has an active workspace, ensure path starts with active workspace
-  if (
-    session?.userId &&
-    session?.activeSpace &&
-    !path.startsWith(`/${session.activeSpace}`) &&
-    !path.startsWith("/not-found")
-  ) {
-    return NextResponse.redirect(
-      new URL(`/${session.activeSpace}/projects`, req.nextUrl)
-    );
-  }
+  // !path.startsWith(`/${session.activeSpace}`) &&
+  // if (
+  //   session?.userId &&
+  //   session?.activeSpace &&
+  //   !path.startsWith("/not-found")
+  // ) {
+  //   return NextResponse.redirect(
+  //     new URL(`/${session.activeSpace}/projects`, req.nextUrl)
+  //   );
+  // }
 
   return NextResponse.next();
 }

@@ -2,8 +2,17 @@ import { z } from "zod";
 
 export const projectSchema = z.object({
   name: z.string().min(3).max(20),
-  description: z.string().min(10).max(100).optional(),
 });
+
+export const projectDeleteSchema = (projectName: string) =>
+  z.object({
+    name: z
+      .string()
+      .min(1, "Project name is required")
+      .refine((value) => value === projectName, {
+        message: "Project name does not match",
+      }),
+  });
 
 export const itemFormSchema = z.object({
   status: z.enum(["incomplete", "complete"]),

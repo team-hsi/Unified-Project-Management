@@ -1,4 +1,6 @@
-import { Workspace } from "./space";
+import { Workspace, WorkspaceWithUser } from "./space";
+
+export type Role = "owner" | "admin" | "member" | "guest";
 
 export interface UserPayload {
   id: string;
@@ -9,7 +11,6 @@ export interface UserPayload {
   password: string;
   activeSpaceId: string | null;
 }
-
 export interface User {
   id: string;
   firstname: string;
@@ -29,13 +30,17 @@ export interface UserWithToken {
 }
 export interface Member {
   id: string;
-  role: "admin" | "guest" | "member";
+  role: Omit<Role, "owner">;
   user: User;
+}
+
+export interface MemberWithSpace extends Member {
+  space: WorkspaceWithUser;
 }
 
 export interface MemberPayload {
   id: string;
-  role: "admin" | "guest" | "member";
+  role: Member["role"];
   userId: string;
 }
 

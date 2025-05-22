@@ -32,6 +32,10 @@ export const useItem = () => {
       if (!bucket) {
         return { previousItems };
       }
+      const maxPosition =
+        bucket.items?.reduce((max, item) => Math.max(max, item.position), 0) ||
+        0;
+
       const optimisticItem: Item = {
         id: `temp-${Date.now()}`,
         name: newItemData.name || "New Item",
@@ -51,7 +55,7 @@ export const useItem = () => {
           updatedAt: "",
         },
         status: newItemData.status || "incomplete",
-        position: 0,
+        position: maxPosition + 100,
         priority: newItemData.priority || null,
         dueDate: newItemData.dueDate || "",
         createdAt: new Date().toISOString(),
@@ -85,15 +89,6 @@ export const useItem = () => {
     onMutate: async (updatedItemData) => {
       await queryClient.cancelQueries({ queryKey: [projectId, "items"] });
       const previousItems = queryClient.getQueryData([projectId, "items"]);
-      // const newItemData = previousItems.map((item: { id: string }) => {
-      //   return item.id === updatedItemData.id
-      //     ? {
-      //         ...item,
-      //         ...updatedItemData,
-      //       }
-      //     : item;
-      // });
-      // console.log("newItemData", newItemData);
       queryClient.setQueryData([projectId, "items"], (old: Item[] = []) => {
         return old.map((item) =>
           item.id === updatedItemData.id
@@ -115,6 +110,7 @@ export const useItem = () => {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
+      queryClient.invalidateQueries({ queryKey: [projectId, "item"] });
       if (isValidResponse(response)) {
         toast.success("Item updated successfully!");
       }

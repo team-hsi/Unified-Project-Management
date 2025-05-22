@@ -1,27 +1,33 @@
-export const EmptyLabelState = () => {
+"use client";
+import { Button } from "@/feature/shared/ui/button";
+import { Card } from "@/feature/shared/ui/card";
+import { Tag, Plus } from "lucide-react";
+
+interface EmptyLabelsProps {
+  onCreateClick?: () => void;
+}
+
+export function EmptyLabels({ onCreateClick }: EmptyLabelsProps) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
-      <div className="mb-2 rounded-full bg-muted p-3">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-6 w-6 text-muted-foreground"
-        >
-          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-          <line x1="7" y1="7" x2="7.01" y2="7"></line>
-        </svg>
+    <Card className="p-8 flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-accent/5 via-primary/5 to-accent/5 border-accent/20 shadow-sm hover:shadow-md transition-all duration-300">
+      <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shadow-inner">
+        <Tag className="h-8 w-8 text-primary" />
       </div>
-      <h3 className="mb-1 text-lg font-medium">No labels yet</h3>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Create labels to categorize and organize your projects.
-      </p>
-    </div>
+      <div className="text-center">
+        <h3 className="text-xl font-semibold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          No labels found
+        </h3>
+        <p className="text-muted-foreground mt-1">
+          Create labels to organize your project items
+        </p>
+      </div>
+      <Button
+        onClick={onCreateClick}
+        className="mt-2 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground shadow-sm hover:shadow-md transition-all duration-300"
+      >
+        <Plus className="h-4 w-4 mr-2" />
+        Create Label
+      </Button>
+    </Card>
   );
-};
+}

@@ -2,7 +2,13 @@
 
 import React from "react";
 
-import { Edit, MoreHorizontal, Plus, Settings2, Trash2 } from "lucide-react";
+import {
+  FileText,
+  MoreHorizontal,
+  Plus,
+  Settings2,
+  Trash2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,14 +29,13 @@ import { useParams, usePathname } from "next/navigation";
 import { CustomDialog } from "@/feature/shared/components/custom-dialog";
 import { useProject } from "@/feature/shared/hooks/use-project";
 import { Project } from "@/feature/shared/@types/projects";
-import { UpdateProjectDialog } from "../interactions/update-project";
 import { Management } from "../management/management";
-import { DeleteProjectDialog } from "../interactions/delete-project";
-import { CreateProjectDialog } from "../interactions/create-project";
+import { DeleteProjectDialog } from "../overlays/delete-project";
+import { CreateProjectDialog } from "../overlays/create-project";
+import { NewDocument } from "@/feature/documentation/overlays/new-doc";
 
 export const NavProjects = () => {
   const { workspaceProjects, prefetchProject } = useProject();
-  // console.log(projects, "projects data");
   const { isMobile } = useSidebar();
   const { workspaceId } = useParams<{ workspaceId: string }>();
 
@@ -76,7 +81,6 @@ export const NavProjects = () => {
   }
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      {/* <ProjectUrlSync /> */}
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
         {workspaceProjects.map((project: Project) => (
@@ -124,8 +128,8 @@ export const NavProjects = () => {
                 <CustomDialog
                   triggerChildren={
                     <>
-                      <Edit className="mr-2 h-4 w-4 text-muted-foreground" />
-                      <span>Edit Project</span>
+                      <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <span>New Doc</span>
                     </>
                   }
                   onSelect={() => handleDialogItemSelect(project.id)}
@@ -133,14 +137,8 @@ export const NavProjects = () => {
                     handleDialogItemOpenChange(project.id, open)
                   }
                 >
-                  <UpdateProjectDialog
-                    project={project}
-                    onOpenChange={(open) =>
-                      handleDialogItemOpenChange(project.id, open)
-                    }
-                  />
+                  <NewDocument projectId={project.id} />
                 </CustomDialog>
-
                 <CustomDialog
                   triggerChildren={
                     <>
@@ -155,9 +153,7 @@ export const NavProjects = () => {
                 >
                   <Management project={project} />
                 </CustomDialog>
-
                 <DropdownMenuSeparator />
-
                 <CustomDialog
                   triggerChildren={
                     <>

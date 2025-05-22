@@ -18,7 +18,7 @@ import { Workspace } from "@/feature/shared/@types/space";
 import { NavUser } from "@/feature/user/nav-user";
 import { useProject } from "@/feature/shared/hooks/use-project";
 import { Project } from "@/feature/shared/@types/projects";
-import { Notification } from "@/feature/notification/notification";
+import { Notification } from "@/feature/notification/components/notification";
 // import { ConnectionManager } from "@/feature/notification/connection-manager";
 
 export const ProjectNavigation = () => {

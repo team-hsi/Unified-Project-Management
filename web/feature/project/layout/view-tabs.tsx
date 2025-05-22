@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger } from "@/feature/shared/ui/tabs";
-import { GanttChartIcon as ChartGantt, Kanban, List } from "lucide-react";
+import { FileText, Kanban, List } from "lucide-react";
 import * as motion from "motion/react-client";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -44,13 +44,13 @@ const ProjectTabs = () => {
             )}
           </TabsTrigger>
         </Link>
-        <Link href={`${pathname}?view=timeline`} passHref>
+        <Link href={`${pathname}?view=documents`} passHref>
           <TabsTrigger
-            value="timeline"
+            value="documents"
             className="relative data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:bg-primary"
           >
-            <ChartGantt /> Timeline
-            {activeTab === "timeline" && (
+            <FileText /> Documents
+            {activeTab === "documents" && (
               <motion.div
                 className="absolute bottom-[-2px] left-0 right-0 h-0.5 bg-[var(--foreground)]"
                 layoutId="underline"

@@ -50,14 +50,11 @@ export const getUser = cache(async () => {
   const session = await getSession();
 
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/v1/users/getcurrentuser`,
-      {
-        headers: {
-          Authorization: `Bearer ${session.tokens.accessToken}`,
-        },
-      }
-    );
+    const res = await fetch(`${process.env.API_URL}/v1/users/getcurrentuser`, {
+      headers: {
+        Authorization: `Bearer ${session.tokens.accessToken}`,
+      },
+    });
 
     const user = await res.json();
 

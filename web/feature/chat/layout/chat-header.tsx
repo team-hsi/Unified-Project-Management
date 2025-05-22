@@ -6,12 +6,10 @@ import { useMemo } from "react";
 import { Room } from "@/feature/shared/@types/room";
 import { useParams } from "next/navigation";
 import { ChatDetails } from "../components/info/chat-details";
-import { ChatDropdown } from "../interactions/chat-dropdown";
-import { Skeleton } from "@/feature/shared/ui/skeleton";
+import { ChatDropdown } from "../overlays/chat-dropdown";
 
 export function ChatHeader() {
   const { chatId } = useParams<{ chatId: string }>();
-  const { roomMembers, isPendingRoomMembers } = useRoom();
   const { rooms } = useRoom();
   const activeChat = useMemo(() => {
     const room = rooms.find((r: Room) => r.id === chatId);
@@ -39,20 +37,6 @@ export function ChatHeader() {
                   Active
                 </Badge>
               </h1>
-              <div className="flex items-center">
-                <Badge
-                  variant="online"
-                  size="sm"
-                  className="mr-1.5 h-2 w-2 rounded-full p-0"
-                />
-                {isPendingRoomMembers ? (
-                  <Skeleton className="h-3 w-16" />
-                ) : (
-                  <span className="text-xs text-muted-foreground">
-                    {roomMembers?.members.length} members
-                  </span>
-                )}
-              </div>
             </div>
           </div>
         </ChatDetails>

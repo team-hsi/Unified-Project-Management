@@ -10,7 +10,7 @@ import {
 import { ProjectsSkeleton } from "@/feature/project/shared/skeletons";
 import { NavProjects } from "@/feature/project/layout/project-lists";
 import { NavMain } from "./nav-menu";
-import { SpaceSwitcher } from "../components/workspace/space-switcher";
+import { SpaceSwitcher } from "../../workspace/space-switcher";
 
 export const AppSidebar = ({
   ...props

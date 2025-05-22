@@ -4,11 +4,13 @@ import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { cn, hexToRgba } from "@/lib/utils";
 import { Button } from "@/feature/shared/ui/button";
 import InlineEdit from "@/feature/shared/ui/inline-edit";
-import React from "react";
+import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import { Bucket } from "@/feature/shared/@types/bucket";
 import { BucketDropdown } from "../dropdown/bucket-dropdown";
 import { useBucket } from "@/feature/shared/hooks/use-bucket";
+import AddCardForm from "./add-item-form";
+import { useItem } from "@/feature/shared/hooks/use-item";
 
 interface KanbanBucketProps {
   bucket: Bucket;
@@ -19,9 +21,24 @@ export const KanbanBucket = ({ bucket, index }: KanbanBucketProps) => {
   const [lastAttemptedName, setLastAttemptedName] = React.useState<
     string | null
   >(null);
+  const [isAddingCard, setIsAddingCard] = useState(false);
+
   const { update } = useBucket();
+  const { create } = useItem();
   const displayName = update.isPending ? update.variables?.name : bucket.name;
 
+  const handleAddCard = async (content: string) => {
+    setIsAddingCard(false);
+    await create.mutateAsync({
+      name: content,
+      bucketId: bucket.id,
+      projectId: bucket.project.id,
+    });
+  };
+
+  const handleCancelAdd = () => {
+    setIsAddingCard(false);
+  };
   const handleSave = (value: string) => {
     setLastAttemptedName(value);
     update.mutate({ id: bucket.id, name: value });
@@ -104,13 +121,25 @@ export const KanbanBucket = ({ bucket, index }: KanbanBucketProps) => {
               </div>
             )}
           </Droppable>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full mt-2 text-muted-foreground"
-          >
-            <Plus size={16} className="mr-1" /> Add a card
-          </Button>
+          {!isAddingCard ? (
+            <div className="p-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full text-gray-600 hover:bg-gray-100 flex items-center justify-center"
+                onClick={() => setIsAddingCard(true)}
+              >
+                <Plus size={16} className="mr-1" /> Add a card
+              </Button>
+            </div>
+          ) : (
+            <div className="p-2">
+              <AddCardForm
+                onSubmit={handleAddCard}
+                onCancel={handleCancelAdd}
+              />
+            </div>
+          )}
         </div>
       )}
     </Draggable>

@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   } = useSuspenseQuery({
     queryKey: ["user"],
     queryFn: getSessionUser,
-    staleTime: 1000 * 60 * 10, // 10 minutes
+    staleTime: 1000 * 60 * 40, // 10 minutes
   });
 
   const { data: session } = useSuspenseQuery({

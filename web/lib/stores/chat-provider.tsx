@@ -3,7 +3,6 @@
 import { type ReactNode, createContext, useContext } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getQueryClient } from "../query-client/get-query-client";
-import { toast } from "sonner";
 import { useUser } from "../auth/auth-provider";
 import { Chat } from "@/feature/shared/@types/room";
 import { useParams } from "next/navigation";
@@ -11,12 +10,15 @@ import { createMessage } from "@/actions/api/message/mutations";
 import { getRoomMessages } from "@/actions/api/message/queries";
 import { useUtils } from "@/feature/shared/hooks/use-utils";
 import { BaseError } from "../errors";
+import { Message } from "@/feature/shared/@types/message";
+import { useWebSocket } from "@/feature/notification/hooks/use-web-socket";
 
 // --- Types
 type ChatContextType = {
   chat: Chat;
   isLoading: boolean;
   sendMessage: (content: string) => Promise<void>;
+  isSocketConnected: boolean;
 };
 
 const ChatStoreContext = createContext<ChatContextType | undefined>(undefined);
@@ -31,6 +33,24 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
     queryKey: [chatId, "chat"],
     queryFn: () => getRoomMessages({ id: chatId }),
     enabled: !!chatId,
+    staleTime: 3000, // 3 seconds
+  });
+
+  const isConnected = useWebSocket("new-message", (message: Message) => {
+    if (!chatId || !user) return;
+    if (message.roomId !== chatId || message.senderId === user.id) return;
+
+    queryClient.setQueryData([chatId, "chat"], (oldChat: Chat | undefined) => {
+      if (!oldChat) return oldChat;
+
+      const messageExists = oldChat.messages.some((m) => m.id === message.id);
+      if (messageExists) return oldChat;
+
+      return {
+        ...oldChat,
+        messages: [...oldChat.messages, message],
+      };
+    });
   });
 
   const sendAction = useMutation({
@@ -45,11 +65,11 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
       queryClient.setQueryData(
         [roomId, "chat"],
         (oldChat: Chat | undefined) => {
-          console.log("oldchat=>", oldChat);
+          if (!oldChat) return oldChat;
           return {
             ...oldChat,
             messages: [
-              ...(oldChat?.messages || []),
+              ...oldChat.messages,
               {
                 id: `temp-${Math.random().toString(36).substring(2, 9)}`,
                 content: content,
@@ -72,9 +92,7 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [chatId, "chat"] });
-      if (isValidResponse(response)) {
-        toast.success("Message sent successfully!");
-      }
+      void isValidResponse(response);
     },
   });
 
@@ -88,6 +106,7 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
         chat: chat as Chat,
         isLoading,
         sendMessage,
+        isSocketConnected: isConnected,
       }}
     >
       {children}

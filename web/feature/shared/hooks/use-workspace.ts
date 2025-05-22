@@ -10,10 +10,13 @@ import {
   updateWorkspace,
   deleteWorkspace,
   addWorkspaceMembers,
+  updateWorkspaceMemberRole,
+  removeWorkspaceMembers,
 } from "@/actions/api/workspace/mutations";
 import { updateUserActiveSpace } from "@/actions/api/user/mutations";
 import { useUtils } from "./use-utils";
 import { toast } from "sonner";
+import { redirect } from "next/navigation";
 
 export const useWorkspace = () => {
   const queryClient = getQueryClient();
@@ -75,7 +78,7 @@ export const useWorkspace = () => {
       queryClient.invalidateQueries({
         queryKey: ["workspaces"],
       });
-      toast.success("Workspace deleted successfully!");
+      redirect("/select-workspace");
     },
     onError: toastUnknownError,
   });
@@ -88,7 +91,39 @@ export const useWorkspace = () => {
       queryClient.invalidateQueries({
         queryKey: [session?.activeSpace, "ws-members"],
       });
-      toast.success("Member added successfully!");
+      toast.success("Update", {
+        description: "Member added successfully!",
+      });
+    },
+    onError: toastUnknownError,
+  });
+
+  // Update member role mutation
+  const updateMembership = useMutation({
+    mutationFn: updateWorkspaceMemberRole,
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
+      queryClient.invalidateQueries({
+        queryKey: [session?.activeSpace, "ws-members"],
+      });
+      toast.success("Update", {
+        description: "user role update successfully!",
+      });
+    },
+    onError: toastUnknownError,
+  });
+
+  // Remove member mutation
+  const removeMember = useMutation({
+    mutationFn: removeWorkspaceMembers,
+    onSuccess: (response) => {
+      if (!isValidResponse(response)) return;
+      queryClient.invalidateQueries({
+        queryKey: [session?.activeSpace, "ws-members"],
+      });
+      toast.success("Delete", {
+        description: "user removed successfully!",
+      });
     },
     onError: toastUnknownError,
   });
@@ -127,6 +162,8 @@ export const useWorkspace = () => {
     update,
     remove,
     inviteMember,
+    updateMembership,
+    removeMember,
     setActive,
 
     // Utilities

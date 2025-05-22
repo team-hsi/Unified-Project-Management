@@ -19,7 +19,7 @@ import { ChatMembersView } from "./chat-members-view";
 import { Room } from "@/feature/shared/@types/room";
 import { Button } from "@/feature/shared/ui/button";
 import { ChatSheetHeader } from "../../layout/chat-sheet-header";
-import { AddMemberDialog } from "../../interactions/add-member";
+import { AddMemberDialog } from "../../overlays/add-member";
 
 interface ChatInfoProps {
   onClose?: () => void;
