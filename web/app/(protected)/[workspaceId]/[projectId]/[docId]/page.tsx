@@ -1,5 +1,5 @@
 import { getDocumentById } from "@/actions/api/document/queries";
-import Editor from "@/feature/documentation/editor";
+import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Metadata } from "next";
@@ -32,9 +32,7 @@ const page = async (props: Props) => {
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div>
-        <Editor />
-      </div>
+      <SimpleEditor />
     </HydrationBoundary>
   );
 };
