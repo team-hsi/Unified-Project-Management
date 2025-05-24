@@ -55,6 +55,7 @@ export const NewDocument = ({ projectId }: { projectId: string }) => {
         onSubmit={handleCreate}
         isPending={create.isPending}
         label="Create"
+        nameOnly={true}
       />
     </DialogContent>
   );

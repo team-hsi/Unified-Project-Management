@@ -7,7 +7,7 @@ import {
 } from "@/feature/shared/ui/avatar";
 import {
   CalendarRange,
-  ChevronsUp,
+  Flag,
   Loader,
   Loader2,
   Newspaper,
@@ -158,7 +158,7 @@ export const ItemDetails = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <section className="flex flex-wrap gap-3">
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Status Field */}
               <MetadataField icon={Loader} label="Status">
                 <FormField
@@ -277,7 +277,7 @@ export const ItemDetails = ({
               </MetadataField>
 
               {/* Priority Field */}
-              <MetadataField icon={ChevronsUp} label="Priority">
+              <MetadataField icon={Flag} label="Priority">
                 <FormField
                   control={form.control}
                   name="priority"

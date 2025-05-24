@@ -1,6 +1,6 @@
 import { getProjectById } from "@/actions/api/project/queries";
 import { ProjectHeader } from "@/feature/project/layout/project-header";
-import { ViewContainer } from "@/feature/project/views/view-container";
+import { ViewContainerWrapper } from "@/feature/project/views/view-container-wrapper";
 import { Metadata } from "next";
 
 type Props = {
@@ -22,16 +22,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: project.name || projectId,
   };
 }
+
 const Page = async (props: Props) => {
   const params = await props.params;
+  const project = await getProjectById({ id: params.projectId });
   const searchParams = await props.searchParams;
   const view = (searchParams.view as string) || "kanban";
-  const project = await getProjectById({ id: params.projectId });
 
   return (
     <div className="p-4 flex flex-col gap-4 overflow-hidden h-full">
       <ProjectHeader project={project} />
-      <ViewContainer view={view} />
+      <ViewContainerWrapper initialView={view} />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { DeleteLabel } from "./delete-label";
 import { Label as LabelType } from "@/feature/shared/@types/label";
 import { useLabel } from "@/feature/shared/hooks/use-label";
 import { Badge } from "@/feature/shared/ui/badge";
+import { hexToRgba } from "@/lib/utils";
 
 interface LabelItemProps {
   label: LabelType;
@@ -35,7 +36,7 @@ export function LabelItem({ label }: LabelItemProps) {
   };
 
   return (
-    <div className="p-4 hover:bg-accent/5 transition-all duration-300">
+    <div className="p-4 hover:bg-accent/80 transition-all duration-300">
       {isEditing ? (
         <div className="space-y-4">
           <div className="flex items-start gap-4">
@@ -101,16 +102,14 @@ export function LabelItem({ label }: LabelItemProps) {
         <div className="flex items-center justify-between">
           <Badge
             variant="outline"
-            className="px-3 py-1.5 border-2 hover:border-primary/50 transition-all duration-300"
-            style={{ borderColor: label.color }}
+            className="text-xs border"
+            style={{
+              backgroundColor: hexToRgba(label.color, 0.1),
+              color: label.color,
+              borderColor: label.color,
+            }}
           >
-            <div className="flex items-center gap-2">
-              <div
-                className="h-4 w-4 rounded-full"
-                style={{ backgroundColor: label.color }}
-              />
-              <span className="font-medium">{label.name}</span>
-            </div>
+            {label.name}
           </Badge>
           <div className="flex items-center gap-2">
             <Button

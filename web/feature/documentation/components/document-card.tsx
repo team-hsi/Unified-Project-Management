@@ -12,14 +12,13 @@ export const DocumentCard = ({
 }) => {
   return (
     <Link href={`/${workspaceId}/${doc.projetId}/${doc.id}`} className="block">
-      <div className="border w-xs rounded-lg overflow-hidden hover:border-primary transition-colors">
+      <div className="border w-44 rounded-lg overflow-hidden hover:border-primary transition-colors">
         <div className="aspect-video bg-muted flex items-center justify-center">
           <FileText className="h-8 w-8 text-muted-foreground" />
         </div>
         <div className="p-3">
-          <h3 className="font-medium truncate">{doc.name}</h3>
-          <p className="text-sm text-muted-foreground">
-            Updated{" "}
+          <h3 className="font-medium truncate text-sm">{doc.name}</h3>
+          <p className="text-xs text-muted-foreground">
             {formatDistanceToNow(new Date(doc.updatedAt), {
               addSuffix: true,
             })}

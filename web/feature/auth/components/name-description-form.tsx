@@ -25,6 +25,7 @@ interface FormProps {
   isPending: boolean;
   defaultValues?: Partial<z.infer<typeof formSchema>>;
   label?: string;
+  nameOnly?: boolean;
 }
 
 export const NameDescriptionForm = ({
@@ -32,6 +33,7 @@ export const NameDescriptionForm = ({
   isPending,
   defaultValues,
   label,
+  nameOnly = false,
 }: FormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -62,24 +64,26 @@ export const NameDescriptionForm = ({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="px-2">Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Enter description..."
-                    className="h-9 min-h-[36px] resize-y"
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {!nameOnly && (
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="px-2">Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Enter description..."
+                      className="h-9 min-h-[36px] resize-y"
+                      disabled={isPending}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
         </div>
         <div className="flex justify-end gap-2 mt-5">
           <Button type="submit" className="flex-1" disabled={isPending}>

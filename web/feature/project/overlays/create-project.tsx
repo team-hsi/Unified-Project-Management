@@ -49,6 +49,7 @@ export function CreateProjectDialog({
           onSubmit={handleCreate}
           isPending={create.isPending}
           label="Create"
+          nameOnly={true}
         />
       </DialogContent>
     </Dialog>

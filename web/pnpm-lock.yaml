@@ -164,6 +164,9 @@ importers:
       ai:
         specifier: ^4.3.16
         version: 4.3.16(react@19.0.0)(zod@3.24.2)
+      balloons-js:
+        specifier: ^0.0.3
+        version: 0.0.3
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -2186,6 +2189,10 @@ packages:
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
+
+  balloons-js@0.0.3:
+    resolution: {integrity: sha512-5Mfy2VH2lC0WhX9jUvlkeKac+47reQq6naaNys+xFM2l+n+4jXoxGwwfnCyAdeXJh2IcRK+2LdD0cpOtyxEZzA==}
+    engines: {node: '>=12.0.0'}
 
   bind-event-listener@3.0.0:
     resolution: {integrity: sha512-PJvH288AWQhKs2v9zyfYdPzlPqf5bXbGMmhmUIY9x4dAUGIWgomO771oBQNwJnMQSnUIXhKu6sgzpBRXTlvb8Q==}
@@ -5717,6 +5724,8 @@ snapshots:
   axobject-query@4.1.0: {}
 
   balanced-match@1.0.2: {}
+
+  balloons-js@0.0.3: {}
 
   bind-event-listener@3.0.0: {}
 
