@@ -59,6 +59,7 @@ import { docPlaceholderContent } from "@/feature/documentation/overlays/new-doc"
 import { useDebouncedCallback } from "use-debounce";
 
 export function SimpleEditor() {
+  // --- Hooks and State (must be called unconditionally) ---
   const isMobile = useMobile();
   const windowSize = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
@@ -72,6 +73,7 @@ export function SimpleEditor() {
   const queryClient = getQueryClient();
   const { isValidResponse, toastUnknownError } = useUtils();
   const {
+    // Query hook
     data: document,
     isPending,
     error,
@@ -79,22 +81,9 @@ export function SimpleEditor() {
     queryKey: [projectId, "documents", docId],
     queryFn: () => getDocumentById({ id: docId }),
   });
-  if (isPending) {
-    return (
-      <div className="flex justify-center items-center min-h-[200px]">
-        Loading editor...
-      </div>
-    );
-  }
 
-  if (error) {
-    return (
-      <div className="text-red-500 p-4">
-        Error loading document: {error.message}
-      </div>
-    );
-  }
   const update = useMutation({
+    // Mutation hook
     mutationFn: updateDocument,
     onSuccess: (response) => {
       if (!isValidResponse(response)) return;
@@ -107,6 +96,7 @@ export function SimpleEditor() {
   });
 
   const handleSave = useDebouncedCallback(async (state: string) => {
+    // Debounced callback hook
     console.log("state", state);
     await update.mutateAsync({
       id: docId,
@@ -116,6 +106,7 @@ export function SimpleEditor() {
   }, 2000);
 
   const editor = useEditor({
+    // Tiptap editor hook
     immediatelyRender: false,
     editorProps: {
       attributes: {
@@ -158,16 +149,36 @@ export function SimpleEditor() {
   });
 
   const bodyRect = useCursorVisibility({
+    // Custom hook
     editor,
     overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
   });
 
   React.useEffect(() => {
+    // Effect hook
     if (!isMobile && mobileView !== "main") {
       setMobileView("main");
     }
   }, [isMobile, mobileView]);
 
+  // --- Conditional Renders (after hooks) ---
+  if (isPending) {
+    return (
+      <div className="flex justify-center items-center min-h-[200px]">
+        Loading editor...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-red-500 p-4">
+        Error loading document: {error.message}
+      </div>
+    );
+  }
+
+  // --- Main Render (hooks called above) ---
   return (
     <EditorContext.Provider value={{ editor }}>
       <Toolbar
