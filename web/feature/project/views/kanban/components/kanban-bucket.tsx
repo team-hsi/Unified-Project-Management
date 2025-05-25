@@ -10,7 +10,7 @@ import { Bucket } from "@/feature/shared/@types/bucket";
 import { BucketDropdown } from "../dropdown/bucket-dropdown";
 import { useBucket } from "@/feature/shared/hooks/use-bucket";
 import AddCardForm from "./add-item-form";
-import { useItem } from "@/feature/shared/hooks/use-item";
+import { useItemMutation } from "@/feature/shared/hooks/use-item-mutation";
 
 interface KanbanBucketProps {
   bucket: Bucket;
@@ -24,7 +24,7 @@ export const KanbanBucket = ({ bucket, index }: KanbanBucketProps) => {
   const [isAddingCard, setIsAddingCard] = useState(false);
 
   const { update } = useBucket();
-  const { create } = useItem();
+  const { create } = useItemMutation();
   const displayName = update.isPending ? update.variables?.name : bucket.name;
 
   const handleAddCard = async (content: string) => {

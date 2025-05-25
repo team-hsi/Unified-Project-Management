@@ -1,4 +1,5 @@
 import { Permission } from "./space";
+import { Member } from "./user";
 
 export type ProjectPayload = {
   id: string;
@@ -15,3 +16,7 @@ export type Project = {
   createdAt: string;
   updatedAt: string;
 };
+
+export interface ProjectWithMembers extends Project {
+  members: Member[];
+}

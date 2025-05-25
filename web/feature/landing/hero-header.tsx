@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import React from "react";
 import { cn } from "@/lib/utils";
-import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import { Button } from "../shared/ui/button";
 
@@ -17,7 +16,6 @@ const menuItems = [
 export const HeroHeader = () => {
   const [menuState, setMenuState] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
-  const { setTheme } = useTheme();
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -27,9 +25,7 @@ export const HeroHeader = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   return (
-    <header
-      onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
-    >
+    <header>
       <nav
         data-state={menuState && "active"}
         className="fixed z-20 w-full px-2"
@@ -103,7 +99,7 @@ export const HeroHeader = () => {
                   size="sm"
                   className={cn(isScrolled && "lg:hidden")}
                 >
-                  <Link href="#">
+                  <Link href="/sign-in">
                     <span>Login</span>
                   </Link>
                 </Button>
@@ -112,7 +108,7 @@ export const HeroHeader = () => {
                   size="sm"
                   className={cn(isScrolled && "lg:hidden")}
                 >
-                  <Link href="#">
+                  <Link href="/sign-up">
                     <span>Sign Up</span>
                   </Link>
                 </Button>

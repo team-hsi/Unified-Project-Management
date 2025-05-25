@@ -1,151 +1,76 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { toast } from "sonner";
 import {
-  createItem,
+  assignUser,
+  unassignUser,
   updateItem,
-  deleteItem,
-} from "../../../actions/api/item/mutations";
-import { Bucket } from "../@types/bucket";
+} from "@/actions/api/item/mutations";
 import { Item } from "../@types/item";
 import { useUtils } from "./use-utils";
 import { BaseError } from "@/lib/errors";
-export const useItem = () => {
+import { getItemById } from "@/actions/api/item/queries";
+
+export const useItem = (id: string) => {
   const queryClient = getQueryClient();
   const { projectId } = useParams<{ projectId: string }>();
   const { isValidResponse, toastUnknownError } = useUtils();
 
-  // Create item mutation
-  const create = useMutation({
-    mutationFn: createItem,
-    onMutate: async (newItemData) => {
-      await queryClient.cancelQueries({ queryKey: [projectId, "items"] });
-      const previousItems = queryClient.getQueryData([projectId, "items"]);
-      const bucketsQueryKey = [projectId, "buckets"];
-
-      const buckets =
-        (queryClient.getQueryData(bucketsQueryKey) as Bucket[]) || [];
-      const bucket = buckets.find((b) => b.id === newItemData.bucketId);
-      if (!bucket) {
-        return { previousItems };
-      }
-      const maxPosition =
-        bucket.items?.reduce((max, item) => Math.max(max, item.position), 0) ||
-        0;
-
-      const optimisticItem: Item = {
-        id: `temp-${Date.now()}`,
-        name: newItemData.name || "New Item",
-        description: newItemData.description || "",
-        bucket: {
-          id: bucket.id,
-          name: bucket.name,
-          color: bucket.color,
-          project: {
-            name: "",
-            ownerId: "",
-            id: "",
-            createdAt: "",
-            updatedAt: "",
-          },
-          createdAt: "",
-          updatedAt: "",
-        },
-        status: newItemData.status || "incomplete",
-        position: maxPosition + 100,
-        priority: newItemData.priority || null,
-        dueDate: newItemData.dueDate || "",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        startDate: null,
-        labels: [],
-        checklist: [],
-      };
-      queryClient.setQueryData([projectId, "items"], (old: Item[] = []) => {
-        return [...old, optimisticItem];
-      });
-      return { previousItems };
-    },
-    onError: (error, variables, context) => {
-      if (context?.previousItems) {
-        queryClient.setQueryData([projectId, "items"], context.previousItems);
-      }
-      toastUnknownError(error as BaseError);
-    },
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
-      if (isValidResponse(response)) {
-        toast.success("Item created successfully!");
-      }
-    },
+  const {
+    data: item,
+    isLoading,
+    error,
+  } = useQuery<Item>({
+    queryKey: [projectId, "item"],
+    queryFn: () => getItemById({ id }),
   });
 
   // Update item mutation
   const update = useMutation({
     mutationFn: updateItem,
     onMutate: async (updatedItemData) => {
-      await queryClient.cancelQueries({ queryKey: [projectId, "items"] });
-      const previousItems = queryClient.getQueryData([projectId, "items"]);
-      queryClient.setQueryData([projectId, "items"], (old: Item[] = []) => {
-        return old.map((item) =>
-          item.id === updatedItemData.id
-            ? {
-                ...item,
-                ...updatedItemData,
-                updatedAt: new Date().toISOString(),
-              }
-            : item
-        );
-      });
-      return { previousItems };
+      await queryClient.cancelQueries({ queryKey: [projectId, "item"] });
+      const previousItem = queryClient.getQueryData([projectId, "item"]);
+
+      queryClient.setQueryData([projectId, "item"], (old: Item) => ({
+        ...old,
+        checklist: updatedItemData.checklist,
+        updatedAt: new Date().toISOString(),
+      }));
+
+      return { previousItem };
     },
     onError: (error, variables, context) => {
-      if (context?.previousItems) {
-        queryClient.setQueryData([projectId, "items"], context.previousItems);
+      if (context?.previousItem) {
+        queryClient.setQueryData([projectId, "item"], context.previousItem);
       }
       toastUnknownError(error as BaseError);
     },
     onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
       queryClient.invalidateQueries({ queryKey: [projectId, "item"] });
       if (isValidResponse(response)) {
-        toast.success("Item updated successfully!");
+        toast.success("Checklist updated successfully!");
       }
     },
   });
 
-  // Delete item mutation
-  const remove = useMutation({
-    mutationFn: deleteItem,
-    onMutate: async (deleteItem) => {
-      await queryClient.cancelQueries({ queryKey: [projectId, "items"] });
-      const previousItems = queryClient.getQueryData([projectId, "items"]);
-      queryClient.setQueryData([projectId, "items"], (old: Item[] = []) => {
-        return old.filter((item) => item.id !== deleteItem.id);
-      });
-      return { previousItems };
-    },
-    onError: (error, variables, context) => {
-      if (context?.previousItems) {
-        queryClient.setQueryData([projectId, "items"], context.previousItems);
-      }
-      toastUnknownError(error as BaseError);
-    },
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
-      if (isValidResponse(response)) {
-        toast.success("Item deleted successfully!");
-      }
-    },
+  const assign = useMutation({
+    mutationFn: assignUser,
+  });
+
+  const unAssign = useMutation({
+    mutationFn: unassignUser,
   });
 
   return {
-    // Mutations
-    create,
+    item,
+    isLoading,
+    error,
     update,
-    remove,
+    assign,
+    unAssign,
   };
 };

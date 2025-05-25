@@ -13,7 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/feature/shared/ui/tooltip";
-import { useItemOne } from "@/feature/shared/hooks/use-item-one";
+import { useItem } from "@/feature/shared/hooks/use-item";
 
 export const CheckList = ({
   lists,
@@ -24,7 +24,7 @@ export const CheckList = ({
   projectId: string;
 }) => {
   const [checklist, setCheckList] = React.useState(lists || []);
-  const { update } = useItemOne(itemId);
+  const { update } = useItem(itemId);
 
   React.useEffect(() => {
     setCheckList(lists || []);

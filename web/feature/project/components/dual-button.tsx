@@ -1,7 +1,7 @@
 import { Button } from "@/feature/shared/ui/button";
 import { cn } from "@/lib/utils";
 import { CheckCircle, Trash } from "lucide-react";
-import { useItem } from "@/feature/shared/hooks/use-item";
+import { useItemMutation } from "@/feature/shared/hooks/use-item-mutation";
 
 export const DualButton = ({
   className,
@@ -15,7 +15,7 @@ export const DualButton = ({
     status?: string;
   };
 }) => {
-  const { remove, update } = useItem();
+  const { remove, update } = useItemMutation();
   return (
     <div
       className={cn(
@@ -33,6 +33,8 @@ export const DualButton = ({
           update.mutateAsync({
             status: data.status === "complete" ? "incomplete" : "complete",
             id: data.itemId,
+            bucketId: data.bucketId,
+            projectId: data.projectId,
           });
         }}
       >
