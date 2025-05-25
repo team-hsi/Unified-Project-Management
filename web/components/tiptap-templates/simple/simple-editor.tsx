@@ -55,8 +55,8 @@ import { updateDocument } from "@/actions/api/document/mutations";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useUtils } from "@/feature/shared/hooks/use-utils";
 import { toast } from "sonner";
-import { useDebounceCallback } from "usehooks-ts";
 import { docPlaceholderContent } from "@/feature/documentation/overlays/new-doc";
+import { useDebouncedCallback } from "use-debounce";
 
 export function SimpleEditor() {
   const isMobile = useMobile();
@@ -106,7 +106,7 @@ export function SimpleEditor() {
     onError: toastUnknownError,
   });
 
-  const handleSave = useDebounceCallback(async (state: string) => {
+  const handleSave = useDebouncedCallback(async (state: string) => {
     console.log("state", state);
     await update.mutateAsync({
       id: docId,
