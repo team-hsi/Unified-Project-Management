@@ -39,7 +39,7 @@ export const loginUser = async (
       refreshToken: tokens.refreshToken,
     };
     await createSession(session);
-    return { data: user };
+    return user;
   } catch (error) {
     return handleError(error);
   }

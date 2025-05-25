@@ -31,9 +31,13 @@ export const CreateCheckList = ({
   children,
   currentList,
   setCheckList,
+  bucketId,
+  projectId,
 }: {
   children: React.ReactNode;
   itemId: string;
+  bucketId: string;
+  projectId: string;
   currentList: CheckList[] | null;
   setCheckList: (list: CheckList[]) => void;
 }) => {
@@ -57,7 +61,7 @@ export const CreateCheckList = ({
     try {
       setCheckList(checklist);
       setIsOpen(false);
-      await update.mutateAsync({ checklist, id: itemId });
+      await update.mutateAsync({ checklist, id: itemId, bucketId, projectId });
       reset();
     } catch (error) {
       console.error("Submission failed:", error);

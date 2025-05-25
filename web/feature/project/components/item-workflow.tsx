@@ -80,7 +80,8 @@ export const ItemWorkflow = ({ itemId }: { itemId: string }) => {
               <CheckList
                 lists={item?.checklist ?? null}
                 itemId={itemId}
-                projectId={item?.bucket.project.id ?? ""}
+                bucketId={item?.bucket.id as string}
+                projectId={item?.bucket.project.id as string}
               />
             )}
           </TabsContent>
