@@ -13,18 +13,21 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/feature/shared/ui/tooltip";
-import { useItemOne } from "@/feature/shared/hooks/use-item-one";
+import { useItem } from "@/feature/shared/hooks/use-item";
 
 export const CheckList = ({
   lists,
   itemId,
+  bucketId,
+  projectId,
 }: {
   lists: Check[] | null;
   itemId: string;
+  bucketId: string;
   projectId: string;
 }) => {
   const [checklist, setCheckList] = React.useState(lists || []);
-  const { update } = useItemOne(itemId);
+  const { update } = useItem(itemId);
 
   React.useEffect(() => {
     setCheckList(lists || []);
@@ -35,7 +38,12 @@ export const CheckList = ({
       idx === index ? { ...item, isCompleted: !item.isCompleted } : item
     );
     setCheckList(updatedChecklist);
-    await update.mutateAsync({ checklist: updatedChecklist, id: itemId });
+    await update.mutateAsync({
+      checklist: updatedChecklist,
+      id: itemId,
+      bucketId,
+      projectId,
+    });
   };
   if (!checklist || checklist.length === 0) {
     return (
@@ -43,6 +51,8 @@ export const CheckList = ({
         <p className="mb-4 text-muted-foreground">No checklist available</p>
         <CreateCheckList
           itemId={itemId}
+          bucketId={bucketId}
+          projectId={projectId}
           currentList={checklist}
           setCheckList={(value) => setCheckList(value)}
         >
@@ -75,6 +85,8 @@ export const CheckList = ({
               <CreateCheckList
                 itemId={itemId}
                 currentList={checklist}
+                bucketId={bucketId}
+                projectId={projectId}
                 setCheckList={(value) => setCheckList(value)}
               >
                 <Button

@@ -1,4 +1,6 @@
 "use client";
+import React from "react";
+import { useParams } from "next/navigation";
 import {
   DialogHeader,
   DialogTitle,
@@ -20,8 +22,14 @@ import {
   SelectValue,
 } from "@/feature/shared/ui/select";
 import { Users, UserPlus, Search, Shield, Edit, Eye } from "lucide-react";
+import { useProject } from "@/feature/shared/hooks/use-project";
+import { Member } from "@/feature/shared/@types/user";
+import { AddProjectMemberDialog } from "./add-project-member-dialog";
 
 export const PeopleView = () => {
+  const { projectMembers, isLoadingPm, errorPm } = useProject();
+  const { projectId } = useParams<{ projectId: string }>();
+
   return (
     <div className="p-6">
       <DialogHeader>
@@ -45,174 +53,96 @@ export const PeopleView = () => {
                 className="pl-9 bg-background hover:bg-accent/5 transition-colors duration-200"
               />
             </div>
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              <UserPlus className="h-4 w-4 mr-2" />
-              Invite People
-            </Button>
+            <AddProjectMemberDialog projectId={projectId}>
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                <UserPlus className="h-4 w-4 mr-2" />
+                Invite People
+              </Button>
+            </AddProjectMemberDialog>
           </div>
         </Card>
 
         {/* Team Members List */}
         <Card className="bg-gradient-to-br from-accent/5 to-primary/5 border-accent/20">
           <div className="divide-y divide-border">
-            {/* Admin Member */}
-            <div className="p-4 hover:bg-accent/5 transition-colors duration-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10 ring-2 ring-background">
-                    <AvatarImage src="/avatars/john.png" />
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      JD
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-medium">John Doe</h4>
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary">
+            {isLoadingPm && (
+              <div className="p-8 text-center text-muted-foreground text-lg">
+                Loading team members…
+              </div>
+            )}
+            {errorPm && (
+              <div className="p-8 text-center text-destructive text-lg">
+                <div className="mb-2">⚠️ Failed to load members</div>
+                <div className="text-sm">Please try refreshing the page.</div>
+              </div>
+            )}
+            {!isLoadingPm &&
+              !errorPm &&
+              (!projectMembers?.members ||
+                projectMembers.members.length === 0) && (
+                <div className="p-8 text-center text-muted-foreground text-lg">
+                  <div className="mb-2">No team members yet</div>
+                  <div className="text-sm">
+                    Invite people to collaborate on this project.
+                  </div>
+                </div>
+              )}
+            {projectMembers?.members?.map((member: Member) => (
+              <div
+                key={member.id}
+                className="p-4 hover:bg-accent/5 transition-colors duration-200"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10 ring-2 ring-background">
+                      <AvatarImage src={undefined} />
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {member.user.username?.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-medium">{member.user.username}</h4>
+                        <span className="px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary capitalize">
+                          {String(member.role)}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {member.user.email}
+                      </p>
+                    </div>
+                  </div>
+                  <Select defaultValue={String(member.role)}>
+                    <SelectTrigger className="w-[120px] bg-background hover:bg-accent/5">
+                      <SelectValue placeholder="Role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem
+                        value="admin"
+                        className="flex items-center gap-2"
+                      >
+                        <Shield className="h-4 w-4" />
                         Admin
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      john@example.com
-                    </p>
-                  </div>
-                </div>
-                <Select defaultValue="admin">
-                  <SelectTrigger className="w-[120px] bg-background hover:bg-accent/5">
-                    <SelectValue placeholder="Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem
-                      value="admin"
-                      className="flex items-center gap-2"
-                    >
-                      <Shield className="h-4 w-4" />
-                      Admin
-                    </SelectItem>
-                    <SelectItem
-                      value="editor"
-                      className="flex items-center gap-2"
-                    >
-                      <Edit className="h-4 w-4" />
-                      Editor
-                    </SelectItem>
-                    <SelectItem
-                      value="viewer"
-                      className="flex items-center gap-2"
-                    >
-                      <Eye className="h-4 w-4" />
-                      Viewer
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Editor Member */}
-            <div className="p-4 hover:bg-accent/5 transition-colors duration-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10 ring-2 ring-background">
-                    <AvatarImage src="/avatars/jane.png" />
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      JS
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-medium">Jane Smith</h4>
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary">
+                      </SelectItem>
+                      <SelectItem
+                        value="editor"
+                        className="flex items-center gap-2"
+                      >
+                        <Edit className="h-4 w-4" />
                         Editor
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      jane@example.com
-                    </p>
-                  </div>
-                </div>
-                <Select defaultValue="editor">
-                  <SelectTrigger className="w-[120px] bg-background hover:bg-accent/5">
-                    <SelectValue placeholder="Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem
-                      value="admin"
-                      className="flex items-center gap-2"
-                    >
-                      <Shield className="h-4 w-4" />
-                      Admin
-                    </SelectItem>
-                    <SelectItem
-                      value="editor"
-                      className="flex items-center gap-2"
-                    >
-                      <Edit className="h-4 w-4" />
-                      Editor
-                    </SelectItem>
-                    <SelectItem
-                      value="viewer"
-                      className="flex items-center gap-2"
-                    >
-                      <Eye className="h-4 w-4" />
-                      Viewer
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Viewer Member */}
-            <div className="p-4 hover:bg-accent/5 transition-colors duration-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10 ring-2 ring-background">
-                    <AvatarImage src="/avatars/mike.png" />
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      MJ
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-medium">Mike Johnson</h4>
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary">
+                      </SelectItem>
+                      <SelectItem
+                        value="viewer"
+                        className="flex items-center gap-2"
+                      >
+                        <Eye className="h-4 w-4" />
                         Viewer
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      mike@example.com
-                    </p>
-                  </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <Select defaultValue="viewer">
-                  <SelectTrigger className="w-[120px] bg-background hover:bg-accent/5">
-                    <SelectValue placeholder="Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem
-                      value="admin"
-                      className="flex items-center gap-2"
-                    >
-                      <Shield className="h-4 w-4" />
-                      Admin
-                    </SelectItem>
-                    <SelectItem
-                      value="editor"
-                      className="flex items-center gap-2"
-                    >
-                      <Edit className="h-4 w-4" />
-                      Editor
-                    </SelectItem>
-                    <SelectItem
-                      value="viewer"
-                      className="flex items-center gap-2"
-                    >
-                      <Eye className="h-4 w-4" />
-                      Viewer
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
-            </div>
+            ))}
           </div>
         </Card>
 

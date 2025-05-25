@@ -31,10 +31,13 @@ export const updateDocument = async (
   }
 };
 
-export const deleteDocument = async (id: string, projectId: string) => {
+export const deleteDocument = async (payload: {
+  id: string;
+  projectId: string;
+}) => {
   try {
-    const result = await del<void>(`/documents/${id}`);
-    revalidateTag(CACHE_TAGS.PROJECT.DOCUMENTS(projectId));
+    const result = await del<void>(`/documents/${payload.id}`);
+    revalidateTag(CACHE_TAGS.PROJECT.DOCUMENTS(payload.projectId));
     return result;
   } catch (error) {
     return handleError(error);

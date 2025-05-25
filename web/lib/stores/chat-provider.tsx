@@ -65,11 +65,10 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
       queryClient.setQueryData(
         [roomId, "chat"],
         (oldChat: Chat | undefined) => {
-          if (!oldChat) return oldChat;
           return {
             ...oldChat,
             messages: [
-              ...oldChat.messages,
+              ...(oldChat?.messages || []),
               {
                 id: `temp-${Math.random().toString(36).substring(2, 9)}`,
                 content: content,

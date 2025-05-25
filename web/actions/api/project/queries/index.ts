@@ -1,7 +1,11 @@
 "use server";
 import { extractErrors } from "@/lib/utils";
 import { get } from "@/actions/core/api-client";
-import { Project, ProjectPayload } from "@/feature/shared/@types/projects";
+import {
+  Project,
+  ProjectPayload,
+  ProjectWithMembers,
+} from "@/feature/shared/@types/projects";
 import { cache } from "react";
 import { CACHE_LIFE, CACHE_TAGS } from "../../../core/cache-config";
 
@@ -47,3 +51,20 @@ export const getProjectById = cache(
     }
   }
 );
+
+export const getProjectMembers = async (
+  payload: Pick<ProjectPayload, "id">
+) => {
+  try {
+    return get<ProjectWithMembers>(`/projects/${payload.id}/members`, {
+      next: {
+        revalidate: CACHE_LIFE.LONG,
+        tags: [CACHE_TAGS.PROJECT.MEMBERS(payload.id)],
+      },
+      cache: "force-cache",
+    });
+  } catch (error) {
+    console.error("Error fetching workspace members:", error);
+    throw new Error(extractErrors(error));
+  }
+};

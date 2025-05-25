@@ -34,7 +34,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { getProjectBuckets } from "@/actions/api/bucket/queries";
 import { Bucket } from "@/feature/shared/@types/bucket";
-import { useItem } from "@/feature/shared/hooks/use-item";
+import { useItemMutation } from "@/feature/shared/hooks/use-item-mutation";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -61,7 +61,7 @@ export function AddItemDrawer({ children }: AddItemDrawerProps) {
     queryKey: [params.projectId, "buckets"],
     queryFn: () => getProjectBuckets({ id: params.projectId }),
   });
-  const { create } = useItem();
+  const { create } = useItemMutation();
   const handleSubmit = async (values: FormValues) => {
     await create.mutateAsync({ ...values, projectId: params.projectId });
     setIsOpen(false);

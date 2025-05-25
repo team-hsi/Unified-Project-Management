@@ -1,6 +1,6 @@
 "use client";
 
-import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useUtils } from "./use-utils";
@@ -10,6 +10,8 @@ import {
   deleteDocument,
   updateDocument,
 } from "@/actions/api/document/mutations";
+import { Document } from "../@types/document";
+import { BaseError } from "@/lib/errors";
 
 export const useDocument = () => {
   const queryClient = getQueryClient();
@@ -21,9 +23,10 @@ export const useDocument = () => {
     data: projectDocuments,
     isPending: isLoading,
     error: error,
-  } = useSuspenseQuery({
+  } = useQuery({
     queryKey: [projectId, "documents"],
     queryFn: () => getProjectDocuments(projectId),
+    enabled: !!projectId,
   });
 
   // Create project mutation
@@ -52,14 +55,23 @@ export const useDocument = () => {
 
   // Delete project mutation
   const remove = useMutation({
-    mutationFn: async (id: string) => await deleteDocument(id, projectId),
-    onSuccess: (response) => {
-      if (!isValidResponse(response)) return;
-      queryClient.invalidateQueries({
-        queryKey: [projectId, "documents"],
+    mutationFn: deleteDocument,
+    onMutate: async ({ id, projectId }) => {
+      await queryClient.cancelQueries({ queryKey: [projectId, "documents"] });
+      const previousDocs = queryClient.getQueryData([projectId, "documents"]);
+      queryClient.setQueryData([projectId, "documents"], (old: Document[]) => {
+        return old?.filter((doc: Document) => doc.id !== id) ?? [];
       });
+      return { previousDocs };
     },
-    onError: toastUnknownError,
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData([projectId, "documents"], context?.previousDocs);
+      toastUnknownError(err as BaseError);
+    },
+    onSuccess: (response) => {
+      void isValidResponse(response);
+      queryClient.invalidateQueries({ queryKey: [projectId, "documents"] });
+    },
   });
 
   return {

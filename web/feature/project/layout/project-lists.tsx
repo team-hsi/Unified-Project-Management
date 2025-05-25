@@ -1,18 +1,9 @@
 "use client";
-
 import React from "react";
-
-import {
-  FileText,
-  MoreHorizontal,
-  Plus,
-  Settings2,
-  Trash2,
-} from "lucide-react";
+import { MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/feature/shared/ui/dropdown-menu";
 import {
@@ -29,10 +20,8 @@ import { useParams, usePathname } from "next/navigation";
 import { CustomDialog } from "@/feature/shared/components/custom-dialog";
 import { useProject } from "@/feature/shared/hooks/use-project";
 import { Project } from "@/feature/shared/@types/projects";
-import { Management } from "../management/management";
 import { DeleteProjectDialog } from "../overlays/delete-project";
 import { CreateProjectDialog } from "../overlays/create-project";
-import { NewDocument } from "@/feature/documentation/overlays/new-doc";
 
 export const NavProjects = () => {
   const { workspaceProjects, prefetchProject } = useProject();
@@ -125,7 +114,7 @@ export const NavProjects = () => {
                   }
                 }}
               >
-                <CustomDialog
+                {/* <CustomDialog
                   triggerChildren={
                     <>
                       <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -138,8 +127,8 @@ export const NavProjects = () => {
                   }
                 >
                   <NewDocument projectId={project.id} />
-                </CustomDialog>
-                <CustomDialog
+                </CustomDialog> */}
+                {/* <CustomDialog
                   triggerChildren={
                     <>
                       <Settings2 className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -152,8 +141,8 @@ export const NavProjects = () => {
                   }
                 >
                   <Management project={project} />
-                </CustomDialog>
-                <DropdownMenuSeparator />
+                </CustomDialog> */}
+                {/* <DropdownMenuSeparator /> */}
                 <CustomDialog
                   triggerChildren={
                     <>

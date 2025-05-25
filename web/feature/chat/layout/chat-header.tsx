@@ -1,6 +1,4 @@
 "use client";
-import { Search } from "lucide-react";
-import { Badge } from "@/feature/shared/ui/badge";
 import { useRoom } from "@/feature/shared/hooks/use-room";
 import { useMemo } from "react";
 import { Room } from "@/feature/shared/@types/room";
@@ -29,21 +27,21 @@ export function ChatHeader() {
             <div className="ml-3">
               <h1 className="text-lg font-semibold flex items-center">
                 {activeChat}
-                <Badge
+                {/* <Badge
                   variant="default"
                   size="sm"
                   className="ml-2 bg-chat-message-sent"
                 >
                   Active
-                </Badge>
+                </Badge> */}
               </h1>
             </div>
           </div>
         </ChatDetails>
         <div className="flex items-center space-x-2">
-          <button className="p-2 text-muted-foreground hover:bg-chat-message-received/30 rounded-full transition-colors">
+          {/* <button className="p-2 text-muted-foreground hover:bg-chat-message-received/30 rounded-full transition-colors">
             <Search className="h-5 w-5" />
-          </button>
+          </button> */}
           <button className="p-2 text-muted-foreground hover:bg-chat-message-received/30 rounded-full transition-colors ml-1"></button>
           <ChatDropdown />
         </div>

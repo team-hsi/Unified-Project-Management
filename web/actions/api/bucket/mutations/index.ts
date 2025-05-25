@@ -16,7 +16,7 @@ export const createBucket = async (
     return handleError(error);
   }
 };
-// BUG : Bucket Color is not updating in the backend
+
 export const updateBucket = async (
   payload: Pick<BucketPayload, "id" | "name" | "color">
 ) => {

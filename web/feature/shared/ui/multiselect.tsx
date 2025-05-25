@@ -483,7 +483,7 @@ const MultipleSelector = React.forwardRef<
                 >
                   {option.label}
                   <button
-                    className="absolute -inset-y-px -end-px flex size-7 items-center justify-center rounded-e-lg border border-transparent p-0 text-muted-foreground/80 outline-0 transition-colors hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70"
+                    className="absolute -inset-y-px -end-px flex size-7 items-center justify-center rounded-e-lg border border-transparent p-0 text-muted-foreground/80 outline-0 transition-colors hover:text-foreground focus-visible:outline focus-visible:outline-ring/70"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         handleUnselect(option);

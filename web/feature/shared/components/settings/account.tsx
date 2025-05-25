@@ -8,21 +8,18 @@ import { Separator } from "@/feature/shared/ui/separator";
 import { Card } from "@/feature/shared/ui/card";
 import { Button } from "@/feature/shared/ui/button";
 import { Input } from "@/feature/shared/ui/input";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/feature/shared/ui/avatar";
+import { Avatar, AvatarFallback } from "@/feature/shared/ui/avatar";
 import { Camera, User, Mail, AtSign, Lock, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { useUser } from "@/lib/auth/auth-provider";
 
 export function AccountView() {
+  const { user, update } = useUser();
   const [userInfo, setUserInfo] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    username: "johndoe",
-    email: "john.doe@example.com",
-    avatar: null,
+    firstName: user?.firstname,
+    lastName: user?.lastname,
+    username: user?.username,
+    email: user?.email,
   });
 
   const [passwordInfo, setPasswordInfo] = useState({
@@ -46,7 +43,9 @@ export function AccountView() {
   };
 
   const getInitials = () => {
-    return `${userInfo.firstName.charAt(0)}${userInfo.lastName.charAt(0)}`;
+    const firstInitial = userInfo.firstName?.charAt(0) ?? "";
+    const lastInitial = userInfo.lastName?.charAt(0) ?? "";
+    return `${firstInitial}${lastInitial}`;
   };
 
   const togglePasswordVisibility = (field: keyof typeof showPasswords) => {
@@ -77,7 +76,6 @@ export function AccountView() {
             <div className="flex flex-col items-center gap-4">
               <div className="relative group">
                 <Avatar className="h-24 w-24 ring-2 ring-background group-hover:ring-accent/20 transition-all duration-200">
-                  <AvatarImage src={userInfo.avatar || undefined} />
                   <AvatarFallback className="text-lg bg-primary/10 text-primary">
                     {getInitials()}
                   </AvatarFallback>
@@ -163,7 +161,11 @@ export function AccountView() {
               </div>
 
               <div className="flex justify-end pt-4">
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                <Button
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                  onClick={() => update(userInfo)}
+                  // disabled={update.isPending}
+                >
                   Save Changes
                 </Button>
               </div>
@@ -272,34 +274,6 @@ export function AccountView() {
             <div className="flex justify-end pt-4">
               <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 Update Password
-              </Button>
-            </div>
-          </div>
-        </Card>
-
-        <Separator />
-
-        <Card className="p-6 bg-gradient-to-br from-accent/5 to-primary/5 border-accent/20">
-          <h3 className="text-lg font-medium flex items-center gap-2">
-            <Mail className="h-5 w-5 text-primary" />
-            Email Preferences
-          </h3>
-
-          <div className="mt-4 space-y-4">
-            <div className="flex items-center justify-between group hover:bg-accent/5 p-3 rounded-lg transition-colors duration-200">
-              <div className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-primary" />
-                <div>
-                  <h4 className="font-medium group-hover:text-primary transition-colors duration-200">
-                    Email Notifications
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Receive email notifications about your account activity.
-                  </p>
-                </div>
-              </div>
-              <Button variant="outline" size="sm">
-                Manage
               </Button>
             </div>
           </div>

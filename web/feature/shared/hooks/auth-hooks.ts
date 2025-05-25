@@ -8,25 +8,21 @@ import { BaseError, isErrorResponse } from "@/lib/errors";
 
 export function useLogin() {
   const router = useRouter();
-  const queryClient = getQueryClient();
 
   return useMutation({
     mutationFn: loginUser,
     onSuccess: (response) => {
       if (isErrorResponse(response)) {
-        console.log("response=>", response);
         toast.error(response.error.displayName, {
           description: response.error.message,
         });
         return;
       }
-      const user = response.data;
-      if (!user.activeSpace) {
-        router.push("/select-workspace");
+      if (response.activeSpace) {
+        router.replace(`/${response.activeSpace?.id}/projects`);
       } else {
-        router.push(`/${user.activeSpace.id}/projects`);
+        router.replace(`/selected-workspace`);
       }
-      queryClient.setQueryData(["user"], user);
       toast.success("Auth", {
         description: "Logged in successfully!",
       });
