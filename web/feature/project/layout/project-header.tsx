@@ -1,13 +1,19 @@
 "use client";
 import * as React from "react";
-import { Project } from "@/lib/stores/project-store";
 import ProjectTabs from "./view-tabs";
 import { CreateBucket } from "../views/kanban/dropdown/create-bucket-dialog";
 import { Dialog, DialogTrigger } from "@/feature/shared/ui/dialog";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Settings } from "lucide-react";
 import { Button } from "@/feature/shared/ui/button";
 import { useViewStore } from "@/lib/stores/view-store";
 import { NewDocument } from "@/feature/documentation/overlays/new-doc";
+import { Management } from "../management/management";
+import { Project } from "@/feature/shared/@types/projects";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/feature/shared/ui/tooltip";
 
 interface ProjectHeaderProps {
   project: Project;
@@ -23,6 +29,25 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({ project }) => {
             {project?.name?.[0]?.toUpperCase()}
           </div>
           <h1 className="text-2xl font-semibold">{project?.name}</h1>
+        </div>
+        <div>
+          <Management project={project} view="people">
+            <DialogTrigger asChild>
+              <Button variant="outline">Add Member</Button>
+            </DialogTrigger>
+          </Management>
+          <Management project={project}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DialogTrigger asChild>
+                  <Button variant="ghost">
+                    <Settings />
+                  </Button>
+                </DialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Project Settings</TooltipContent>
+            </Tooltip>
+          </Management>
         </div>
       </div>
 

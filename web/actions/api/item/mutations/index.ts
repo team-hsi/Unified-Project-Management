@@ -47,8 +47,8 @@ export const deleteItem = async (
 ) => {
   try {
     await del<void>(`/items/${payload.id}`);
-    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(payload.bucketId));
     revalidateTag(CACHE_TAGS.PROJECT.ITEMS(payload.projectId));
+    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(payload.bucketId));
     return true;
   } catch (error) {
     return handleError(error);

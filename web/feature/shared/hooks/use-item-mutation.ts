@@ -132,11 +132,19 @@ export const useItemMutation = () => {
   const remove = useMutation({
     mutationFn: deleteItem,
     onMutate: async (deleteItem) => {
-      await queryClient.cancelQueries({ queryKey: [projectId, "items"] });
-      const previousItems = queryClient.getQueryData([projectId, "items"]);
-      queryClient.setQueryData([projectId, "items"], (old: Item[] = []) => {
-        return old.filter((item) => item.id !== deleteItem.id);
+      await queryClient.cancelQueries({
+        queryKey: [deleteItem.projectId, "items"],
       });
+      const previousItems = queryClient.getQueryData([
+        deleteItem.projectId,
+        "items",
+      ]);
+      queryClient.setQueryData(
+        [deleteItem.projectId, "items"],
+        (old: Item[] = []) => {
+          return old.filter((item) => item.id !== deleteItem.id);
+        }
+      );
       return { previousItems };
     },
     onError: (error, variables, context) => {

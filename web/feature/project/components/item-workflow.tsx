@@ -15,9 +15,15 @@ import {
   AvatarFallback,
 } from "@/feature/shared/ui/avatar";
 import { UserPlus, UserMinus, UserX } from "lucide-react";
+import { AddItemAssigneeDialog } from "./add-item-assignee-dialog";
 
 export const ItemWorkflow = ({ itemId }: { itemId: string }) => {
   const { item, isLoading, error } = useItem(itemId);
+
+  const handleAssign = async (userId: string) => {
+    // TODO: Implement the actual assignment logic here
+    console.log("Assigning user", userId, "to item", itemId);
+  };
 
   if (error) {
     return (
@@ -87,10 +93,16 @@ export const ItemWorkflow = ({ itemId }: { itemId: string }) => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold">Assigned Users</h3>
-                  <Button variant="outline" size="sm">
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Add Assignee
-                  </Button>
+                  <AddItemAssigneeDialog
+                    itemId={itemId}
+                    projectId={item?.bucket.project.id ?? ""}
+                    onAssign={handleAssign}
+                  >
+                    <Button variant="outline" size="sm">
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Add Assignee
+                    </Button>
+                  </AddItemAssigneeDialog>
                 </div>
                 <div className="space-y-3">
                   {item?.assignees?.map((assignee) => (
