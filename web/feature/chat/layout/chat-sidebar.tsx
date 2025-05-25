@@ -1,18 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { Search } from "lucide-react";
-import { useRoom } from "@/feature/shared/hooks/use-room";
 import { NewChat } from "../overlays/new-chat";
 import { ChatList } from "../components/chat-list";
 import { ChatListLoading } from "../shared/chat-loadings";
 
 export function ChatSidebar() {
-  const { errorRooms } = useRoom();
   const [searchTerm, setSearchTerm] = useState("");
-
-  if (errorRooms) {
-    return <div className="p-4">Error loading rooms</div>;
-  }
 
   return (
     <div className="w-72 h-full flex flex-col bg-sidebar-background border-r overflow-hidden">

@@ -27,14 +27,14 @@ export const createItem = async (
 };
 
 export const updateItem = async (
-  payload: Pick<ItemPayload, "id"> &
-    Partial<Omit<ItemPayload, "id" | "bucketId">>
+  payload: Pick<ItemPayload, "id" | "bucketId"> &
+    Partial<Omit<ItemPayload, "id" | "bucketId">> & { projectId: string }
 ) => {
   try {
-    const { id, ...rest } = payload;
+    const { id, bucketId, projectId, ...rest } = payload;
     const result = await put<Item>(`/items/${id}`, rest);
-    revalidateTag(CACHE_TAGS.PROJECT.ITEMS(result.bucket.project.id));
-    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(result.bucket.id));
+    revalidateTag(CACHE_TAGS.PROJECT.ITEMS(projectId));
+    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(bucketId));
     revalidateTag(CACHE_TAGS.ITEM.ONE(id));
     return result;
   } catch (error) {
@@ -47,8 +47,8 @@ export const deleteItem = async (
 ) => {
   try {
     await del<void>(`/items/${payload.id}`);
-    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(payload.bucketId));
     revalidateTag(CACHE_TAGS.PROJECT.ITEMS(payload.projectId));
+    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(payload.bucketId));
     return true;
   } catch (error) {
     return handleError(error);
@@ -92,6 +92,50 @@ export const reorderItems = async (
     revalidateTag(CACHE_TAGS.PROJECT.ITEMS(projectId));
     revalidateTag(CACHE_TAGS.BUCKET.ITEMS(bucketId));
     revalidateTag(CACHE_TAGS.ITEM.ONE(id));
+    return result;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+// ToDO: back end should accept [] of user id
+export const assignUser = async (payload: {
+  userId: string;
+  itemId: string;
+  bucketId: string;
+  projectId: string;
+}) => {
+  try {
+    const result = await post<Item>(
+      `/items/${payload.itemId}/assignees/assign`,
+      {
+        userId: payload.userId,
+      }
+    );
+    revalidateTag(CACHE_TAGS.PROJECT.ITEMS(payload.projectId));
+    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(payload.bucketId));
+    revalidateTag(CACHE_TAGS.ITEM.ONE(payload.itemId));
+    return result;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const unassignUser = async (payload: {
+  userId: string;
+  itemId: string;
+  bucketId: string;
+  projectId: string;
+}) => {
+  try {
+    const result = await del<Item>(
+      `/items/${payload.itemId}/assignees/unassign`,
+      {
+        userId: payload.userId,
+      }
+    );
+    revalidateTag(CACHE_TAGS.PROJECT.ITEMS(payload.projectId));
+    revalidateTag(CACHE_TAGS.BUCKET.ITEMS(payload.bucketId));
+    revalidateTag(CACHE_TAGS.ITEM.ONE(payload.itemId));
     return result;
   } catch (error) {
     return handleError(error);

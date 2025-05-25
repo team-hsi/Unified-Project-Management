@@ -7,17 +7,12 @@ import { Badge } from "@/feature/shared/ui/badge";
 import { Item } from "@/feature/shared/@types/item";
 import { ItemSheet } from "@/feature/project/shared/item-sheet";
 import { DualButton } from "@/feature/project/components/dual-button";
-import { useLabel } from "@/feature/shared/hooks/use-label";
-
 interface KanbanCardProps {
   item: Item;
   index: number;
 }
 
 export const KanbanItem = ({ item, index }: KanbanCardProps) => {
-  const { labels } = useLabel({
-    projectId: item.bucket.project.id,
-  });
   return (
     <Draggable draggableId={item.id} index={index}>
       {(provided) => (
@@ -37,24 +32,19 @@ export const KanbanItem = ({ item, index }: KanbanCardProps) => {
             <CardContent className="p-0 flex flex-col">
               <div className="flex items-center gap-1 mb-2">
                 {item.labels?.map((label) => {
-                  const itemLabel = labels?.find(
-                    (l: { id: string }) => l.id === label.id
-                  );
                   return (
-                    itemLabel && (
-                      <Badge
-                        key={itemLabel.id}
-                        variant="outline"
-                        className="text-xs border"
-                        style={{
-                          backgroundColor: hexToRgba(itemLabel.color, 0.1),
-                          color: itemLabel.color,
-                          borderColor: itemLabel.color,
-                        }}
-                      >
-                        {itemLabel.name}
-                      </Badge>
-                    )
+                    <Badge
+                      key={label.id}
+                      variant="outline"
+                      className="text-xs border"
+                      style={{
+                        backgroundColor: hexToRgba(label.color, 0.1),
+                        color: label.color,
+                        borderColor: label.color,
+                      }}
+                    >
+                      {label.name}
+                    </Badge>
                   );
                 })}
               </div>

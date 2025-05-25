@@ -8,32 +8,39 @@ import { useParams } from "next/navigation";
 import React from "react";
 
 export const ChatList = () => {
-  const { rooms } = useRoom();
-  console.log("rooms", rooms);
+  const { rooms, errorRooms } = useRoom();
+
   const { workspaceId, chatId } = useParams<{
     workspaceId: string;
     chatId: string;
   }>();
 
   // Filter out duplicate rooms and rooms not belonging to the current workspace
-  const uniqueRooms = React.useMemo(() => {
-    const seen = new Set<string>();
-    return rooms.filter((room: Room) => {
-      // Filter by workspaceId first
-      if (room.spaceId !== workspaceId) return false;
-      // Then filter out duplicates
-      if (seen.has(room.id)) return false;
-      seen.add(room.id);
-      return true;
-    });
-  }, [rooms, workspaceId]);
+  // const uniqueRooms = React.useMemo(() => {
+  //   const seen = new Set<string>();
+  //   return rooms.filter((room: Room) => {
+  //     // Filter by workspaceId first
+  //     if (room.spaceId !== workspaceId) return false;
+  //     // Then filter out duplicates
+  //     if (seen.has(room.id)) return false;
+  //     seen.add(room.id);
+  //     return true;
+  //   });
+  // }, [rooms, workspaceId]);
 
-  if (!uniqueRooms.length) {
-    return (
-      <div className="p-4 text-muted-foreground text-sm">
-        No rooms available.
-      </div>
-    );
+  // if (!uniqueRooms.length) {
+  //   return (
+  //     <div className="p-4 text-muted-foreground text-sm">
+  //       No rooms available.
+  //     </div>
+  //   );
+  // }
+  const uniqueRooms = Array.from(
+    new Map(rooms.map((room) => [room.id, room])).values()
+  );
+
+  if (errorRooms) {
+    return <div className="p-4">Error loading rooms</div>;
   }
 
   return (
@@ -53,15 +60,9 @@ export const ChatList = () => {
                 </div>
               </div>
               <div className="ml-3 flex-1 min-w-0">
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-center">
                   <h3 className="font-medium text-sm truncate">{room.name}</h3>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    10:30 AM
-                  </span>
                 </div>
-                <p className="text-xs text-muted-foreground truncate">
-                  Alex: I&apos;ve just pushed some updates to the documentation
-                </p>
               </div>
               <div className="ml-2 bg-chat-message-sent rounded-full h-5 w-5 flex items-center justify-center">
                 <span className="text-white text-xs">1</span>

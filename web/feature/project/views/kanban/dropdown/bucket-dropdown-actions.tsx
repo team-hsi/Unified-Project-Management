@@ -19,7 +19,7 @@ import {
 import { Bucket } from "@/feature/shared/@types/bucket";
 import { NameDescriptionForm } from "@/feature/auth/components/name-description-form";
 import { useBucket } from "@/feature/shared/hooks/use-bucket";
-import { useItem } from "@/feature/shared/hooks/use-item";
+import { useItemMutation } from "@/feature/shared/hooks/use-item-mutation";
 
 /*
  * Add Item
@@ -33,7 +33,7 @@ export const AddBucketItem = ({
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
-  const { create } = useItem();
+  const { create } = useItemMutation();
 
   const handleSubmit = async (values: {
     name: string;

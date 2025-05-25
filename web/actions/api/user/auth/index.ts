@@ -30,7 +30,6 @@ export const loginUser = async (
   payload: Pick<UserPayload, "email" | "password">
 ) => {
   try {
-    console.log("payload=>", payload);
     const result = await auth<UserWithToken>(`/users/login`, payload);
     const { user, tokens } = result;
     const session = {
@@ -40,7 +39,7 @@ export const loginUser = async (
       refreshToken: tokens.refreshToken,
     };
     await createSession(session);
-    return { data: user };
+    return user;
   } catch (error) {
     return handleError(error);
   }

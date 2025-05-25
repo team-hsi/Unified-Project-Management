@@ -13,7 +13,7 @@ import { Badge } from "@/feature/shared/ui/badge";
 import { useIsMobile } from "@/feature/shared/hooks/use-mobile";
 import { Separator } from "@/feature/shared/ui/separator";
 import { Button } from "@/feature/shared/ui/button";
-import { useItem } from "@/feature/shared/hooks/use-item";
+import { useItemMutation } from "@/feature/shared/hooks/use-item-mutation";
 
 export const ItemBreadcrumb = ({
   item,
@@ -30,7 +30,7 @@ export const ItemBreadcrumb = ({
   segments: string[];
   unsavedForm: boolean;
 }) => {
-  const { remove } = useItem();
+  const { remove } = useItemMutation();
   const isMobile = useIsMobile();
   const Icon = isMobile ? ChevronsDown : ChevronsRight;
   return (

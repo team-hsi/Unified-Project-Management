@@ -7,7 +7,7 @@ import {
 } from "@/feature/shared/ui/card";
 export const EmptyChat = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-gradient-to-r from-rose-500 to-pink-600">
+    <div className="flex flex-col items-center justify-center h-full p-8 text-center">
       <Card className="w-fit h-fit p-2 border  rounded-lg shadow-md max-w-sm">
         <CardHeader>
           <CardTitle>No messages here yet...</CardTitle>

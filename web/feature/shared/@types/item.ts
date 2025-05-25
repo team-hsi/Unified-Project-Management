@@ -47,6 +47,7 @@ export interface Item {
   dueDate: string | null;
   checklist: CheckList[] | null;
   activities?: Activity[];
+  assignees?: User[];
   labels: Label[];
   createdAt: string;
   updatedAt: string;

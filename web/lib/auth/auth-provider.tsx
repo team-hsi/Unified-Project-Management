@@ -1,15 +1,17 @@
 "use client";
 
-import { Session, User } from "@/feature/shared/@types/user";
+import { Session, User, UserPayload } from "@/feature/shared/@types/user";
 import { getCurrentSession, getSessionUser } from "@/actions/api/user/auth";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { createContext, useContext, ReactNode } from "react";
+import { updateUser } from "@/actions/api/user/mutations";
 
 interface AuthContextType {
   user: User | null;
   isPending: boolean;
   error: Error | null;
   session: Session | null;
+  update: (user: Partial<Omit<UserPayload, "id" | "password">>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,7 +24,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   } = useSuspenseQuery({
     queryKey: ["user"],
     queryFn: getSessionUser,
-    staleTime: 1000 * 60 * 40, // 10 minutes
+    staleTime: 1000 * 60 * 40,
+  });
+
+  const update = useMutation({
+    mutationFn: updateUser,
+    mutationKey: ["user"],
   });
 
   const { data: session } = useSuspenseQuery({
@@ -33,7 +40,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, isPending, error, session: session ?? null }}
+      value={{
+        user,
+        isPending,
+        error,
+        update: update.mutateAsync,
+        session: session ?? null,
+      }}
     >
       {children}
     </AuthContext.Provider>

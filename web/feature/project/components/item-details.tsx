@@ -7,7 +7,7 @@ import {
 } from "@/feature/shared/ui/avatar";
 import {
   CalendarRange,
-  ChevronsUp,
+  Flag,
   Loader,
   Loader2,
   Newspaper,
@@ -23,7 +23,7 @@ import {
   AccordionTrigger,
 } from "@/feature/shared/ui/accordion";
 import InlineEdit from "@/feature/shared/ui/inline-edit";
-import { useItem } from "@/feature/shared/hooks/use-item";
+import { useItemMutation } from "@/feature/shared/hooks/use-item-mutation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -84,7 +84,7 @@ export const ItemDetails = ({
   setUnsavedForm: (value: boolean) => void;
   unsavedForm: boolean;
 }) => {
-  const { update } = useItem();
+  const { update } = useItemMutation();
   const { labels } = useLabel({ projectId: item.bucket.project.id });
 
   const labelOptions = React.useMemo(() => {
@@ -98,12 +98,14 @@ export const ItemDetails = ({
   }, [labels]);
 
   const initialLabels = React.useMemo(() => {
-    return (item.labels || [])
-      .map((label) =>
-        labelOptions.find((l: { value: string }) => l.value === label.id)
-      )
-      .filter(Boolean);
-  }, [item.labels, labelOptions]);
+    return (
+      item.labels.map((label) => ({
+        value: label.id,
+        label: label.name,
+        color: label.color,
+      })) || []
+    );
+  }, [item.labels]);
 
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemFormSchema),
@@ -122,14 +124,16 @@ export const ItemDetails = ({
   }, [form.formState.isDirty, setUnsavedForm]);
 
   // Handle form submission
-  const onSubmit = (data: ItemFormValues) => {
+  const onSubmit = async (data: ItemFormValues) => {
     const labelIds = (data.labels ?? []).map((label) => label.value);
     const payload: ItemFormValues = { ...data };
     if (payload.priority === "") {
       delete payload.priority;
     }
-    update.mutateAsync({
+    await update.mutateAsync({
       id: item.id,
+      bucketId: item.bucket.id,
+      projectId: item.bucket.project.id,
       ...payload,
       labels: labelIds,
       dueDate: data.dueDate ? data.dueDate.toISOString() : "",
@@ -151,6 +155,8 @@ export const ItemDetails = ({
               update.mutateAsync({
                 id: item.id,
                 name: value,
+                bucketId: item.bucket.id,
+                projectId: item.bucket.project.id,
               })
             }
           />
@@ -158,7 +164,7 @@ export const ItemDetails = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <section className="flex flex-wrap gap-3">
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Status Field */}
               <MetadataField icon={Loader} label="Status">
                 <FormField
@@ -277,7 +283,7 @@ export const ItemDetails = ({
               </MetadataField>
 
               {/* Priority Field */}
-              <MetadataField icon={ChevronsUp} label="Priority">
+              <MetadataField icon={Flag} label="Priority">
                 <FormField
                   control={form.control}
                   name="priority"

@@ -12,7 +12,7 @@ import { Input } from "@/feature/shared/ui/input";
 import { LabelItem } from "./label-item";
 import { LabelForm } from "./label-form";
 import { EmptyLabels } from "./empty-labels";
-import { Tag, Plus, Search, Palette } from "lucide-react";
+import { Tag, PlusCircle, Search } from "lucide-react";
 import type { Project } from "@/feature/shared/@types/projects";
 import { useState } from "react";
 import { useLabel } from "@/feature/shared/hooks/use-label";
@@ -47,7 +47,7 @@ export function LabelsView({ project }: LabelsViewProps) {
 
       <div className="space-y-6">
         {/* Search and Create Section */}
-        <Card className="p-4 bg-gradient-to-br from-accent/5 via-primary/5 to-accent/5 border-accent/20 shadow-sm hover:shadow-md transition-all duration-300">
+        <Card className="p-4 shadow-none transition-all duration-300">
           <div className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -55,57 +55,23 @@ export function LabelsView({ project }: LabelsViewProps) {
                 placeholder="Search labels..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 bg-background/50 hover:bg-accent/5 transition-all duration-200 focus:bg-background h-9"
+                className="pl-9 max-w-md bg-background/50 hover:bg-accent/5 transition-all duration-200 focus:bg-background h-9"
               />
             </div>
+            <Button variant="outline"> ({labels?.length || 0}) Labels</Button>
             <Button
               className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground shadow-sm hover:shadow-md transition-all duration-300 h-9"
               onClick={() => setIsCreating(true)}
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <PlusCircle className="h-4 w-4 mr-2" />
               Create Label
             </Button>
           </div>
         </Card>
 
-        {/* Label Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card className="p-4 bg-gradient-to-br from-accent/5 via-primary/5 to-accent/5 border-accent/20 shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shadow-inner">
-                <Tag className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground">
-                  Total Labels
-                </h4>
-                <p className="text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                  {labels?.length || 0}
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-4 bg-gradient-to-br from-accent/5 via-primary/5 to-accent/5 border-accent/20 shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shadow-inner">
-                <Palette className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground">
-                  Color Schemes
-                </h4>
-                <p className="text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                  {new Set(labels?.map((label) => label.color) || []).size}
-                </p>
-              </div>
-            </div>
-          </Card>
-        </div>
-
         {/* Labels List */}
         {filteredLabels.length > 0 ? (
-          <Card className="bg-gradient-to-br from-accent/5 via-primary/5 to-accent/5 border-accent/20 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+          <Card className="shadow-none transition-all duration-300 overflow-hidden p-0">
             <div className="divide-y divide-border/50">
               {filteredLabels.map((label) => (
                 <LabelItem key={label.id} label={label} />
