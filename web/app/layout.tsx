@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import { QueryProvider } from "@/lib/query-client/query-provider";
 import NextTopLoader from "nextjs-toploader";
+import "@liveblocks/react-ui/styles.css";
+import "@liveblocks/react-tiptap/styles.css";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme/next-theme";
 import { Toaster } from "sonner";

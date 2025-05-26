@@ -57,9 +57,12 @@ import { useUtils } from "@/feature/shared/hooks/use-utils";
 import { toast } from "sonner";
 import { docPlaceholderContent } from "@/feature/documentation/overlays/new-doc";
 import { useDebouncedCallback } from "use-debounce";
+import { useLiveblocksExtension } from "@liveblocks/react-tiptap";
 
 export function SimpleEditor() {
   // --- Hooks and State (must be called unconditionally) ---
+
+  const liveblocks = useLiveblocksExtension();
   const isMobile = useMobile();
   const windowSize = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
@@ -117,7 +120,17 @@ export function SimpleEditor() {
       },
     },
     extensions: [
-      StarterKit,
+      liveblocks.configure({
+        cursor: {
+          render: (cursor: { userId: string; user?: { name: string } }) => {
+            return cursor.user?.name || cursor.userId;
+          },
+        },
+      }),
+      StarterKit.configure({
+        // The Liveblocks extension comes with its own history handling
+        history: false,
+      }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Underline,
       TaskList,
@@ -225,6 +238,8 @@ export function SimpleEditor() {
           role="presentation"
           className="simple-editor-content"
         />
+        {/* <Threads editor={editor} /> */}
+        {/* <FloatingToolbar editor={editor} /> */}
       </div>
     </EditorContext.Provider>
   );
