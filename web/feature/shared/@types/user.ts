@@ -1,3 +1,4 @@
+import { Room } from "./room";
 import { Workspace, WorkspaceWithUser } from "./space";
 
 export type Role = "owner" | "admin" | "member" | "guest";
@@ -27,6 +28,14 @@ export interface UserWithToken {
     accessToken: string;
     refreshToken: string;
   };
+  privateSpace: {
+    id: string;
+    name: string;
+  };
+}
+
+export interface UserWithRooms extends User {
+  rooms: Room[];
 }
 export interface Member {
   id: string;

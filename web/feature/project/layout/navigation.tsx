@@ -42,6 +42,7 @@ export const ProjectNavigation = () => {
         <Breadcrumb>
           <BreadcrumbList>
             {segments.map((segment, index) => {
+              // const isFirst = index === 0
               const isLast = index === segments.length - 1;
               // const href = `/${segments.slice(0, index + 1).join("/")}`;
 

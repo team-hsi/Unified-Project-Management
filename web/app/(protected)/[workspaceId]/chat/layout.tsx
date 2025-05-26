@@ -6,6 +6,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Chat } from "@/feature/chat/layout/chat";
 import { getUserRooms } from "@/actions/api/room/queries";
 import { verifySession } from "@/actions/core/dal";
+import { WebSocketProvider } from "@/lib/socket/WebSocketProvider";
 export const metadata: Metadata = {
   title: "Chat",
   description: "Collaboration chat page",
@@ -21,7 +22,9 @@ const ChatLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <ChatStoreProvider>
-        <Chat>{children}</Chat>
+        <WebSocketProvider>
+          <Chat>{children}</Chat>
+        </WebSocketProvider>
       </ChatStoreProvider>
     </HydrationBoundary>
   );

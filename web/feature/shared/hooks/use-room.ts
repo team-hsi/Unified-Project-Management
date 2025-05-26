@@ -35,7 +35,7 @@ export const useRoom = () => {
 
   // Queries
   const {
-    data: rooms,
+    data: userRooms,
     isPending: isPendingRooms,
     error: errorRooms,
   } = useSuspenseQuery({
@@ -161,7 +161,7 @@ export const useRoom = () => {
 
   return {
     // Queries
-    rooms,
+    userRooms,
     isPendingRooms,
     errorRooms,
     roomMembers,

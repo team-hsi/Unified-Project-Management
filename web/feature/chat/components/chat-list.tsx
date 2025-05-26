@@ -8,7 +8,7 @@ import { useParams } from "next/navigation";
 import React from "react";
 
 export const ChatList = () => {
-  const { rooms, errorRooms } = useRoom();
+  const { userRooms, errorRooms } = useRoom();
 
   const { workspaceId, chatId } = useParams<{
     workspaceId: string;
@@ -36,7 +36,7 @@ export const ChatList = () => {
   //   );
   // }
   const uniqueRooms = Array.from(
-    new Map(rooms.map((room) => [room.id, room])).values()
+    new Map(userRooms.rooms.map((room) => [room.id, room])).values()
   );
 
   if (errorRooms) {
