@@ -12,10 +12,10 @@ export const createUser = async (
 ) => {
   try {
     const result = await auth<UserWithToken>("/users/create", payload);
-    const { user, tokens } = result;
+    const { user, tokens, privateSpace } = result;
     const session = {
       userId: user.id,
-      activeSpace: user.activeSpace?.id || null,
+      activeSpace: privateSpace.id || null,
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
     };
