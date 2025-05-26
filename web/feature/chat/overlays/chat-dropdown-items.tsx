@@ -8,6 +8,7 @@ import {
 import { Trash2, LogOut } from "lucide-react";
 import { DropdownAction } from "@/feature/project/views/kanban/dropdown/bucket-dropdown-actions";
 import { CustomAlertDialog } from "@/feature/shared/components/custom-alert";
+// import { useRoom } from "@/feature/shared/hooks/use-room";
 
 export const LeaveChat = ({
   onSelect,
@@ -62,9 +63,10 @@ export const DeleteChat = ({
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
 }) => {
-  // const handleDeleteBucket = async () => {
+  // const { remove } = useRoom();
+  // const handleDelete = async () => {
   //   onOpenChange?.(false);
-  //   await deleteBucket.mutateAsync({ id: bucket.id });
+  //   await remove.mutateAsync({ id: bucket.id });
   // };
 
   return (
@@ -88,11 +90,6 @@ export const DeleteChat = ({
             // disabled={deleteBucket.isPending}
             // onClick={handleDeleteBucket}
           >
-            {/* {deleteBucket.isPending ? (
-              <Loader className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              "Delete"
-            )} */}
             Delete
           </Button>
         </AlertDialogFooter>

@@ -29,13 +29,13 @@ export const ChatInfo = ({ onClose }: ChatInfoProps) => {
   const [openEdit, setOpenEdit] = React.useState(false);
   const [viewMembers, setViewMembers] = React.useState(false);
 
-  const { rooms, roomMembers, isPendingRoomMembers } = useRoom();
+  const { userRooms, roomMembers, isPendingRoomMembers } = useRoom();
   const { chatId } = useParams<{ chatId: string }>();
   const [selectedMember, setSelectedMember] = React.useState<Member | null>(
     null
   );
 
-  const currentRoom = rooms?.find((room: Room) => room.id === chatId);
+  const currentRoom = userRooms.rooms?.find((room: Room) => room.id === chatId);
 
   return (
     <div className="flex flex-col h-full">

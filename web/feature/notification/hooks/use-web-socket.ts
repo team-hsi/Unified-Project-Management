@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useUser } from "@/lib/auth/auth-provider";
+import { toast } from "sonner";
 // import { toast } from "sonner";
 
 export function useWebSocket<T = unknown>(
@@ -13,12 +14,6 @@ export function useWebSocket<T = unknown>(
 
   useEffect(() => {
     if (!session?.tokens.accessToken) return;
-    console.log("session?.tokens.accessToken", session?.tokens.accessToken);
-    console.log(
-      "process.env.NEXT_PUBLIC_WS_URL",
-      process.env.NEXT_PUBLIC_WS_URL
-    );
-
     if (!socketRef.current) {
       socketRef.current = io(process.env.NEXT_PUBLIC_WS_URL!, {
         transports: ["websocket"],
@@ -32,7 +27,10 @@ export function useWebSocket<T = unknown>(
 
     const socket = socketRef.current;
     socket.on("connect", () => {
+      toast.success("🔌 new socket connected");
+      console.log("🔌 new socket connected");
       setIsConnected(true);
+      // socket.emit("start_call", { roomId: "123" });
       // toast.success("🔌 Socket Connected");
     });
     socket.on("disconnect", () => setIsConnected(false));

@@ -29,7 +29,7 @@ export const ChatDropdown = () => {
   return (
     <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
       <DropdownMenuTrigger>
-        <span ref={dropdownTriggerRef} className=" hover:text-muted">
+        <span ref={dropdownTriggerRef} className=" hover:text-primary">
           <MoreVertical size={20} />
         </span>
       </DropdownMenuTrigger>
