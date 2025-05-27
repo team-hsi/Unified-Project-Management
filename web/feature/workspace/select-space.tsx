@@ -11,7 +11,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/feature/shared/ui/avatar";
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Workspace } from "../shared/@types/space";
 import { updateActiveSpace } from "@/actions/api/workspace/mutations";
@@ -55,7 +55,7 @@ const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {
             </Link>
           ))}
 
-          <Button
+          {/* <Button
             variant="ghost"
             className="w-full justify-between h-16 rounded-none bg-accent"
           >
@@ -67,7 +67,7 @@ const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {
                 Create New Workspace
               </span>
             </div>
-          </Button>
+          </Button> */}
         </CardContent>
       </Card>
     </div>

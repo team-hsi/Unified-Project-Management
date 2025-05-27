@@ -2,7 +2,7 @@
 import { Dot } from "../../shared/components/dot";
 import { cn } from "@/lib/utils";
 import { useWebSocket } from "../hooks/use-web-socket";
-import { NotificationBell } from "./notification-bell";
+// import { NotificationBell } from "./notification-bell";
 
 export const Notification = () => {
   // Use a dummy event and handler just to get connection status
@@ -16,10 +16,10 @@ export const Notification = () => {
           isConnected ? "bg-green-500" : "bg-red-500"
         )}
       />
-      <p className="text-sm text-gray-500">
+      {/* <p className="text-sm text-gray-500">
         {isConnected ? "Connected" : "Disconnected"}
-      </p>
-      <NotificationBell />
+      </p> */}
+      {/* <NotificationBell /> */}
     </div>
   );
 };

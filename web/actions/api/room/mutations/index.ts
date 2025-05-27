@@ -22,7 +22,9 @@ export const createRoom = async (
 export const updateRoom = async (payload: Pick<RoomPayload, "id" | "name">) => {
   try {
     const { id, ...rest } = payload;
+    const session = await getSession();
     const result = await put<Room>(`/rooms/${id}`, rest);
+    revalidateTag(CACHE_TAGS.USER.ROOMS(session.userId as string));
     revalidateTag(CACHE_TAGS.WORKSPACE.ROOMS(result.spaceId));
     revalidateTag(CACHE_TAGS.ROOM.ONE(payload.id));
     return result;
@@ -31,12 +33,12 @@ export const updateRoom = async (payload: Pick<RoomPayload, "id" | "name">) => {
   }
 };
 
-export const deleteRoom = async (
-  payload: Pick<RoomPayload, "id" | "spaceId">
-) => {
+export const deleteRoom = async (payload: Pick<RoomPayload, "id">) => {
   try {
+    const session = await getSession();
     const result = await del<void>(`/rooms/${payload.id}`);
-    revalidateTag(CACHE_TAGS.WORKSPACE.ROOMS(payload.spaceId));
+    // revalidateTag(CACHE_TAGS.WORKSPACE.ROOMS(result.spaceId));
+    revalidateTag(CACHE_TAGS.USER.ROOMS(session.userId as string));
     return result;
   } catch (error) {
     return handleError(error);
@@ -68,6 +70,7 @@ export const removeRoomMember = async (
     const result = await del<Room>(`/rooms/${id}/members/remove`, {
       userId,
     });
+    revalidateTag(CACHE_TAGS.USER.ROOMS(userId));
     revalidateTag(CACHE_TAGS.ROOM.MEMBERS(id));
     revalidateTag(CACHE_TAGS.ROOM.ONE(id));
     // revalidateTag(CACHE_TAGS.WORKSPACE.ROOMS(spaceId));

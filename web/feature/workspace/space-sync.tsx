@@ -22,7 +22,7 @@ export function SpaceSync() {
     };
 
     syncSpace();
-  }, [workspaceId, session, setActive]);
+  }, [workspaceId]);
 
   return null;
 }

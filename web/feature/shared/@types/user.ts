@@ -28,6 +28,10 @@ export interface UserWithToken {
     accessToken: string;
     refreshToken: string;
   };
+  privateSpace: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface UserWithRooms extends User {

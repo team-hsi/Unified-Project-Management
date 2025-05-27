@@ -54,7 +54,7 @@ import { getDocumentById } from "@/actions/api/document/queries";
 import { updateDocument } from "@/actions/api/document/mutations";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { useUtils } from "@/feature/shared/hooks/use-utils";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import { docPlaceholderContent } from "@/feature/documentation/overlays/new-doc";
 import { useDebouncedCallback } from "use-debounce";
 import { useLiveblocksExtension } from "@liveblocks/react-tiptap";
@@ -93,14 +93,12 @@ export function SimpleEditor() {
       queryClient.invalidateQueries({
         queryKey: [projectId, "documents", docId],
       });
-      toast.success("saved");
     },
     onError: toastUnknownError,
   });
 
   const handleSave = useDebouncedCallback(async (state: string) => {
     // Debounced callback hook
-    console.log("state", state);
     await update.mutateAsync({
       id: docId,
       projectId: projectId,

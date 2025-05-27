@@ -81,7 +81,7 @@ export const useItemMutation = () => {
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
       if (isValidResponse(response)) {
-        toast.success("Item created successfully!");
+        // toast.success("Item created successfully!");
       }
     },
   });
@@ -122,9 +122,7 @@ export const useItemMutation = () => {
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
       queryClient.invalidateQueries({ queryKey: [projectId, "item"] });
-      if (isValidResponse(response)) {
-        toast.success("Item updated successfully!");
-      }
+      void isValidResponse(response);
     },
   });
 

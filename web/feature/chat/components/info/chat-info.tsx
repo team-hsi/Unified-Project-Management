@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
-import { Bell, SquareArrowOutUpRight, UserPlus } from "lucide-react";
+import { SquareArrowOutUpRight, UserPlus } from "lucide-react";
 import React from "react";
 import {
   CardDescription,
@@ -56,20 +56,6 @@ export const ChatInfo = ({ onClose }: ChatInfoProps) => {
             </CardDescription>
           </CardHeader>
         </div>
-        <div className="px-4 py-4 border-b">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3">
-                <Bell size={16} />
-              </div>
-              <span>Notifications</span>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6  peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
-            </label>
-          </div>
-        </div>
         <div className="px-4">
           <Tabs defaultValue="members" className="w-full mb-4">
             <TabsList className="h-auto rounded-none border-b border-border bg-transparent w-full pb-0">
@@ -83,12 +69,6 @@ export const ChatInfo = ({ onClose }: ChatInfoProps) => {
                   className=" hover:text-blue-500"
                   onClick={() => setViewMembers(true)}
                 />
-              </TabsTrigger>
-              <TabsTrigger
-                value="demo"
-                className="underline-tab data-[state=active]:bg-transparent flex-1 data-[state=active]:shadow-none data-[state=active]:after:bg-primary"
-              >
-                Permissions
               </TabsTrigger>
             </TabsList>
             <TabsContent value="members" className="mt-4">
@@ -135,7 +115,6 @@ export const ChatInfo = ({ onClose }: ChatInfoProps) => {
                 )}
               </ScrollArea>
             </TabsContent>
-            <TabsContent value="demo"> placeholder</TabsContent>
           </Tabs>
         </div>
         <AddMemberDialog>

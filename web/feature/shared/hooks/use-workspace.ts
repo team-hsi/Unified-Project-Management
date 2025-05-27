@@ -9,7 +9,7 @@ import {
   createWorkspace,
   updateWorkspace,
   deleteWorkspace,
-  addWorkspaceMembers,
+  inviteWorkspaceMembers,
   updateWorkspaceMemberRole,
   removeWorkspaceMembers,
 } from "@/actions/api/workspace/mutations";
@@ -85,15 +85,15 @@ export const useWorkspace = () => {
 
   // Add workspace members mutation
   const inviteMember = useMutation({
-    mutationFn: addWorkspaceMembers,
+    mutationFn: inviteWorkspaceMembers,
     onSuccess: (response) => {
       if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({
         queryKey: [session?.activeSpace, "ws-members"],
       });
-      toast.success("Update", {
-        description: "Member added successfully!",
-      });
+      // toast.success("Update", {
+      //   description: "Member added successfully!",
+      // });
     },
     onError: toastUnknownError,
   });
@@ -135,7 +135,7 @@ export const useWorkspace = () => {
       queryClient.invalidateQueries({
         queryKey: ["session"],
       });
-      toast.success("Workspace changed!");
+      // toast.success("Workspace changed!");
     },
     onError: toastUnknownError,
   });

@@ -111,7 +111,7 @@ export function ChatHeader() {
 
   return (
     <>
-      <div className="border-b p-2 shadow-sm">
+      <div className="border-b p-2 shadow-sm cursor-pointer">
         <div className="flex items-center justify-between">
           <ChatDetails>
             <div className="flex items-center">

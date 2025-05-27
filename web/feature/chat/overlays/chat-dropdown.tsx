@@ -7,13 +7,17 @@ import {
 } from "@/feature/shared/ui/dropdown-menu";
 import { useState } from "react";
 import { MoreVertical } from "lucide-react";
-import { DeleteChat, LeaveChat } from "./chat-dropdown-items";
+import { LeaveChat } from "./chat-dropdown-items";
+import { useUser } from "@/lib/auth/auth-provider";
+import { useParams } from "next/navigation";
 
 export const ChatDropdown = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [hasOpenDialog, setHasOpenDialog] = useState(false);
   const dropdownTriggerRef = useRef<HTMLButtonElement | null>(null);
   const focusRef = useRef<HTMLElement | null>(null);
+  const { chatId } = useParams<{ chatId: string }>();
+  const { session } = useUser();
 
   const handleDialogOpenChange = (open: boolean) => {
     setHasOpenDialog(open);
@@ -46,11 +50,13 @@ export const ChatDropdown = () => {
         <LeaveChat
           onOpenChange={handleDialogOpenChange}
           onSelect={handleItemSelect}
+          id={chatId}
+          userId={session?.userId as string}
         />
-        <DeleteChat
+        {/* <DeleteChat
           onOpenChange={handleDialogOpenChange}
           onSelect={handleItemSelect}
-        />
+        /> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );

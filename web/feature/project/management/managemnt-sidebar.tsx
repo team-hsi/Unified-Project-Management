@@ -1,5 +1,5 @@
 "use client";
-import { Bell, Settings, Tag, Users } from "lucide-react";
+import { Settings, Tag, Users } from "lucide-react";
 import type React from "react";
 
 import { Button } from "@/feature/shared/ui/button";
@@ -36,11 +36,6 @@ export const ManagementSidebar = ({
           id: "general",
           label: "General",
           icon: <Settings className="h-4 w-4" />,
-        },
-        {
-          id: "notifications",
-          label: "Notifications",
-          icon: <Bell className="h-4 w-4" />,
         },
         {
           id: "people",

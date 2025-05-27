@@ -57,3 +57,28 @@ export const removeUserActiveSpace = async () => {
   //   throw new Error(extractErrors(error));
   // }
 };
+
+export const acceptInvite = async (inviteId: string) => {
+  try {
+    const session = await getSession();
+    const result = await fetch(
+      `https://unified-project-management-api.onrender.com/v1/spaces/invites/${inviteId}/accept`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.tokens.accessToken}`,
+        },
+        body: JSON.stringify({ inviteId }),
+      }
+    );
+    const data = await result.json();
+    if (!result.ok) {
+      throw new Error(`Failed to accept invite: ${data}`);
+    }
+    return true;
+  } catch (error) {
+    console.error(`Error accepting invite ${inviteId}:`, error);
+    throw new Error(extractErrors(error));
+  }
+};

@@ -56,7 +56,7 @@ export const PeopleView = () => {
             <AddProjectMemberDialog projectId={projectId}>
               <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 <UserPlus className="h-4 w-4 mr-2" />
-                Invite People
+                Add Team Member
               </Button>
             </AddProjectMemberDialog>
           </div>

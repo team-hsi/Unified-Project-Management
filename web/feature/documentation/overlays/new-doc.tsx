@@ -1,18 +1,23 @@
 "use client";
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/feature/shared/ui/dialog";
-import { FolderPlus } from "lucide-react";
+import { FolderPlus, PlusCircle } from "lucide-react";
 // import { useDocument } from "@/feature/shared/hooks/use-document";
 import { NameDescriptionForm } from "@/feature/auth/components/name-description-form";
 import { useMutation } from "@tanstack/react-query";
 import { createDocument } from "@/actions/api/document/mutations";
 import { useUtils } from "@/feature/shared/hooks/use-utils";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
+import { Button } from "@/feature/shared/ui/button";
+import React from "react";
 export const NewDocument = ({ projectId }: { projectId: string }) => {
+  const [open, setOpen] = React.useState(false);
   // const { create } = useDocument();
   const { isValidResponse, toastUnknownError } = useUtils();
   const queryClient = getQueryClient();
@@ -32,32 +37,41 @@ export const NewDocument = ({ projectId }: { projectId: string }) => {
       content: docPlaceholderContent,
       projectId: projectId,
     });
+    setOpen(false);
   };
   return (
-    <DialogContent>
-      <div className="flex flex-col items-center gap-2">
-        <div
-          className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border"
-          aria-hidden="true"
-        >
-          <FolderPlus className="opacity-80" size={16} strokeWidth={2} />
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button>
+          <PlusCircle className="h-4 w-4 mr-2" />
+          New Document
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <div className="flex flex-col items-center gap-2">
+          <div
+            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border"
+            aria-hidden="true"
+          >
+            <FolderPlus className="opacity-80" size={16} strokeWidth={2} />
+          </div>
+          <DialogHeader>
+            <DialogTitle className="sm:text-center">
+              Create New Document
+            </DialogTitle>
+            <DialogDescription className="sm:text-center">
+              Fill in the details below to create your new project.
+            </DialogDescription>
+          </DialogHeader>
         </div>
-        <DialogHeader>
-          <DialogTitle className="sm:text-center">
-            Create New Document
-          </DialogTitle>
-          <DialogDescription className="sm:text-center">
-            Fill in the details below to create your new project.
-          </DialogDescription>
-        </DialogHeader>
-      </div>
-      <NameDescriptionForm
-        onSubmit={handleCreate}
-        isPending={create.isPending}
-        label="Create"
-        nameOnly={true}
-      />
-    </DialogContent>
+        <NameDescriptionForm
+          onSubmit={handleCreate}
+          isPending={create.isPending}
+          label="Create"
+          nameOnly={true}
+        />
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -69,25 +83,13 @@ export const docPlaceholderContent = `<h1>Welcome to Your Project Management Hub
   <li>
     <p><strong>Rich Text Editing</strong> - Format text with <strong>bold</strong>, <em>italic</em>, and <u>underline</u></p>
   </li>
-  <li>
-    <p><strong>AI-Powered Writing</strong> - Select text and use the ✨ AI button to improve, fix, or rewrite content</p>
-  </li>
-  <li>
-    <p><strong>Auto-Save</strong> - Your changes are automatically saved as you type</p>
-  </li>
-  <li>
-    <p><strong>Task Lists</strong> - Create interactive checklists for your projects</p>
-  </li>
+
 </ul>
 
 <h2>📋 Project Documentation Ideas</h2>
 <p>Use this space to document:</p>
 <ul>
   <li><input type="checkbox" disabled> Project requirements and specifications</li>
-  <li><input type="checkbox" disabled> Meeting notes and action items</li>
-  <li><input type="checkbox" disabled> Team collaboration guidelines</li>
-  <li><input type="checkbox" disabled> Project timelines and milestones</li>
-  <li><input type="checkbox" checked disabled> Technical documentation and APIs</li>
 </ul>
 
 <h2>💡 Pro Tips</h2>
@@ -95,22 +97,4 @@ export const docPlaceholderContent = `<h1>Welcome to Your Project Management Hub
   <p><em>Select any text to see formatting options in the bubble menu. Try the AI features to enhance your writing instantly!</em></p>
 </blockquote>
 
-<ol>
-  <li>
-    <p>Use <code># Heading 1</code> for main sections</p>
-  </li>
-  <li>
-    <p>Use <code>## Heading 2</code> for subsections</p>
-  </li>
-  <li>
-    <p>Type <code>- [ ]</code> to create task lists</p>
-  </li>
-  <li>
-    <p>Type <code>&gt;</code> for blockquotes</p>
-  </li>
-</ol>
-
-<p>Ready to start your project documentation? Simply select all this text and start typing to replace it with your own content. Your work will be automatically saved as you type.</p>
-
-<p><em>Happy documenting! 🎉</em></p>
 `;

@@ -28,7 +28,7 @@ export function ChatSidebar() {
       </div>
 
       <React.Suspense fallback={<ChatListLoading />}>
-        <ChatList />
+        <ChatList searchTerm={searchTerm} />
       </React.Suspense>
     </div>
   );

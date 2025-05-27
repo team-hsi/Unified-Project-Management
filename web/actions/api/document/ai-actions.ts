@@ -136,6 +136,12 @@ ${html}`;
       maxTokens: 1000,
       temperature: 0.2,
     });
+    // const { text: result } = await generateText({
+    //   model: groq("deepseek-r1-7b"),
+    //   prompt,
+    //   maxTokens: 1000,
+    //   temperature: 0.2,
+    // });
 
     // Clean up the response
     let cleanedResult = result.trim();
