@@ -38,10 +38,6 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
         console.log("🔌 Global WebSocket Connected:", newSocket.id);
         setSocket(newSocket);
       });
-      newSocket.onAny((event, ...args) => {
-        console.log("asdfasdf", event);
-        // console.log(🌍 Event received: ${event}, args);
-      });
       newSocket.on("disconnect", (reason) => {
         console.log("🔌 Global WebSocket Disconnected:", reason);
         // setSocket(null); // Keep the socket instance for reconnection attempts
