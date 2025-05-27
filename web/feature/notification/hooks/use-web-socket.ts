@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useUser } from "@/lib/auth/auth-provider";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 // import { toast } from "sonner";
 
 export function useWebSocket<T = unknown>(
@@ -27,7 +27,7 @@ export function useWebSocket<T = unknown>(
 
     const socket = socketRef.current;
     socket.on("connect", () => {
-      toast.success("🔌 new socket connected");
+      // toast.success("🔌 new socket connected");
       console.log("🔌 new socket connected");
       setIsConnected(true);
       // socket.emit("start_call", { roomId: "123" });
