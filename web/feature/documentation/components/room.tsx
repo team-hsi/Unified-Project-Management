@@ -8,7 +8,13 @@ import {
 } from "@liveblocks/react/suspense";
 import { getDocUsers } from "@/actions/api/user/queries";
 
-export function Room({ children }: { children: ReactNode }) {
+export function Room({
+  children,
+  docId,
+}: {
+  children: ReactNode;
+  docId: string;
+}) {
   return (
     <LiveblocksProvider
       resolveUsers={async ({ userIds }) => {
@@ -22,7 +28,7 @@ export function Room({ children }: { children: ReactNode }) {
         "pk_prod_JkhNVz01ZJ7kWWj3tuujajE3ifR85KskdznqyJlxhyTLTlR0IVOwlvNrgmS8JrPs"
       }
     >
-      <RoomProvider id="my-room" initialPresence={{ cursor: { x: 0, y: 0 } }}>
+      <RoomProvider id={docId} initialPresence={{ cursor: { x: 0, y: 0 } }}>
         <ClientSideSuspense fallback={<div>Loading…</div>}>
           {children}
         </ClientSideSuspense>

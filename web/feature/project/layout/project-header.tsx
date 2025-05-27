@@ -2,8 +2,8 @@
 import * as React from "react";
 import ProjectTabs from "./view-tabs";
 import { CreateBucket } from "../views/kanban/dropdown/create-bucket-dialog";
-import { Dialog, DialogTrigger } from "@/feature/shared/ui/dialog";
-import { PlusCircle, Settings } from "lucide-react";
+import { DialogTrigger } from "@/feature/shared/ui/dialog";
+import { Settings } from "lucide-react";
 import { Button } from "@/feature/shared/ui/button";
 import { useViewStore } from "@/lib/stores/view-store";
 import { NewDocument } from "@/feature/documentation/overlays/new-doc";
@@ -26,7 +26,11 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({ project }) => {
       <div className="flex items-center justify-between w-full p-4 pb-3 mx-auto">
         <div className="flex items-center gap-3">
           <div className="border-2 w-10 h-10 rounded-lg flex items-center justify-center text-xl font-semibold">
-            {project?.name?.[0]?.toUpperCase()}
+            {project?.name
+              ?.split(" ")
+              .filter(Boolean)
+              .map((word) => word[0].toUpperCase())
+              .join("")}
           </div>
           <h1 className="text-2xl font-semibold">{project?.name}</h1>
         </div>
@@ -55,15 +59,7 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({ project }) => {
         <ProjectTabs />
         <div className="flex items-center gap-2 w-full sm:w-auto">
           {activeView === "documents" ? (
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button>
-                  <PlusCircle className="h-4 w-4 mr-2" />
-                  New Document
-                </Button>
-              </DialogTrigger>
-              <NewDocument projectId={project?.id || ""} />
-            </Dialog>
+            <NewDocument projectId={project?.id || ""} />
           ) : (
             <CreateBucket projectId={project?.id || ""} />
           )}

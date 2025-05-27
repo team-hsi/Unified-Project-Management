@@ -73,11 +73,6 @@ export const PeopleView = () => {
     memberId: string,
     newRole: Member["role"]
   ) => {
-    console.log({
-      id: workspaceId,
-      userId: memberId,
-      role: newRole,
-    });
     await updateMembership.mutateAsync({
       id: workspaceId,
       userId: memberId,
@@ -104,7 +99,7 @@ export const PeopleView = () => {
       email: "",
     }));
     await inviteMember.mutateAsync({
-      userId: invite.email,
+      email: invite.email,
       role: invite.role,
       id: workspaceId,
     });

@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import React from "react";
 
-export const ChatList = () => {
+export const ChatList = ({ searchTerm }: { searchTerm: string }) => {
   const { userRooms, errorRooms } = useRoom();
 
   const { workspaceId, chatId } = useParams<{
@@ -16,28 +16,27 @@ export const ChatList = () => {
   }>();
 
   // Filter out duplicate rooms and rooms not belonging to the current workspace
-  // const uniqueRooms = React.useMemo(() => {
-  //   const seen = new Set<string>();
-  //   return rooms.filter((room: Room) => {
-  //     // Filter by workspaceId first
-  //     if (room.spaceId !== workspaceId) return false;
-  //     // Then filter out duplicates
-  //     if (seen.has(room.id)) return false;
-  //     seen.add(room.id);
-  //     return true;
-  //   });
-  // }, [rooms, workspaceId]);
+  const uniqueRooms = React.useMemo(() => {
+    const seen = new Set<string>();
 
-  // if (!uniqueRooms.length) {
-  //   return (
-  //     <div className="p-4 text-muted-foreground text-sm">
-  //       No rooms available.
-  //     </div>
-  //   );
-  // }
-  const uniqueRooms = Array.from(
-    new Map(userRooms.rooms.map((room) => [room.id, room])).values()
-  );
+    return userRooms.rooms.filter((room: Room) => {
+      if (room.spaceId !== workspaceId) return false;
+      if (seen.has(room.id)) return false;
+      seen.add(room.id);
+      return room.name.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+  }, [userRooms.rooms, workspaceId, searchTerm]);
+
+  if (!uniqueRooms.length) {
+    return (
+      <div className="p-4 text-muted-foreground text-sm">
+        No rooms available.
+      </div>
+    );
+  }
+  // const uniqueRooms = Array.from(
+  //   new Map(userRooms.rooms.map((room) => [room.id, room])).values()
+  // );
 
   if (errorRooms) {
     return <div className="p-4">Error loading rooms</div>;
@@ -55,8 +54,10 @@ export const ChatList = () => {
           >
             <div className="flex items-start">
               <div className="relative">
-                <div className="h-10 w-10 rounded-full flex items-center justify-center text-white bg-primary">
-                  <span>{room.name.slice(0, 2)}</span>
+                <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center">
+                  <span className="text-white text-sm font-medium leading-none">
+                    {room.name.slice(0, 2).toUpperCase()}
+                  </span>
                 </div>
               </div>
               <div className="ml-3 flex-1 min-w-0">

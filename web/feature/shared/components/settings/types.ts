@@ -1,12 +1,10 @@
 export type SettingsView =
   | "preferences"
-  | "notifications"
   | "general"
   | "people"
   | "account"
-  | "permissions";
-
-// | "sites"
+  | "permissions"
+  | "invitations";
 // | "emoji"
 // | "import"
 // | "billing"

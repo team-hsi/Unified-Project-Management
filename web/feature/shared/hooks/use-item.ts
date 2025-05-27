@@ -3,7 +3,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
-import { toast } from "sonner";
 import {
   assignUser,
   unassignUser,
@@ -51,9 +50,7 @@ export const useItem = (id: string) => {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "item"] });
-      if (isValidResponse(response)) {
-        toast.success("Checklist updated successfully!");
-      }
+      void isValidResponse(response);
     },
   });
 

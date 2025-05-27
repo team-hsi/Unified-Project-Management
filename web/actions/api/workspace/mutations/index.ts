@@ -64,6 +64,19 @@ export const addWorkspaceMembers = async (payload: MemberPayload) => {
     return handleError(error);
   }
 };
+export const inviteWorkspaceMembers = async (
+  payload: Omit<MemberPayload, "userId"> & { email: string }
+) => {
+  try {
+    const result = await post(`/spaces/${payload.id}/invites/invite`, {
+      email: payload.email,
+      role: payload.role,
+    });
+    return result;
+  } catch (error) {
+    return handleError(error);
+  }
+};
 
 export const updateWorkspaceMemberRole = async (payload: MemberPayload) => {
   try {

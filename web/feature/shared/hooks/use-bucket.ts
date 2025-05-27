@@ -92,9 +92,7 @@ export const useBucket = () => {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "buckets"] });
-      if (isValidResponse(response)) {
-        toast.success("Bucket updated!");
-      }
+      void isValidResponse(response);
     },
   });
 

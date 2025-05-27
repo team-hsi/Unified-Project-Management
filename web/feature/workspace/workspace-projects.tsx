@@ -149,9 +149,6 @@ function ProjectCard({ project }: { project: Project }) {
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between py-2">
-            <Badge className="bg-slate-500/15 text-slate-600 hover:bg-slate-500/25">
-              Personal
-            </Badge>
             <span className="text-xs text-muted-foreground">
               Updated {timeAgo}
             </span>

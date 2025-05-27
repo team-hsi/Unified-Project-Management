@@ -10,6 +10,7 @@ import { getSession } from "../../../core/dal";
 import { extractErrors } from "@/lib/utils";
 import { cache } from "react";
 import { CACHE_LIFE, CACHE_TAGS } from "../../../core/cache-config";
+import { Invitation } from "../../user/queries";
 
 export const getAllWorkspaces = async () => {
   try {
@@ -69,6 +70,15 @@ export const getWorkspaceMembers = async (
     });
   } catch (error) {
     console.error("Error fetching workspace members:", error);
+    throw new Error(extractErrors(error));
+  }
+};
+
+export const getSpaceInviteInfo = async (id: string) => {
+  try {
+    return await get<Invitation>(`/spaces/invites/${id}`);
+  } catch (error) {
+    console.error("Error fetching user invitations:", error);
     throw new Error(extractErrors(error));
   }
 };

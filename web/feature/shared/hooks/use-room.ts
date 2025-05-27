@@ -111,16 +111,44 @@ export const useRoom = () => {
 
   const update = useMutation({
     mutationFn: updateRoom,
-    onSuccess: (response) => {
-      if (!isValidResponse(response)) return;
-      queryClient.invalidateQueries({ queryKey: [session?.userId, "rooms"] });
+    onMutate: async (updatedRoom: { id: string; name: string }) => {
+      await queryClient.cancelQueries({ queryKey: [session?.userId, "rooms"] });
+      const previousRooms = queryClient.getQueryData([
+        session?.userId,
+        "rooms",
+      ]) as Room[] | undefined;
+
+      // Optimistically update the room in the cache
+      queryClient.setQueryData([session?.userId, "rooms"], (old: Room[] = []) =>
+        old.map((room) =>
+          room.id === updatedRoom.id
+            ? { ...room, name: updatedRoom.name }
+            : room
+        )
+      );
+
+      return { previousRooms };
     },
-    onError: toastUnknownError,
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: [session?.userId, "rooms"] });
+      if (isValidResponse(response)) {
+      }
+    },
+    onError: (error, updatedRoom, context) => {
+      // Rollback to previous rooms if error
+      if (context?.previousRooms) {
+        queryClient.setQueryData(
+          [session?.userId, "rooms"],
+          context.previousRooms
+        );
+      }
+      queryClient.invalidateQueries({ queryKey: [session?.userId, "rooms"] });
+      toastUnknownError(error as BaseError);
+    },
   });
 
   const remove = useMutation({
-    mutationFn: async (id: string) =>
-      await deleteRoom({ id, spaceId: workspaceId }),
+    mutationFn: async (id: string) => await deleteRoom({ id }),
     onSuccess: (response) => {
       if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({ queryKey: [session?.userId, "rooms"] });
@@ -142,6 +170,7 @@ export const useRoom = () => {
     onSuccess: (response) => {
       if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({ queryKey: [chatId, "room-members"] });
+      queryClient.invalidateQueries({ queryKey: [session?.userId, "rooms"] });
     },
     onError: toastUnknownError,
   });

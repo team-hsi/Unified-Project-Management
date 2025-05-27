@@ -33,7 +33,7 @@ const page = async (props: Props) => {
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Room>
+      <Room docId={params.docId}>
         {/* <Editor /> */}
         <SimpleEditor />
       </Room>

@@ -27,6 +27,7 @@ export const CACHE_TAGS = {
   USER: {
     WORKSPACES: (id: string) => `user-${id}-workspaces`,
     ROOMS: (id: string) => `user-${id}-rooms`,
+    INVITES: (id: string) => `user-${id}-invitations`,
   },
   WORKSPACE: {
     ALL: "workspaces",

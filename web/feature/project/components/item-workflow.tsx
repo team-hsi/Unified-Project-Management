@@ -55,12 +55,6 @@ export const ItemWorkflow = ({ itemId }: { itemId: string }) => {
             Assignees
           </TabsTrigger>
           <TabsTrigger
-            value="comments"
-            className="underline-tab data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:bg-primary"
-          >
-            Comments
-          </TabsTrigger>
-          <TabsTrigger
             value="activities"
             className="underline-tab data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:bg-primary"
           >
@@ -146,11 +140,6 @@ export const ItemWorkflow = ({ itemId }: { itemId: string }) => {
                 </div>
               </div>
             )}
-          </TabsContent>
-          <TabsContent value="comments" className="p-4 m-0 h-full">
-            <p className="text-center text-sm text-muted-foreground">
-              Content for comments
-            </p>
           </TabsContent>
           <TabsContent value="activities" className="p-4 m-0 h-full">
             <div className="h-full">

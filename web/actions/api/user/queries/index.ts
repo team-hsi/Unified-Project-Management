@@ -76,3 +76,34 @@ export const getCurrentUser = async () => {
     return null;
   }
 };
+
+export const getUserInvitations = async () => {
+  try {
+    const session = await getSession();
+    return await get<InvitationList>(`/users/${session.userId}/invites`);
+  } catch (error) {
+    console.error("Error fetching user invitations:", error);
+    throw new Error(extractErrors(error));
+  }
+};
+
+export type Invitation = {
+  id: string;
+  email: string;
+  role: string;
+  spaceId: string;
+  inviter: {
+    id: string;
+    firstname: string;
+    lastname: string;
+    username: string;
+    email: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  status: "pending" | "accepted" | "declined";
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type InvitationList = Invitation[];

@@ -1,4 +1,4 @@
-export type ManagementsView = "general" | "notifications" | "people" | "labels";
+export type ManagementsView = "general" | "people" | "labels";
 
 export type ProjectLabel = {
   name: string;

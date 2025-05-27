@@ -7,12 +7,12 @@ import {
   CardTitle,
 } from "@/feature/shared/ui/card";
 import { Member } from "@/feature/shared/@types/user";
-import { Button } from "@/feature/shared/ui/button";
-import { Trash2 } from "lucide-react";
-import { useParams } from "next/navigation";
-import { toast } from "sonner";
+// import { Button } from "@/feature/shared/ui/button";
+// import { Trash2 } from "lucide-react";
+// import { useParams } from "next/navigation";
+// import { toast } from "sonner";
 import { ChatSheetHeader } from "../../layout/chat-sheet-header";
-import { useRoom } from "@/feature/shared/hooks/use-room";
+// import { useRoom } from "@/feature/shared/hooks/use-room";
 
 interface ChatUserInfoProps {
   member: Member;
@@ -20,21 +20,21 @@ interface ChatUserInfoProps {
 }
 // TODO: add joined date to the member
 export const ChatUserInfo = ({ member, onClose }: ChatUserInfoProps) => {
-  const { chatId } = useParams<{ chatId: string }>();
-  const { removeMember } = useRoom();
+  // const { chatId } = useParams<{ chatId: string }>();
+  // const { removeMember } = useRoom();
 
-  const handleRemoveMember = async () => {
-    try {
-      await removeMember.mutateAsync({
-        id: chatId,
-        userId: member.user.id,
-      });
-      toast.success(`Member removed successfully, ${member.user.id}`);
-      onClose();
-    } catch (error) {
-      toast.error(JSON.stringify(error));
-    }
-  };
+  // const handleRemoveMember = async () => {
+  //   try {
+  //     await removeMember.mutateAsync({
+  //       id: chatId,
+  //       userId: member.user.id,
+  //     });
+  //     toast.success(`Member removed successfully, ${member.user.id}`);
+  //     onClose();
+  //   } catch (error) {
+  //     toast.error(JSON.stringify(error));
+  //   }
+  // };
 
   return (
     <div className="flex flex-col h-full">
@@ -74,7 +74,7 @@ export const ChatUserInfo = ({ member, onClose }: ChatUserInfoProps) => {
           </CardContent>
         </Card>
 
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <Button
             variant="destructive"
             className="w-full"
@@ -84,7 +84,7 @@ export const ChatUserInfo = ({ member, onClose }: ChatUserInfoProps) => {
             <Trash2 className="mr-2 h-4 w-4" />
             Remove from Room
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
