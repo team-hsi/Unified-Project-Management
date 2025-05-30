@@ -1,15 +1,32 @@
-# Unified Project Management - Web
+# Unified Project Management
 
-A web-based platform for unified project management.
+A modern, web-based platform for unified project management that helps teams collaborate, track progress, and deliver projects efficiently.
 
----
+## Features
 
-## 1. Installation and Configuration
+- 📊 Interactive Kanban board for task management
+- 💬 Real-time chat functionality
+- 👥 Team collaboration tools
+- 📱 Responsive design for all devices
+- 🔒 Secure authentication and authorization
+- 🎯 Project tracking and analytics
+- 🔄 Real-time updates and notifications
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Development](#development)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Installation
 
 ### Prerequisites
 
 - **Node.js** (v16+ recommended)
-- **npm** or **yarn** or **pnpm**
+- **pnpm** (recommended) or **npm** or **yarn**
 - **Git** (for version control)
 - **Playwright** (for end-to-end testing)
 
@@ -25,202 +42,127 @@ A web-based platform for unified project management.
 2. **Install dependencies:**
 
    ```sh
-   npm install
-   # or
-   yarn install
-   # or
    pnpm install
    ```
 
 3. **Environment configuration:**
 
-   - Copy `.env.example` to `.env` and update environment variables as needed (e.g., database URLs, API keys).
+   - Copy `.env.example` to `.env`
+   - Update environment variables as needed:
+     - Database URLs
+     - API keys
+     - Authentication settings
+     - Other configuration options
 
 4. **Start the development server:**
-
    ```sh
-   npm run dev
-   # or
-   yarn dev
-   # or
    pnpm dev
    ```
 
-5. **Run tests:**
+## Usage
+
+### Starting the Application
+
+1. Start the development server:
+
    ```sh
-   npx playwright test
+   pnpm dev
    ```
+
+2. Open your browser and navigate to `http://localhost:3000`
+
+### Key Features
+
+- **Project Management**: Create and manage projects with customizable views
+- **Task Tracking**: Organize tasks using Kanban boards
+- **Team Collaboration**: Real-time chat and updates
+- **Analytics**: Track project progress and team performance
+
+## Development
+
+### Coding Standards
+
+- **TypeScript** for type safety
+- **ESLint** and **Prettier** for code quality
+- Semantic HTML and accessible components
+- Component-based architecture
+- Responsive design principles
+
+### Project Structure
+
+```
+web/
+├── app/              # Next.js app directory
+├── components/       # Reusable UI components
+├── features/         # Feature-specific components
+├── lib/             # Utility functions and hooks
+├── public/          # Static assets
+└── tests/           # Test files
+```
 
 ### Version Control
 
-- The project uses **Git** for version control.
-- Follow the [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) branching model:
+- Follow [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) branching model:
   - `main` for production-ready code
   - `develop` for ongoing development
   - Feature branches: `feature/your-feature`
   - Bugfix branches: `bugfix/your-bug`
-- Commit messages should be clear and follow the [Conventional Commits](https://www.conventionalcommits.org/) standard.
+- Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/) standard
 
----
+## Testing
 
-## 2. Development
+### Running Tests
 
-### Coding Practices
+```sh
+# Run all tests
+pnpm test
 
-- **TypeScript** is used for type safety.
-- **ESLint** and **Prettier** are configured for code quality and formatting.
-- Use semantic HTML and accessible components.
-- All UI components are tested with Playwright.
+# Run specific test file
+pnpm test tests/your-test.spec.ts
 
-### Integration Strategies
-
-- **Continuous Integration (CI):** Automated tests run on every pull request.
-- **API Integration:** The frontend communicates with the backend via RESTful APIs.
-- **Component Reuse:** Shared components are placed in a common directory for reuse.
-
-### Challenges Faced
-
-- **Authentication Flows:** Ensuring secure and user-friendly login/logout with proper error handling.
-- **Testing Asynchronous UI:** Handling timing issues in Playwright tests, especially for redirects and dynamic content.
-- **Environment Management:** Managing different configurations for development, testing, and production environments.
-- **Merge Conflicts:** Occasionally, parallel feature development led to merge conflicts, resolved through regular communication and rebasing.
-
----
-
-## 3. Code Snippets
-
-### Task Management (Frontend)
-
-This snippet extends the provided Page.tsx to demonstrate task fetching and rendering in a kanban view.
-
-```tsx
-// web/app/(protected)/[workspaceId]/[projectId]/page.tsx
-import { getProjectById } from "@/actions/api/project/queries";
-import { ProjectHeader } from "@/feature/project/layout/project-header";
-import { ViewContainer } from "@/feature/project/views/view-container";
-import { Metadata } from "next";
-
-type Props = {
-  params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-};
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { projectId } = await params;
-
-  const project = await getProjectById({ id: projectId });
-  if (!project) {
-    return {
-      title: "Project Not Found",
-    };
-  }
-
-  return {
-    title: project.name || projectId,
-  };
-}
-
-const Page = async (props: Props) => {
-  const params = await props.params;
-  const searchParams = await props.searchParams;
-  const view = (searchParams.view as string) || "kanban";
-  const project = await getProjectById({ id: params.projectId });
-
-  return (
-    <div className="p-4 flex flex-col gap-4 overflow-hidden h-full">
-      <ProjectHeader project={project} />
-      <ViewContainer view={view} />
-    </div>
-  );
-};
-
-export default Page;
+# Run tests in UI mode
+pnpm test --ui
 ```
 
-### Real-Time Chat (Frontend Client)
+### Test Coverage
 
-This React component handles sending and receiving chat messages via Socket.IO.
-
-```tsx
-// web/feature/chat/components/chat-input.tsx
-"use client";
-import { useState, KeyboardEvent, useRef } from "react";
-import { Send } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useChat } from "@/lib/stores/chat-provider";
-
-export function ChatInput() {
-  const { sendMessage } = useChat(); // Assuming you have a sendMessage function in your context
-  const [message, setMessage] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (message.trim()) {
-      await sendMessage(message); // Call the sendMessage function from context
-      setMessage("");
-    }
-  };
-
-  const handleKeyDown = async (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      if (message.trim()) {
-        await sendMessage(message); // Call the sendMessage function from context
-        setMessage("");
-      }
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setMessage(value);
-  };
-
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex items-center relative p-4 pt-1 bg-transparent"
-    >
-      <div className="flex-1 flex gap-2 relative bg-muted">
-        <input
-          ref={inputRef}
-          type="text"
-          value={message}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          placeholder="Type your message..."
-          className="w-full bg-background border border-input rounded-md py-2.5 px-3 text-sm focus:outline-none focus:ring-2"
-        />
-      </div>
-      <button
-        type="submit"
-        className={cn(
-          "rounded-full p-1.5 flex items-center justify-center transition-all",
-          !message.trim()
-            ? "opacity-50 cursor-not-allowed"
-            : "hover:scale-110 hover:bg-accent"
-        )}
-        disabled={!message.trim()}
-      >
-        <Send className="h-4 w-4" />
-      </button>
-    </form>
-  );
-}
-```
-
----
+- Unit tests for components and utilities
+- Integration tests for feature workflows
+- End-to-end tests with Playwright
+- Accessibility testing
 
 ## Contributing
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/your-feature`)
-3. Commit your changes.
-4. Push to your fork and submit a pull request.
+We welcome contributions! Please follow these steps:
 
----
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/your-feature`)
+3. Make your changes
+4. Run tests to ensure everything works
+5. Commit your changes with clear commit messages
+6. Push to your fork
+7. Submit a pull request
+
+### Pull Request Guidelines
+
+- Update documentation for new features
+- Add tests for new functionality
+- Ensure all tests pass
+- Follow the existing code style
+- Include screenshots for UI changes
 
 ## License
 
-[MIT](LICENSE)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+For support, please:
+
+- Open an issue in the GitHub repository
+- Check the documentation
+- Contact the maintainers
+
+---
+
+Built with ❤️ by the Unified Project Management Team
