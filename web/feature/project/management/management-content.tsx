@@ -6,6 +6,7 @@ import { LabelsView } from "./labels/labels";
 import { PeopleView } from "./people";
 import { GeneralView } from "./general";
 import type { Project } from "@/feature/shared/@types/projects";
+import { MilestoneView } from "./milestone/milestone";
 
 interface ManagementContentProps {
   currentView: ManagementsView;
@@ -20,6 +21,7 @@ export const ManagementsContent = ({
   const viewComponents: Record<ManagementsView, React.ReactNode> = {
     general: <GeneralView project={project} />,
     people: <PeopleView />,
+    milestone: <MilestoneView project={project} />,
     labels: <LabelsView project={project} />,
   };
 

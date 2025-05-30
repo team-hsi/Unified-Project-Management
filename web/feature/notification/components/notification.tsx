@@ -1,12 +1,11 @@
 "use client";
+import { useGlobalSocket } from "@/lib/socket/WebSocketProvider";
 import { Dot } from "../../shared/components/dot";
 import { cn } from "@/lib/utils";
-import { useWebSocket } from "../hooks/use-web-socket";
 // import { NotificationBell } from "./notification-bell";
 
 export const Notification = () => {
-  // Use a dummy event and handler just to get connection status
-  const isConnected = useWebSocket("__connection_status__", () => {});
+  const { isConnected } = useGlobalSocket();
 
   return (
     <div className="flex items-center gap-2">

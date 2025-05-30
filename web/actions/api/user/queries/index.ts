@@ -51,7 +51,7 @@ export const getDocUsers = async (userIds: string[]) => {
 };
 export const getUserById = cache(async (payload: Pick<UserPayload, "id">) => {
   try {
-    return await get<User>(`/v1/users/${payload.id}`);
+    return await get<User>(`/users/${payload.id}`);
   } catch (error) {
     console.error(`Error fetching user ${payload.id}:`, error);
     throw new Error(extractErrors(error));

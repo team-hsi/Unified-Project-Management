@@ -11,6 +11,7 @@ import { extractErrors } from "@/lib/utils";
 import { cache } from "react";
 import { CACHE_LIFE, CACHE_TAGS } from "../../../core/cache-config";
 import { Invitation } from "../../user/queries";
+import { MemberWithSpace } from "@/feature/shared/@types/user";
 
 export const getAllWorkspaces = async () => {
   try {
@@ -63,7 +64,7 @@ export const getWorkspaceMembers = async (
   try {
     return get<WorkspaceWithMembers>(`/spaces/${payload.id}/members`, {
       next: {
-        revalidate: CACHE_LIFE.LONG,
+        revalidate: CACHE_LIFE.REALTIME,
         tags: [CACHE_TAGS.WORKSPACE.MEMBERS(payload.id)],
       },
       cache: "force-cache",
@@ -75,10 +76,23 @@ export const getWorkspaceMembers = async (
 };
 
 export const getSpaceInviteInfo = async (id: string) => {
-  try {
-    return await get<Invitation>(`/spaces/invites/${id}`);
-  } catch (error) {
-    console.error("Error fetching user invitations:", error);
-    throw new Error(extractErrors(error));
-  }
+  return await get<Invitation>(`/spaces/invites/${id}`);
 };
+export const getSpaceInvitations = async (id: string) => {
+  return await get<Invitation[]>(`/spaces/${id}/invites`);
+};
+
+// export const getUserSpaceMembership = async (payload: {
+//   userId: string;
+//   id: string;
+// }) => {
+//   try {
+//     const { id, userId } = payload;
+//     const result = await get<MemberWithSpace>(`/spaces/${id}/membership`);
+//     revalidateTag(CACHE_TAGS.WORKSPACE.MEMBERS(payload.id));
+//     console.log("result", result);
+//     return result;
+//   } catch (error) {
+//     return handleError(error);
+//   }
+// };

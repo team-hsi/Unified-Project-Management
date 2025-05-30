@@ -113,7 +113,7 @@ function ProjectCard({ project }: { project: Project }) {
 
   return (
     <Link
-      href={`/${workspaceId}/${project.id}`}
+      href={`/${workspaceId}/${project.id}/dashboard`}
       prefetch={true}
       className="block"
     >

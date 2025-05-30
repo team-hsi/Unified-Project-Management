@@ -30,7 +30,7 @@ export default function Invitation({ inviteId, invitation }: InvitationProps) {
     setLoading(true);
     setError(null);
     try {
-      await acceptInvite(inviteId);
+      await acceptInvite({ inviteId, inviterId: invitation.inviter.id });
       toast.success("Invitation accepted!");
       router.replace("/"); // Redirect after accept
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

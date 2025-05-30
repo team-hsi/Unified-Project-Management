@@ -1,19 +1,13 @@
 "use client";
 import * as React from "react";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/feature/shared/ui/avatar";
+
 import {
   CalendarRange,
   Flag,
   Loader,
   Loader2,
   Newspaper,
-  Plus,
   Tag,
-  Users,
 } from "lucide-react";
 import { Textarea } from "@/feature/shared/ui/textarea";
 import {
@@ -56,7 +50,7 @@ import { Item } from "@/feature/shared/@types/item";
 import { Label } from "@/feature/shared/@types/label";
 import { itemFormSchema } from "../shared/schema";
 import MultipleSelector from "@/feature/shared/ui/multiselect";
-
+import { useMilestone } from "@/feature/shared/hooks/use-milestone";
 const MetadataField = ({
   icon: Icon,
   label,
@@ -85,6 +79,7 @@ export const ItemDetails = ({
   unsavedForm: boolean;
 }) => {
   const { update } = useItemMutation();
+  const { milestones } = useMilestone({ projectId: item.bucket.project.id });
   const { labels } = useLabel({ projectId: item.bucket.project.id });
 
   const labelOptions = React.useMemo(() => {
@@ -110,8 +105,9 @@ export const ItemDetails = ({
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemFormSchema),
     defaultValues: {
-      status: (item.status as "incomplete" | "complete") || "incomplete",
+      status: item.status,
       dueDate: item?.dueDate ? new Date(item.dueDate) : undefined,
+      startDate: item?.startDate ? new Date(item.startDate) : undefined,
       priority: item?.priority || "",
       description: item?.description || "",
       labels: initialLabels,
@@ -137,6 +133,7 @@ export const ItemDetails = ({
       ...payload,
       labels: labelIds,
       dueDate: data.dueDate ? data.dueDate.toISOString() : "",
+      startDate: data.startDate ? data.startDate.toISOString() : "",
     });
     setUnsavedForm(false);
     form.reset(form.getValues());
@@ -193,6 +190,67 @@ export const ItemDetails = ({
                 />
               </MetadataField>
 
+              {/* Due Date Field */}
+              <MetadataField icon={CalendarRange} label="Start Date">
+                <FormField
+                  control={form.control}
+                  name="startDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel className="sr-only">Start date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className={cn(
+                                "p-1 font-normal text-sm",
+                                !field.value && ""
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "yyyy-MM-dd")
+                              ) : (
+                                <span className="pl-5">Set date</span>
+                              )}
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          align="start"
+                          className="flex w-auto flex-col space-y-2 p-2"
+                        >
+                          <Select
+                            onValueChange={(value) =>
+                              field.onChange(
+                                addDays(new Date(), Number.parseInt(value))
+                              )
+                            }
+                          >
+                            <SelectTrigger className="w-full border">
+                              <SelectValue placeholder="Select date" />
+                            </SelectTrigger>
+                            <SelectContent position="popper">
+                              <SelectItem value="0">Today</SelectItem>
+                              <SelectItem value="1">Tomorrow</SelectItem>
+                              <SelectItem value="3">In 3 days</SelectItem>
+                              <SelectItem value="7">In a week</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <div className="rounded-md border">
+                            <Calendar
+                              mode="single"
+                              selected={field.value ?? undefined}
+                              onSelect={field.onChange}
+                            />
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    </FormItem>
+                  )}
+                />
+              </MetadataField>
               {/* Due Date Field */}
               <MetadataField icon={CalendarRange} label="Due Date">
                 <FormField
@@ -255,32 +313,33 @@ export const ItemDetails = ({
                 />
               </MetadataField>
 
-              {/* Assignee Field */}
-              <MetadataField icon={Users} label="Assignee">
-                <div className="flex items-center -space-x-2">
-                  <Avatar className="h-6 w-6 border-2 border-background">
-                    <AvatarImage
-                      src="/placeholder.svg?height=32&width=32"
-                      alt="Calum Tyler"
-                    />
-                    <AvatarFallback className="text-xs">CT</AvatarFallback>
-                  </Avatar>
-                  <Avatar className="h-6 w-6 border-2 border-background">
-                    <AvatarImage
-                      src="/placeholder.svg?height=32&width=32"
-                      alt="Dawson Tarman"
-                    />
-                    <AvatarFallback className="text-xs bg-green-100 text-green-800">
-                      DT
-                    </AvatarFallback>
-                  </Avatar>
-                  <Avatar className="h-6 w-6 border-2 border-background">
-                    <AvatarFallback className="text-xs">
-                      <Plus size={10} />
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
-              </MetadataField>
+              {/* Milestone Field */}
+              <FormField
+                name="milestoneId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Milestone</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a milestone" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {/* Assuming 'milestones' is an array of Milestone objects */}
+                        {milestones?.map((milestone) => (
+                          <SelectItem key={milestone.id} value={milestone.id}>
+                            {milestone.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
 
               {/* Priority Field */}
               <MetadataField icon={Flag} label="Priority">
@@ -383,11 +442,7 @@ export const ItemDetails = ({
             {/* Save Button - only shown when form is dirty */}
             {unsavedForm && (
               <Button type="submit" className="mt-3" size="sm">
-                {update.isPending ? (
-                  <Loader className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  "Save"
-                )}
+                {update.isPending ? "Updating..." : "Update"}
               </Button>
             )}
           </form>

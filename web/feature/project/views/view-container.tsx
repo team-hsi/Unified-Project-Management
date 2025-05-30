@@ -4,6 +4,7 @@ import { KanbanBoardSkeleton } from "./kanban/shared/skeletons";
 import { ListViewSkeleton } from "./list/shared/skeletons";
 import { useViewStore } from "@/lib/stores/view-store";
 import { DocumentsSkeleton } from "@/feature/documentation/components/DocumentsSkeleton";
+import { TimelineSkeleton } from "./timeline/timeline";
 
 // Dynamically import components with their loading states
 const KanbanBoard = dynamic(
@@ -30,6 +31,13 @@ const DocumentsView = dynamic(
     ssr: true,
   }
 );
+const TimelineView = dynamic(
+  () => import("./timeline/timeline").then((mod) => mod.TimelineView),
+  {
+    loading: () => <TimelineSkeleton />,
+    ssr: true,
+  }
+);
 
 const VIEWS = {
   kanban: {
@@ -40,9 +48,13 @@ const VIEWS = {
     component: ListView,
     skeleton: ListViewSkeleton,
   },
+  timeline: {
+    component: TimelineView,
+    skeleton: TimelineSkeleton,
+  },
   documents: {
     component: DocumentsView,
-    skeleton: () => <div>Document skeleton Component</div>,
+    skeleton: DocumentsSkeleton,
   },
 };
 

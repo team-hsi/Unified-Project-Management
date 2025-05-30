@@ -79,7 +79,10 @@ export const NavProjects = () => {
             onFocus={() => prefetchProject(project.id)}
           >
             <SidebarMenuButton asChild isActive={segments.includes(project.id)}>
-              <Link href={`/${workspaceId}/${project.id}`} prefetch={true}>
+              <Link
+                href={`/${workspaceId}/${project.id}/dashboard`}
+                prefetch={true}
+              >
                 {project.name}
               </Link>
             </SidebarMenuButton>

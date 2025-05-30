@@ -11,6 +11,7 @@ import { CACHE_TAGS } from "@/actions/core/cache-config";
 import { getSession } from "@/actions/core/dal";
 import { handleError } from "@/lib/errors";
 import { createSession, SessionPayload } from "@/actions/core/session";
+import { redirect } from "next/navigation";
 
 export const createWorkspace = async (
   payload: Pick<WorkspacePayload, "name" | "description">
@@ -81,7 +82,6 @@ export const inviteWorkspaceMembers = async (
 export const updateWorkspaceMemberRole = async (payload: MemberPayload) => {
   try {
     const { id, ...rest } = payload;
-    console.log("payload=>", payload, `/spaces/${id}/membership`);
     const result = await put<MemberWithSpace>(`/spaces/${id}/membership`, {
       userId: rest.userId,
       role: rest.role,
@@ -118,4 +118,5 @@ export const updateActiveSpace = async (activeSpace: string) => {
     refreshToken: session.tokens.refreshToken,
   };
   await createSession(newSession as SessionPayload);
+  redirect(`/${activeSpace}/projects`);
 };

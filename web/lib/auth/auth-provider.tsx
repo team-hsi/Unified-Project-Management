@@ -1,10 +1,11 @@
 "use client";
 
 import { Session, User, UserPayload } from "@/feature/shared/@types/user";
-import { getCurrentSession, getSessionUser } from "@/actions/api/user/auth";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { createContext, useContext, ReactNode } from "react";
 import { updateUser } from "@/actions/api/user/mutations";
+import { getCurrentUser } from "@/actions/api/user/queries";
+import { getCurrentSession } from "@/actions/api/user/auth";
 
 interface AuthContextType {
   user: User | null;
@@ -23,7 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     error,
   } = useSuspenseQuery({
     queryKey: ["user"],
-    queryFn: getSessionUser,
+    queryFn: getCurrentUser,
     staleTime: 1000 * 60 * 40,
   });
 

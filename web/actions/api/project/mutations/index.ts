@@ -51,10 +51,12 @@ export const deleteProject = async (
 export const addProjectMember = async (payload: MemberPayload) => {
   try {
     const { id, ...rest } = payload;
+    console.log("res =>>>>", rest);
     const result = await post<ProjectWithMembers>(
       `/projects/${id}/members/add`,
       rest
     );
+    console.log("result", result);
     revalidateTag(CACHE_TAGS.PROJECT.MEMBERS(payload.id));
     return result;
   } catch (error) {

@@ -4,7 +4,8 @@ export type SettingsView =
   | "people"
   | "account"
   | "permissions"
-  | "invitations";
+  | "sent-invitations"
+  | "my-invitations";
 // | "emoji"
 // | "import"
 // | "billing"

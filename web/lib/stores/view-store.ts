@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type ViewType = "kanban" | "list" | "documents";
+type ViewType = "kanban" | "list" | "documents" | "timeline";
 
 interface ViewState {
   activeView: ViewType;

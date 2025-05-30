@@ -16,12 +16,17 @@ const ProjectTabs = () => {
   // Sync URL with store on initial load
   useEffect(() => {
     const viewParam = searchParams.get("view");
-    if (viewParam && ["kanban", "list", "documents"].includes(viewParam)) {
-      setActiveView(viewParam as "kanban" | "list" | "documents");
+    if (
+      viewParam &&
+      ["kanban", "list", "documents", "timeline"].includes(viewParam)
+    ) {
+      setActiveView(viewParam as "kanban" | "list" | "documents" | "timeline");
     }
   }, [searchParams, setActiveView]);
 
-  const handleTabChange = (view: "kanban" | "list" | "documents") => {
+  const handleTabChange = (
+    view: "kanban" | "list" | "documents" | "timeline"
+  ) => {
     setActiveView(view);
     // Update URL without triggering a full page reload
     const params = new URLSearchParams(searchParams.toString());
@@ -53,6 +58,20 @@ const ProjectTabs = () => {
         >
           <List /> List
           {activeView === "list" && (
+            <motion.div
+              className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--foreground)]"
+              layoutId="underline"
+              id="underline"
+            />
+          )}
+        </TabsTrigger>
+        <TabsTrigger
+          value="timeline"
+          onClick={() => handleTabChange("timeline")}
+          className="relative data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:bg-primary"
+        >
+          <List /> Timeline
+          {activeView === "timeline" && (
             <motion.div
               className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--foreground)]"
               layoutId="underline"

@@ -23,6 +23,8 @@ import { useUser } from "@/lib/auth/auth-provider";
 import { useCallback } from "react";
 import { useUtils } from "./use-utils";
 import { BaseError } from "@/lib/errors";
+import { UserWithRooms } from "../@types/user";
+import { useRouter } from "next/navigation";
 
 export const useRoom = () => {
   const queryClient = useQueryClient();
@@ -32,6 +34,7 @@ export const useRoom = () => {
     workspaceId: string;
     chatId: string;
   }>();
+  const router = useRouter();
 
   // Queries
   const {
@@ -70,21 +73,25 @@ export const useRoom = () => {
         "rooms",
       ]);
 
-      queryClient.setQueryData([session?.userId, "rooms"], (old: Room[]) => {
-        return [
+      queryClient.setQueryData(
+        [session?.userId, "rooms"],
+        (old: UserWithRooms) => ({
           ...old,
-          {
-            id: `temp-${Date.now()}-${Math.random()
-              .toString(36)
-              .substring(2, 9)}`,
-            name: payload.name,
-            type: "GROUP",
-            owner: user,
-            members: [],
-            spaceId: workspaceId,
-          },
-        ];
-      });
+          rooms: [
+            ...old.rooms,
+            {
+              id: `temp-${Date.now()}-${Math.random()
+                .toString(36)
+                .substring(2, 9)}`,
+              name: payload.name,
+              type: "GROUP",
+              owner: user,
+              members: [],
+              spaceId: workspaceId,
+            },
+          ],
+        })
+      );
       return { previousRooms };
     },
     onSuccess: (response) => {
@@ -149,11 +156,40 @@ export const useRoom = () => {
 
   const remove = useMutation({
     mutationFn: async (id: string) => await deleteRoom({ id }),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: [session?.userId, "rooms"] });
+      const previousRooms = queryClient.getQueryData([
+        session?.userId,
+        "rooms",
+      ]);
+
+      // Optimistically remove the room from the cache
+      queryClient.setQueryData(
+        [session?.userId, "rooms"],
+        (old: UserWithRooms) => ({
+          ...old,
+          rooms: old.rooms.filter((room) => room.id !== id),
+        })
+      );
+
+      return { previousRooms };
+    },
     onSuccess: (response) => {
       if (!isValidResponse(response)) return;
+      router.back;
       queryClient.invalidateQueries({ queryKey: [session?.userId, "rooms"] });
     },
-    onError: toastUnknownError,
+    onError: (error, id, context) => {
+      // Rollback to previous rooms if error
+      if (context?.previousRooms) {
+        queryClient.setQueryData(
+          [session?.userId, "rooms"],
+          context.previousRooms
+        );
+      }
+      queryClient.invalidateQueries({ queryKey: [session?.userId, "rooms"] });
+      toastUnknownError(error as BaseError);
+    },
   });
 
   const addMember = useMutation({

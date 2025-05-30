@@ -7,7 +7,7 @@ import {
 } from "@/feature/shared/ui/dropdown-menu";
 import { useState } from "react";
 import { MoreVertical } from "lucide-react";
-import { LeaveChat } from "./chat-dropdown-items";
+import { DeleteChat, LeaveChat } from "./chat-dropdown-items";
 import { useUser } from "@/lib/auth/auth-provider";
 import { useParams } from "next/navigation";
 
@@ -53,10 +53,11 @@ export const ChatDropdown = () => {
           id={chatId}
           userId={session?.userId as string}
         />
-        {/* <DeleteChat
+        <DeleteChat
           onOpenChange={handleDialogOpenChange}
           onSelect={handleItemSelect}
-        /> */}
+          id={chatId}
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );

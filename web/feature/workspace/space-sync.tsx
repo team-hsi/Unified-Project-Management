@@ -20,9 +20,8 @@ export function SpaceSync() {
         console.error("Failed to sync workspace:", error);
       }
     };
-
     syncSpace();
-  }, [workspaceId]);
+  }, [workspaceId, session, setActive]);
 
   return null;
 }

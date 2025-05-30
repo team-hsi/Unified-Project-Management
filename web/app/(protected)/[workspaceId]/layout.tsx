@@ -7,8 +7,9 @@ import { AuthProvider } from "@/lib/auth/auth-provider";
 import { getQueryClient } from "@/lib/query-client/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getWorkspaceProjects } from "@/actions/api/project/queries";
-import { getSessionUser } from "@/actions/api/user/auth";
 import { SpaceSync } from "@/feature/workspace/space-sync";
+import { getCurrentUser } from "@/actions/api/user/queries";
+import { WebSocketProvider } from "@/lib/socket/WebSocketProvider";
 
 const WorkspaceLayout = async ({
   children,
@@ -31,7 +32,7 @@ const WorkspaceLayout = async ({
     }),
     queryClient.prefetchQuery({
       queryKey: ["user"],
-      queryFn: getSessionUser,
+      queryFn: getCurrentUser,
     }),
   ]);
   queryClient.setQueryData(["session"], session);
@@ -50,14 +51,16 @@ const WorkspaceLayout = async ({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <AuthProvider>
-        <SpaceSync />
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <ProjectNavigation />
-            {children}
-          </SidebarInset>
-        </SidebarProvider>
+        <WebSocketProvider>
+          <SpaceSync />
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              <ProjectNavigation />
+              {children}
+            </SidebarInset>
+          </SidebarProvider>
+        </WebSocketProvider>
       </AuthProvider>
     </HydrationBoundary>
   );

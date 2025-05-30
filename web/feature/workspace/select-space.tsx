@@ -11,12 +11,14 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/feature/shared/ui/avatar";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { ArrowRight, Loader } from "lucide-react";
 import { Workspace } from "../shared/@types/space";
-import { updateActiveSpace } from "@/actions/api/workspace/mutations";
-
+import { useMutation } from "@tanstack/react-query";
+import { updateUserActiveSpace } from "@/actions/api/user/mutations";
 const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {
+  const updateSpace = useMutation({
+    mutationFn: updateUserActiveSpace,
+  });
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm p-0">
@@ -30,29 +32,32 @@ const SelectWorkspace = ({ workspaces }: { workspaces: Workspace[] }) => {
         </CardHeader>
         <CardContent className="p-0">
           {workspaces.map((workspace) => (
-            <Link key={workspace.id} href={`/${workspace.id}/projects`}>
-              <Button
-                variant="ghost"
-                className="w-full justify-between h-16 rounded-none border-b last:border-b-0 first:border-t hover:bg-accent group"
-                onClick={async () => {
-                  await updateActiveSpace(workspace.id);
-                }}
-              >
-                <div className="flex items-center gap-4">
-                  <Avatar>
-                    <AvatarImage
-                      src={`https://avatar.vercel.sh/${workspace.name}.png`}
-                      alt={workspace.name}
-                    />
-                    <AvatarFallback>
-                      {workspace.name.substring(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="">{workspace.name}</span>
-                </div>
+            <Button
+              key={workspace.id}
+              variant="ghost"
+              className="w-full justify-between h-16 rounded-none border-b last:border-b-0 first:border-t hover:bg-accent group"
+              onClick={async () => {
+                await updateSpace.mutateAsync(workspace.id);
+              }}
+            >
+              <div className="flex items-center gap-4">
+                <Avatar>
+                  <AvatarImage
+                    src={`https://avatar.vercel.sh/${workspace.name}.png`}
+                    alt={workspace.name}
+                  />
+                  <AvatarFallback>
+                    {workspace.name.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="">{workspace.name}</span>
+              </div>
+              {updateSpace.isPending ? (
+                <Loader className=" animate-spin" />
+              ) : (
                 <ArrowRight className="w-5 h-5 mr-5 text-background group-hover:text-primary group-hover:translate-x-1 transition-all" />
-              </Button>
-            </Link>
+              )}
+            </Button>
           ))}
 
           {/* <Button

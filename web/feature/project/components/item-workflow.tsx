@@ -18,11 +18,15 @@ import { UserPlus, UserMinus, UserX } from "lucide-react";
 import { AddItemAssigneeDialog } from "./add-item-assignee-dialog";
 
 export const ItemWorkflow = ({ itemId }: { itemId: string }) => {
-  const { item, isLoading, error } = useItem(itemId);
+  const { item, isLoading, error, assign } = useItem(itemId);
 
   const handleAssign = async (userId: string) => {
-    // TODO: Implement the actual assignment logic here
-    console.log("Assigning user", userId, "to item", itemId);
+    await assign.mutateAsync({
+      userId,
+      itemId,
+      bucketId: item?.bucket.id as string,
+      projectId: item?.bucket.project.id as string,
+    });
   };
 
   if (error) {

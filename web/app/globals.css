@@ -55,6 +55,47 @@
   --shadow-xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.1),
     0px 8px 10px -2px hsl(0 0% 0% / 0.1);
   --shadow-2xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.25);
+
+  --sx-color-primary: hsl(var(--primary));
+  --sx-color-on-primary: hsl(var(--primary-foreground));
+  --sx-color-primary-container: hsl(var(--primary) / 0.1);
+  --sx-color-on-primary-container: hsl(var(--primary));
+  --sx-color-secondary: hsl(var(--secondary));
+  --sx-color-on-secondary: hsl(var(--secondary-foreground));
+  --sx-color-secondary-container: hsl(var(--secondary) / 0.1);
+  --sx-color-on-secondary-container: hsl(var(--secondary));
+  --sx-color-tertiary: hsl(var(--accent));
+  --sx-color-on-tertiary: hsl(var(--accent-foreground));
+  --sx-color-tertiary-container: hsl(var(--accent) / 0.1);
+  --sx-color-on-tertiary-container: hsl(var(--accent));
+  --sx-color-surface: hsl(var(--card));
+  --sx-color-surface-dim: hsl(var(--muted));
+  --sx-color-surface-bright: hsl(var(--card));
+  --sx-color-on-surface: hsl(var(--card-foreground));
+  --sx-color-surface-container: hsl(var(--card));
+  --sx-color-surface-container-low: hsl(var(--card));
+  --sx-color-surface-container-high: hsl(var(--card));
+  --sx-color-background: hsl(var(--background));
+  --sx-color-on-background: hsl(var(--foreground));
+  --sx-color-outline: hsl(var(--border));
+  --sx-color-outline-variant: hsl(var(--border));
+  --sx-color-shadow: hsl(var(--foreground) / 0.1);
+  --sx-color-surface-tint: hsl(var(--primary));
+  --sx-color-neutral: hsl(var(--muted));
+  --sx-color-neutral-variant: hsl(var(--muted-foreground));
+
+  --sx-internal-color-gray-ripple-background: hsl(var(--muted));
+  --sx-internal-color-light-gray: hsl(var(--muted) / 0.1);
+  --sx-internal-color-text: hsl(var(--foreground));
+  .sx-react-calendar-wrapper {
+    height: 500px;
+    width: 100%;
+  }
+}
+/*  Style a specific event */
+.sx-event-container {
+  background-color: #a22323; /*  Example: Set background color */
+  border: 1px solid #ccc; /*  Example: Add border */
 }
 
 .dark {
@@ -214,6 +255,9 @@
   .dark {
     --brand: 31 97% 72%;
     --brand-foreground: 27 96% 61%;
+  }
+  .sx-time-grid-event {
+    background-color: #f0f0f0; /* Example background color */
   }
 }
 @layer base {

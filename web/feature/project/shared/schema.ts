@@ -15,8 +15,9 @@ export const projectDeleteSchema = (projectName: string) =>
   });
 
 export const itemFormSchema = z.object({
-  status: z.enum(["incomplete", "complete"]),
+  status: z.string(),
   dueDate: z.date().optional(),
+  startDate: z.date().optional(),
   priority: z.enum(["low", "medium", "high", ""]).optional(),
   description: z
     .union([

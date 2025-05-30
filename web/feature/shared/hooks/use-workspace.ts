@@ -16,11 +16,12 @@ import {
 import { updateUserActiveSpace } from "@/actions/api/user/mutations";
 import { useUtils } from "./use-utils";
 import { toast } from "sonner";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 export const useWorkspace = () => {
   const queryClient = getQueryClient();
   const { session } = useUser();
+  const router = useRouter();
   const { isValidResponse, toastUnknownError } = useUtils();
 
   // Get user's workspaces
@@ -52,7 +53,10 @@ export const useWorkspace = () => {
       queryClient.invalidateQueries({
         queryKey: [session?.userId, "workspaces"],
       });
-      toast.success("Workspace created successfully!");
+      if ("id" in response) {
+        router.push(`${response.id}/projects`);
+        toast.success("Workspace created successfully!");
+      }
     },
     onError: toastUnknownError,
   });
@@ -120,6 +124,9 @@ export const useWorkspace = () => {
       if (!isValidResponse(response)) return;
       queryClient.invalidateQueries({
         queryKey: [session?.activeSpace, "ws-members"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [session?.userId, "workspaces"],
       });
       toast.success("Delete", {
         description: "user removed successfully!",

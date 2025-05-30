@@ -48,8 +48,10 @@ export const CACHE_TAGS = {
     BUCKETS: (id: string) => `project-${id}-buckets`,
     ITEMS: (id: string) => `project-${id}-items`,
     LABELS: (id: string) => `project-${id}-labels`,
+    MILESTONES: (id: string) => `project-${id}-milestone`,
     DOCUMENTS: (id: string) => `project-${id}-documents`,
     MEMBERS: (id: string) => `project-${id}-members`,
+    MATRIX: (id: string) => `project-${id}-matrix`,
   },
   DOCUMENT: {
     ALL: "documents",

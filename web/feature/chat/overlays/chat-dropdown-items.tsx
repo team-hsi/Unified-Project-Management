@@ -60,15 +60,17 @@ export const LeaveChat = ({
 export const DeleteChat = ({
   onSelect,
   onOpenChange,
+  id,
 }: {
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
+  id: string;
 }) => {
-  // const { remove } = useRoom();
-  // const handleDelete = async () => {
-  //   onOpenChange?.(false);
-  //   await remove.mutateAsync({ id: bucket.id });
-  // };
+  const { remove } = useRoom();
+  const handleDelete = async () => {
+    onOpenChange?.(false);
+    await remove.mutateAsync(id);
+  };
 
   return (
     <CustomAlertDialog
@@ -88,8 +90,8 @@ export const DeleteChat = ({
           <Button
             variant="destructive"
             className="flex-1"
-            // disabled={deleteBucket.isPending}
-            // onClick={handleDeleteBucket}
+            disabled={remove.isPending}
+            onClick={handleDelete}
           >
             Delete
           </Button>

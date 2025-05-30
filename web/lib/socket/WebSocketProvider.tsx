@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { io, Socket } from "socket.io-client";
 import { useUser } from "@/lib/auth/auth-provider"; // Your auth hook
+import { toast } from "sonner";
 
 export const WebSocketContext = createContext<Socket | null>(null);
 
@@ -36,31 +37,24 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
 
       newSocket.on("connect", () => {
         console.log("🔌 Global WebSocket Connected:", newSocket.id);
+        // toast.info("🔌  WebSocket Connected:", { description: newSocket.id });
         setSocket(newSocket);
       });
       newSocket.on("disconnect", (reason) => {
+        // toast.warning("🔌 WebSocket Disconnected", { description: reason });
         console.log("🔌 Global WebSocket Disconnected:", reason);
-        // setSocket(null); // Keep the socket instance for reconnection attempts
-        // unless the disconnect is due to explicit logout or auth error.
+
         if (reason === "io server disconnect") {
-          // Server explicitly disconnected client
-          newSocket.connect(); // Attempt to reconnect
+          newSocket.connect();
         }
       });
 
       newSocket.on("connect_error", (err) => {
-        console.error("🔌 Global WebSocket Connection Error:", err.message);
-        // Potentially handle token expiry here by prompting re-login
-        // or attempting token refresh and re-auth if your setup allows.
-        // If auth error, server might disconnect.
-        if (err.message.includes("Authentication error")) {
-          // Or similar error message from your backend
-          // Handle auth error, maybe sign out user or attempt token refresh
-        }
+        console.log("🔌 Global WebSocket Error:", err.message);
+        // toast.error("🔌 WebSocket Connection Error:", {
+        //   description: err.message,
+        // });
       });
-
-      // Set socket early to allow context consumers to attempt to use it,
-      // they should check for socket.connected status.
       setSocket(newSocket);
 
       return () => {
@@ -72,7 +66,6 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
         setSocket(null);
       };
     } else if (socket) {
-      // If session is lost (logout), disconnect existing socket
       console.log("User session lost, disconnecting global WebSocket.");
       socket.disconnect();
       setSocket(null);
@@ -89,7 +82,6 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
 
 export const useGlobalSocket = () => {
   const socket = useContext(WebSocketContext);
-  // You might want to return an object with isConnected status too
   return { socket, isConnected: socket?.connected ?? false };
   // return socket;
 };

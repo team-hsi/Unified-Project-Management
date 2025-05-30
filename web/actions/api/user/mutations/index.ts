@@ -1,9 +1,11 @@
 "use server";
-import { put } from "@/actions/core/api-client";
+import { post, put } from "@/actions/core/api-client";
+import { CACHE_TAGS } from "@/actions/core/cache-config";
 import { getSession } from "@/actions/core/dal";
 import { createSession, SessionPayload } from "@/actions/core/session";
 import { User, UserPayload } from "@/feature/shared/@types/user";
-import { extractErrors } from "@/lib/utils";
+import { handleError } from "@/lib/errors";
+import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 export const updateUser = async (
@@ -13,8 +15,7 @@ export const updateUser = async (
     const session = await getSession();
     return await put<User>(`/users/${session.userId}`, payload);
   } catch (error) {
-    console.error("Error fetching user:", error);
-    throw new Error(extractErrors(error));
+    return handleError(error);
   }
 };
 export const updateUserActiveSpace = async (activeSpace: string) => {
@@ -25,16 +26,11 @@ export const updateUserActiveSpace = async (activeSpace: string) => {
     accessToken: session.tokens.accessToken,
     refreshToken: session.tokens.refreshToken,
   };
+  await updateUser({
+    activeSpaceId: activeSpace,
+  });
   await createSession(newSession as SessionPayload);
-  try {
-    const result = await updateUser({
-      activeSpaceId: activeSpace,
-    });
-    return result.activeSpace;
-  } catch (error) {
-    console.error(`Error updating workspace ${activeSpace}:`, error);
-    throw new Error(extractErrors(error));
-  }
+  return true;
 };
 
 export const removeUserActiveSpace = async () => {
@@ -58,27 +54,20 @@ export const removeUserActiveSpace = async () => {
   // }
 };
 
-export const acceptInvite = async (inviteId: string) => {
+export const acceptInvite = async (payload: {
+  inviteId: string;
+  inviterId: string;
+}) => {
   try {
     const session = await getSession();
-    const result = await fetch(
-      `https://unified-project-management-api.onrender.com/v1/spaces/invites/${inviteId}/accept`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.tokens.accessToken}`,
-        },
-        body: JSON.stringify({ inviteId }),
-      }
-    );
-    const data = await result.json();
-    if (!result.ok) {
-      throw new Error(`Failed to accept invite: ${data}`);
-    }
+    await post(`/spaces/invites/${payload.inviteId}/accept`, {
+      inviteId: payload.inviteId,
+    });
+    revalidateTag(CACHE_TAGS.USER.WORKSPACES(session.userId as string));
+    revalidateTag(CACHE_TAGS.USER.WORKSPACES(payload.inviterId));
     return true;
   } catch (error) {
-    console.error(`Error accepting invite ${inviteId}:`, error);
-    throw new Error(extractErrors(error));
+    console.error(`Error accepting invite`, error);
+    return handleError(error);
   }
 };

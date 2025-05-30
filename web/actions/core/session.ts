@@ -44,6 +44,7 @@ export async function createSession(
     httpOnly: true,
     secure: true,
     expires: expiresAt,
+    maxAge: 23 * 60 * 60,
     sameSite: "lax",
     path: "/",
   });

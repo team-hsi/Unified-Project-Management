@@ -34,9 +34,6 @@ export const ChatList = ({ searchTerm }: { searchTerm: string }) => {
       </div>
     );
   }
-  // const uniqueRooms = Array.from(
-  //   new Map(userRooms.rooms.map((room) => [room.id, room])).values()
-  // );
 
   if (errorRooms) {
     return <div className="p-4">Error loading rooms</div>;
@@ -48,26 +45,17 @@ export const ChatList = ({ searchTerm }: { searchTerm: string }) => {
         <Link href={`/${workspaceId}/chat/${room.id}`} key={room.id}>
           <div
             className={cn(
-              "p-3 border-b border-chat-border hover:bg-sidebar-accent cursor-pointer transition-colors",
+              "px-4 py-3 border-b border-chat-border hover:bg-sidebar-accent/50 cursor-pointer transition-colors",
               room.id === chatId ? "bg-sidebar-accent" : ""
             )}
           >
-            <div className="flex items-start">
-              <div className="relative">
-                <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center">
-                  <span className="text-white text-sm font-medium leading-none">
-                    {room.name.slice(0, 2).toUpperCase()}
-                  </span>
-                </div>
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-full bg-primary/90 flex items-center justify-center">
+                <span className="text-white text-sm font-medium">
+                  {room.name.slice(0, 2).toUpperCase()}
+                </span>
               </div>
-              <div className="ml-3 flex-1 min-w-0">
-                <div className="flex justify-between items-center">
-                  <h3 className="font-medium text-sm truncate">{room.name}</h3>
-                </div>
-              </div>
-              <div className="ml-2 bg-chat-message-sent rounded-full h-5 w-5 flex items-center justify-center">
-                <span className="text-white text-xs">1</span>
-              </div>
+              <h3 className="font-medium text-sm truncate">{room.name}</h3>
             </div>
           </div>
         </Link>

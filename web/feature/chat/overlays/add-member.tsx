@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useParams } from "next/navigation";
 import {
   Dialog,
@@ -15,7 +15,7 @@ import { Input } from "@/feature/shared/ui/input";
 import { Checkbox } from "@/feature/shared/ui/checkbox";
 import { ScrollArea } from "@/feature/shared/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/feature/shared/ui/avatar";
-import { X, ArrowRight } from "lucide-react";
+import { X, ArrowRight, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Select,
@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/feature/shared/ui/select";
 import { useRoom } from "@/feature/shared/hooks/use-room";
+import { useWorkspace } from "@/feature/shared/hooks/use-workspace";
 
 interface AddMemberDialogProps {
   children: React.ReactNode;
@@ -37,12 +38,36 @@ interface SelectedMember {
 
 export const AddMemberDialog = ({ children }: AddMemberDialogProps) => {
   const { chatId } = useParams<{ chatId: string }>();
+  const { workspaceMembers, isLoadingWsMembers } = useWorkspace();
   const { addMember, roomMembers } = useRoom();
   const [open, setOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedMembers, setSelectedMembers] = React.useState<
     SelectedMember[]
   >([]);
+
+  // Filter workspace members to show only those not already in the room
+  const roomMemberIds = useMemo(
+    () => new Set(roomMembers?.members?.map((m) => m.user.id)),
+    [roomMembers]
+  );
+
+  const availableMembers = useMemo(() => {
+    if (!workspaceMembers?.members) return [];
+    return workspaceMembers.members.filter(
+      (member: Member) => !roomMemberIds.has(member.user.id)
+    );
+  }, [workspaceMembers, roomMemberIds]);
+
+  const filteredMembers = useMemo(() => {
+    return availableMembers.filter((member: Member) => {
+      const fullName =
+        `${member.user.firstname} ${member.user.lastname}`.toLowerCase();
+      const email = member.user.email.toLowerCase();
+      const search = searchQuery.toLowerCase();
+      return fullName.includes(search) || email.includes(search);
+    });
+  }, [availableMembers, searchQuery]);
 
   const onSubmit = async () => {
     if (!chatId) return;
@@ -63,16 +88,6 @@ export const AddMemberDialog = ({ children }: AddMemberDialogProps) => {
       );
     }
   };
-
-  const currentSpaceMembers = roomMembers?.members || [];
-
-  const filteredMembers = currentSpaceMembers.filter((member: Member) => {
-    const fullName =
-      `${member.user.firstname} ${member.user.lastname}`.toLowerCase();
-    const email = member.user.email.toLowerCase();
-    const search = searchQuery.toLowerCase();
-    return fullName.includes(search) || email.includes(search);
-  });
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
@@ -97,7 +112,7 @@ export const AddMemberDialog = ({ children }: AddMemberDialogProps) => {
           <DialogTitle>Add Member</DialogTitle>
           <DialogDescription>
             {selectedMembers.length === 0
-              ? "Select members to invite"
+              ? "Select workspace members to invite"
               : `${selectedMembers.length} member${
                   selectedMembers.length > 1 ? "s" : ""
                 } selected`}
@@ -115,7 +130,7 @@ export const AddMemberDialog = ({ children }: AddMemberDialogProps) => {
               <div className="flex flex-wrap gap-2 p-2 border rounded-md min-h-[40px]">
                 <AnimatePresence mode="popLayout">
                   {selectedMembers.map(({ userId }) => {
-                    const member = currentSpaceMembers.find(
+                    const member = availableMembers.find(
                       (m: Member) => m.user.id === userId
                     );
                     if (!member) return null;
@@ -161,9 +176,14 @@ export const AddMemberDialog = ({ children }: AddMemberDialogProps) => {
                 />
               </div>
               <ScrollArea className="h-[300px] rounded-md p-2">
-                {filteredMembers.length === 0 ? (
+                {isLoadingWsMembers ? (
+                  <div className="flex items-center justify-center p-4 text-muted-foreground">
+                    <Loader2 className="h-5 w-5 animate-spin mr-2" /> Loading
+                    workspace members...
+                  </div>
+                ) : filteredMembers.length === 0 ? (
                   <div className="p-2 text-sm text-muted-foreground">
-                    No members found
+                    No workspace members available to invite
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -263,7 +283,11 @@ export const AddMemberDialog = ({ children }: AddMemberDialogProps) => {
                       className="rounded-full size-8"
                       disabled={addMember.isPending}
                     >
-                      <ArrowRight size={20} />
+                      {addMember.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <ArrowRight size={20} />
+                      )}
                     </Button>
                   </motion.div>
                 ) : (

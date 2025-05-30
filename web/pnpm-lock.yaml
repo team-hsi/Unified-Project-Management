@@ -128,6 +128,21 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.1.8
         version: 1.1.8(@types/react-dom@19.0.4(@types/react@19.0.12))(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@schedule-x/calendar':
+        specifier: ^2.31.1
+        version: 2.31.1(@preact/signals@2.1.1(preact@10.26.7))(preact@10.26.7)
+      '@schedule-x/events-service':
+        specifier: ^2.31.1
+        version: 2.31.1
+      '@schedule-x/react':
+        specifier: ^2.31.1
+        version: 2.31.1(@schedule-x/calendar@2.31.1(@preact/signals@2.1.1(preact@10.26.7))(preact@10.26.7))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@schedule-x/theme-default':
+        specifier: ^2.31.1
+        version: 2.31.1
+      '@schedule-x/theme-shadcn':
+        specifier: ^2.31.1
+        version: 2.31.1
       '@tanstack/react-query':
         specifier: ^5.69.0
         version: 5.69.0(react@19.0.0)
@@ -245,6 +260,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
+      react-error-boundary:
+        specifier: ^6.0.0
+        version: 6.0.0(react@19.0.0)
       react-hook-form:
         specifier: ^7.54.2
         version: 7.54.2(react@19.0.0)
@@ -871,6 +889,14 @@ packages:
 
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
+
+  '@preact/signals-core@1.8.0':
+    resolution: {integrity: sha512-OBvUsRZqNmjzCZXWLxkZfhcgT+Fk8DDcT/8vD6a1xhDemodyy87UJRJfASMuSD8FaAIeGgGm85ydXhm7lr4fyA==}
+
+  '@preact/signals@2.1.1':
+    resolution: {integrity: sha512-qPgx6NVNQnfps424sxDZiW0rvsf/ByqSTT7LedzYa2kQLgT+LzayytghJmkScA6364/JJmne5UWHoxB4VUs79w==}
+    peerDependencies:
+      preact: '>= 10.25.0'
 
   '@radix-ui/number@1.1.0':
     resolution: {integrity: sha512-V3gRzhVNU1ldS5XhAPTom1fOIo4ccrjjJgmE+LI2h/WaFpHmx0MQApT+KZHnx8abG6Avtfcz4WoEciMnpFT3HQ==}
@@ -1725,6 +1751,28 @@ packages:
 
   '@rushstack/eslint-patch@1.11.0':
     resolution: {integrity: sha512-zxnHvoMQVqewTJr/W4pKjF0bMGiKJv1WX7bSrkl46Hg0QjESbzBROWK0Wg4RphzSOS5Jiy7eFimmM3UgMrMZbQ==}
+
+  '@schedule-x/calendar@2.31.1':
+    resolution: {integrity: sha512-HNhKj4ApKrO0ZNiHrMMedQ6rkF9inuMXmEyBq3fl8Lznex7HCxTv0hBwuhU4wfdosh53C5vt/sG5QOgzNELPHQ==}
+    peerDependencies:
+      '@preact/signals': ^2.0.2
+      preact: ^10.19.2
+
+  '@schedule-x/events-service@2.31.1':
+    resolution: {integrity: sha512-6EE+pwqPCiu1qMMjuH/5BCaoSm9bqbdmmrWh5MhR0qq3C2Q4g8zB7qxkFCQDf18zStUHZRNOHQWmHrKqCRx1jQ==}
+
+  '@schedule-x/react@2.31.1':
+    resolution: {integrity: sha512-PcwC4fdqexZXWXcP6DMaSE8iko85Pa7ddweu58dqvbn8TFaJqXBISfnqWLr1PmRn8kq0Yh4nFo2cfB0FtIr3Zw==}
+    peerDependencies:
+      '@schedule-x/calendar': ^2.25.0
+      react: ^16.7.0 || ^17 || ^18 || ^19
+      react-dom: ^16.7.0 || ^17 || ^18 || ^19
+
+  '@schedule-x/theme-default@2.31.1':
+    resolution: {integrity: sha512-JNRcI45HFKFycbNd3QdqDi1EarDlvcB/7U3Vo7jUH9ISR8/Ef43Su6zkREkLTQZ0fuSWNgFEzpwWYRtfGcXbIw==}
+
+  '@schedule-x/theme-shadcn@2.31.1':
+    resolution: {integrity: sha512-VWSmJ1D78P86k5bTqD/ftsVe3BF3TZ60QY+NQNxW2iYMCvH4R234xCJfua9CuR6jI/1d6iiV/ICNIV0Hv6bWgg==}
 
   '@schummar/icu-type-parser@1.21.5':
     resolution: {integrity: sha512-bXHSaW5jRTmke9Vd0h5P7BtWZG9Znqb8gSDxZnxaGSJnGwPLDPfS+3g0BKzeWqzgZPsIVZkM7m2tbo18cm5HBw==}
@@ -3487,6 +3535,9 @@ packages:
     resolution: {integrity: sha512-dle9A3yYxlBSrt8Fu+IpjGT8SY8hN0mlaA6GY8t0P5PjIOZemULz/E2Bnm/2dcUOena75OTNkHI76uZBNUUq3A==}
     engines: {node: ^10 || ^12 || >=14}
 
+  preact@10.26.7:
+    resolution: {integrity: sha512-43xS+QYc1X1IPbw03faSgY6I6OYWcLrJRv3hU0+qMOfh/XCHcP0MX2CVjNARYR2cC/guu975sta4OcjlczxD7g==}
+
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
@@ -3587,6 +3638,11 @@ packages:
   react-error-boundary@3.1.4:
     resolution: {integrity: sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==}
     engines: {node: '>=10', npm: '>=6'}
+    peerDependencies:
+      react: '>=16.13.1'
+
+  react-error-boundary@6.0.0:
+    resolution: {integrity: sha512-gdlJjD7NWr0IfkPlaREN2d9uUZUlksrfOx7SX62VRerwXbMY6ftGCIZua1VG1aXFNOimhISsTq+Owp725b9SiA==}
     peerDependencies:
       react: '>=16.13.1'
 
@@ -4810,6 +4866,13 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
+  '@preact/signals-core@1.8.0': {}
+
+  '@preact/signals@2.1.1(preact@10.26.7)':
+    dependencies:
+      '@preact/signals-core': 1.8.0
+      preact: 10.26.7
+
   '@radix-ui/number@1.1.0': {}
 
   '@radix-ui/primitive@1.0.1':
@@ -5643,6 +5706,23 @@ snapshots:
   '@rtsao/scc@1.1.0': {}
 
   '@rushstack/eslint-patch@1.11.0': {}
+
+  '@schedule-x/calendar@2.31.1(@preact/signals@2.1.1(preact@10.26.7))(preact@10.26.7)':
+    dependencies:
+      '@preact/signals': 2.1.1(preact@10.26.7)
+      preact: 10.26.7
+
+  '@schedule-x/events-service@2.31.1': {}
+
+  '@schedule-x/react@2.31.1(@schedule-x/calendar@2.31.1(@preact/signals@2.1.1(preact@10.26.7))(preact@10.26.7))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      '@schedule-x/calendar': 2.31.1(@preact/signals@2.1.1(preact@10.26.7))(preact@10.26.7)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+
+  '@schedule-x/theme-default@2.31.1': {}
+
+  '@schedule-x/theme-shadcn@2.31.1': {}
 
   '@schummar/icu-type-parser@1.21.5': {}
 
@@ -7555,6 +7635,8 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
+  preact@10.26.7: {}
+
   prelude-ls@1.2.1: {}
 
   prismjs@1.30.0: {}
@@ -7691,6 +7773,11 @@ snapshots:
       scheduler: 0.25.0
 
   react-error-boundary@3.1.4(react@19.0.0):
+    dependencies:
+      '@babel/runtime': 7.26.10
+      react: 19.0.0
+
+  react-error-boundary@6.0.0(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.26.10
       react: 19.0.0

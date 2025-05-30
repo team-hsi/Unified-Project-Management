@@ -10,7 +10,7 @@ export type ItemPayload = {
   dueDate: string;
   checklist: CheckList[];
   priority: "low" | "medium" | "high" | "";
-  status: "complete" | "incomplete";
+  status: string;
   id: string;
   bucketId: string;
 };

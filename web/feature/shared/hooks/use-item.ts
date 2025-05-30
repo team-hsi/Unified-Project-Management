@@ -50,12 +50,19 @@ export const useItem = (id: string) => {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "item"] });
+      queryClient.invalidateQueries({
+        queryKey: [projectId, "project-dashboard"],
+      });
       void isValidResponse(response);
     },
   });
 
   const assign = useMutation({
     mutationFn: assignUser,
+    onSuccess: (response) => {
+      void isValidResponse(response);
+      queryClient.invalidateQueries({ queryKey: [projectId, "item"] });
+    },
   });
 
   const unAssign = useMutation({

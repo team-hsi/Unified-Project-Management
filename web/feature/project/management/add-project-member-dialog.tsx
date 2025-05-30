@@ -58,7 +58,7 @@ export const AddProjectMemberDialog = ({
   const availableMembers = useMemo(() => {
     if (!workspaceMembers?.members) return [];
     return workspaceMembers.members.filter(
-      (member: Member) => !projectMemberIds.has(member.id)
+      (member: Member) => !projectMemberIds.has(member.user.id)
     );
   }, [workspaceMembers, projectMemberIds]);
 
@@ -66,19 +66,20 @@ export const AddProjectMemberDialog = ({
     if (!projectId || selectedMembers.length === 0) return;
 
     try {
-      await Promise.all(
-        selectedMembers.map(async ({ userId, role }) => {
-          await addMember.mutateAsync({ userId, role, id: projectId });
-          return console.log("pr", userId, role, projectId);
-        })
-      );
+      const firstMember = selectedMembers[0];
 
-      toast.success("Members added successfully!");
+      if (firstMember) {
+        const { userId, role } = firstMember;
+        await addMember.mutateAsync({ userId, role, id: projectId });
+      } else {
+        toast.error("No member selected.");
+      }
+
       setOpen(false);
       setSelectedMembers([]);
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to add members"
+        error instanceof Error ? error.message : "Failed to add member"
       );
     }
   };
@@ -102,10 +103,12 @@ export const AddProjectMemberDialog = ({
     if (checked) {
       setSelectedMembers([
         ...selectedMembers,
-        { userId: member.id, role: "member" },
+        { userId: member.user.id, role: "member" },
       ]); // Default to viewer role
     } else {
-      setSelectedMembers(selectedMembers.filter((m) => m.userId !== member.id));
+      setSelectedMembers(
+        selectedMembers.filter((m) => m.userId !== member.user.id)
+      );
     }
   };
 
@@ -145,7 +148,7 @@ export const AddProjectMemberDialog = ({
               <AnimatePresence mode="popLayout">
                 {selectedMembers.map(({ userId }) => {
                   const member = availableMembers.find(
-                    (m: Member) => m.id === userId
+                    (m: Member) => m.user.id === userId
                   ); // Find from available members list
                   if (!member) return null;
 
@@ -196,7 +199,7 @@ export const AddProjectMemberDialog = ({
                 <div className="space-y-2">
                   {availableMembers.map((member: Member) => (
                     <motion.div
-                      key={member.id}
+                      key={member.user.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -204,8 +207,8 @@ export const AddProjectMemberDialog = ({
                       className="flex items-center space-x-3 p-2 hover:bg-accent rounded-md transition-colors"
                     >
                       <Checkbox
-                        id={member.id}
-                        checked={isMemberSelected(member.id)}
+                        id={member.user.id}
+                        checked={isMemberSelected(member.user.id)}
                         onCheckedChange={(checked) =>
                           handleCheckboxChange(checked as boolean, member)
                         }
@@ -221,7 +224,7 @@ export const AddProjectMemberDialog = ({
                       </Avatar>
                       <div className="flex flex-col flex-1">
                         <label
-                          htmlFor={member.id}
+                          htmlFor={member.user.id}
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
                           {`${member.user.firstname} ${member.user.lastname}`}
@@ -230,12 +233,12 @@ export const AddProjectMemberDialog = ({
                           {member.user.email}
                         </span>
                       </div>
-                      {isMemberSelected(member.id) && (
+                      {isMemberSelected(member.user.id) && (
                         <Select
-                          value={getMemberRole(member.id)}
+                          value={getMemberRole(member.user.id)}
                           onValueChange={(role) =>
                             handleRoleChange(
-                              member.id,
+                              member.user.id,
                               role as SelectedMember["role"]
                             )
                           }

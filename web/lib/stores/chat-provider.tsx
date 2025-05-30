@@ -11,14 +11,12 @@ import { getRoomMessages } from "@/actions/api/message/queries";
 import { useUtils } from "@/feature/shared/hooks/use-utils";
 import { BaseError } from "../errors";
 import { Message } from "@/feature/shared/@types/message";
-import { useWebSocket } from "@/feature/notification/hooks/use-web-socket";
-
+import { useSocketEvent } from "@/feature/notification/hooks/useSocketEvent";
 // --- Types
 type ChatContextType = {
   chat: Chat;
   isLoading: boolean;
   sendMessage: (content: string) => Promise<void>;
-  isSocketConnected: boolean;
 };
 
 const ChatStoreContext = createContext<ChatContextType | undefined>(undefined);
@@ -36,7 +34,7 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
     staleTime: 3000, // 3 seconds
   });
 
-  const isConnected = useWebSocket("new-message", (message: Message) => {
+  useSocketEvent("new-message", (message: Message) => {
     if (!chatId || !user) return;
     if (message.roomId !== chatId || message.senderId === user.id) return;
 
@@ -105,7 +103,6 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
         chat: chat as Chat,
         isLoading,
         sendMessage,
-        isSocketConnected: isConnected,
       }}
     >
       {children}

@@ -18,6 +18,20 @@ import { toast } from "sonner";
 import { useWorkspace } from "../../hooks/use-workspace";
 import { useParams } from "next/navigation";
 import { ActionButton } from "../action-button";
+import { useUser } from "@/lib/auth/auth-provider";
+import { cn } from "@/lib/utils";
+import { LoadingState, ErrorState } from "./loading-states";
+import { Workspace } from "../../@types/space";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/feature/shared/ui/alert-dialog";
 
 interface TeamMember {
   id: string;
@@ -27,7 +41,7 @@ interface TeamMember {
   avatarFallback: string;
 }
 
-export const PeopleView = () => {
+export const PeopleView = ({ workspace }: { workspace: Workspace }) => {
   const {
     workspaceMembers,
     isLoadingWsMembers,
@@ -35,23 +49,30 @@ export const PeopleView = () => {
     inviteMember,
     updateMembership,
     removeMember,
+    update,
   } = useWorkspace();
+  const { user } = useUser();
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<Member["role"] | null>(null);
   const [invite, setInvite] = useState<{
     email: string;
-    role: Member["role"];
+    role: Member["role"] | "owner";
   }>({
     email: "",
     role: "member",
   });
+  const [showPublicDialog, setShowPublicDialog] = useState(false);
+  const [pendingInvite, setPendingInvite] = useState<{
+    email: string;
+    role: Member["role"];
+  } | null>(null);
 
   if (isLoadingWsMembers) {
-    return <div className="text-center">Loading...</div>;
+    return <LoadingState />;
   }
   if (errorWsMembers) {
-    return <div className="text-center">Error loading members</div>;
+    return <ErrorState message="Failed to load workspace members" />;
   }
 
   const mappedMembers: TeamMember[] =
@@ -91,18 +112,45 @@ export const PeopleView = () => {
     return matchesSearch && matchesRole;
   });
   const handleInvite = async () => {
-    toast.success("Invitation", {
-      description: `You invited ${invite.email} as ${invite.role}`,
-    });
+    if (user?.email === invite.email) {
+      toast.warning("You can't invite yourself");
+      return;
+    }
+
+    if (workspace.visibility === "private") {
+      setPendingInvite(invite);
+      setShowPublicDialog(true);
+      return;
+    }
+
+    await sendInvitation(invite);
+  };
+
+  const sendInvitation = async (inviteData: {
+    email: string;
+    role: Member["role"];
+  }) => {
     setInvite((prev) => ({
       ...prev,
       email: "",
     }));
     await inviteMember.mutateAsync({
-      email: invite.email,
-      role: invite.role,
+      email: inviteData.email,
+      role: inviteData.role,
       id: workspaceId,
     });
+  };
+
+  const handleMakePublic = async () => {
+    await update.mutateAsync({
+      id: workspaceId,
+      visibility: "public",
+    });
+    if (pendingInvite) {
+      await sendInvitation(pendingInvite);
+    }
+    setShowPublicDialog(false);
+    setPendingInvite(null);
   };
 
   return (
@@ -225,11 +273,13 @@ export const PeopleView = () => {
                     onValueChange={(value: Member["role"]) =>
                       handleRoleChange(member.id, value)
                     }
+                    disabled={member.role === "owner"}
                   >
                     <SelectTrigger className="w-[120px] bg-background hover:bg-accent/5 transition-colors duration-200">
                       <SelectValue placeholder="Role" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="owner">Owner</SelectItem>
                       <SelectItem value="admin">Admin</SelectItem>
                       <SelectItem value="member">Member</SelectItem>
                       <SelectItem value="guest">Guest</SelectItem>
@@ -245,6 +295,9 @@ export const PeopleView = () => {
                         userId: member.id,
                       });
                     }}
+                    className={cn(
+                      member.role === "owner" && "invisible pointer-events-none"
+                    )}
                   />
                 </div>
               </div>
@@ -255,6 +308,26 @@ export const PeopleView = () => {
           ))
         )}
       </div>
+      <AlertDialog open={showPublicDialog} onOpenChange={setShowPublicDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Make Workspace Public?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This workspace is currently private. To invite members, you need
+              to make it public first. Would you like to make it public and
+              continue with the invitation?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingInvite(null)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleMakePublic}>
+              Make Public & Invite
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

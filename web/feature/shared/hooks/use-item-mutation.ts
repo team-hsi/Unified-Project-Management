@@ -80,6 +80,10 @@ export const useItemMutation = () => {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
+      queryClient.invalidateQueries({
+        queryKey: [projectId, "project-dashboard"],
+      });
+      console.log("response", response);
       if (isValidResponse(response)) {
         // toast.success("Item created successfully!");
       }
@@ -122,6 +126,9 @@ export const useItemMutation = () => {
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
       queryClient.invalidateQueries({ queryKey: [projectId, "item"] });
+      queryClient.invalidateQueries({
+        queryKey: [projectId, "project-dashboard"],
+      });
       void isValidResponse(response);
     },
   });
@@ -153,6 +160,9 @@ export const useItemMutation = () => {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [projectId, "items"] });
+      queryClient.invalidateQueries({
+        queryKey: [projectId, "project-dashboard"],
+      });
       if (isValidResponse(response)) {
         toast.success("Item deleted successfully!");
       }

@@ -5,7 +5,6 @@ import { createSession, deleteSession } from "@/actions/core/session";
 import { redirect } from "next/navigation";
 import { getSession } from "@/actions/core/dal";
 import { handleError } from "@/lib/errors";
-import { getUser } from "../queries";
 
 export const createUser = async (
   payload: Omit<UserPayload, "id" | "activeSpaceId">
@@ -13,6 +12,7 @@ export const createUser = async (
   try {
     const result = await auth<UserWithToken>("/users/create", payload);
     const { user, tokens, privateSpace } = result;
+    console.log("private-space", privateSpace);
     const session = {
       userId: user.id,
       activeSpace: privateSpace.id || null,
@@ -55,7 +55,7 @@ export async function getCurrentSession() {
   return session;
 }
 
-export async function getSessionUser() {
-  const user = await getUser();
-  return user;
-}
+// export async function getSessionUser() {
+//   const user = await getUser();
+//   return user;
+// }

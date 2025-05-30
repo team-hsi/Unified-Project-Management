@@ -29,6 +29,7 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
   if (response.status === 204) {
     return undefined as T;
   }
+
   const data = await response.json();
   if (!response.ok) {
     if (response.status === 400) {

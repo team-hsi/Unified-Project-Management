@@ -17,10 +17,10 @@ export const createItem = async (
   } & Partial<Omit<ItemPayload, "name" | "bucketId">>
 ) => {
   try {
-    const result = await post<Item>("/items/create", payload);
+    await post<Item>("/items/create", payload);
     revalidateTag(CACHE_TAGS.PROJECT.ITEMS(payload.projectId));
     revalidateTag(CACHE_TAGS.BUCKET.ITEMS(payload.bucketId));
-    return result;
+    return true;
   } catch (error) {
     return handleError(error);
   }
@@ -111,9 +111,9 @@ export const assignUser = async (payload: {
         userId: payload.userId,
       }
     );
+    revalidateTag(CACHE_TAGS.ITEM.ONE(payload.itemId));
     revalidateTag(CACHE_TAGS.PROJECT.ITEMS(payload.projectId));
     revalidateTag(CACHE_TAGS.BUCKET.ITEMS(payload.bucketId));
-    revalidateTag(CACHE_TAGS.ITEM.ONE(payload.itemId));
     return result;
   } catch (error) {
     return handleError(error);

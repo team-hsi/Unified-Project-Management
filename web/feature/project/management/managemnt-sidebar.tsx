@@ -1,5 +1,5 @@
 "use client";
-import { Settings, Tag, Users } from "lucide-react";
+import { Milestone, Settings, Tag, Users } from "lucide-react";
 import type React from "react";
 
 import { Button } from "@/feature/shared/ui/button";
@@ -41,6 +41,11 @@ export const ManagementSidebar = ({
           id: "people",
           label: "People",
           icon: <Users className="h-4 w-4" />,
+        },
+        {
+          id: "milestone",
+          label: "Milestone",
+          icon: <Milestone className="h-4 w-4" />,
         },
         {
           id: "labels",

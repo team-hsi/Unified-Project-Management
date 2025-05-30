@@ -7,7 +7,8 @@ import { GeneralView } from "./general";
 import { AccountView } from "./account";
 import { PermissionsView } from "./permissions";
 import { Workspace } from "../../@types/space";
-import { Invitations } from "./invitations";
+import { MyInvitations } from "./my-invitations";
+import { SentInvitations } from "./sent-invitations";
 
 interface SettingsContentProps {
   currentView: SettingsView;
@@ -22,10 +23,11 @@ export function SettingsContent({
   const viewComponents: Record<SettingsView, React.ReactNode> = {
     preferences: <PreferencesView />,
     general: <GeneralView workspace={workspace} />,
-    people: <PeopleView />,
+    people: <PeopleView workspace={workspace} />,
     account: <AccountView />,
     permissions: <PermissionsView workspace={workspace} />,
-    invitations: <Invitations />,
+    "my-invitations": <MyInvitations />,
+    "sent-invitations": <SentInvitations />,
   };
 
   return viewComponents[currentView] || <PreferencesView />;

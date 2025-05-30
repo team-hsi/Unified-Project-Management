@@ -20,3 +20,18 @@ export type Project = {
 export interface ProjectWithMembers extends Project {
   members: Member[];
 }
+
+export interface ProjectMatrix {
+  project: Project;
+  counts: MatrixData;
+}
+
+export type MatrixData = {
+  total: number;
+  done: number;
+  overdue: number;
+  todo: number;
+  inprogress: number;
+  priority: number;
+  unassigned: number;
+};

@@ -18,7 +18,8 @@ import {
 import { X, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Checkbox } from "@/feature/shared/ui/checkbox";
-import { useProject } from "@/feature/shared/hooks/use-project";
+// import { useProject } from "@/feature/shared/hooks/use-project";
+import { useWorkspace } from "@/feature/shared/hooks/use-workspace";
 
 interface AddItemAssigneeDialogProps {
   children: React.ReactNode;
@@ -34,7 +35,8 @@ export const AddItemAssigneeDialog = ({
   projectId,
   onAssign,
 }: AddItemAssigneeDialogProps) => {
-  const { projectMembers } = useProject();
+  // const { projectMembers } = useProject();
+  const { workspaceMembers } = useWorkspace();
   const [open, setOpen] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,11 +46,19 @@ export const AddItemAssigneeDialog = ({
 
     setIsLoading(true);
     try {
-      await Promise.all(
-        selectedMembers.map(async (userId) => {
-          await onAssign(userId);
-        })
-      );
+      const userId = selectedMembers[selectedMembers.length - 1];
+      if (userId) {
+        await onAssign(userId);
+      } else {
+        toast.error("No member selected.");
+      }
+      // await Promise.all(
+      //   selectedMembers.map(async (userId, index) => {
+      //     console.log(`Starting assignment ${index}`);
+      //     await onAssign(userId);
+      //     console.log(`Completed assignment ${index}`);
+      //   })
+      // );
 
       toast.success("Assignees added successfully!");
       setOpen(false);
@@ -103,7 +113,7 @@ export const AddItemAssigneeDialog = ({
             <div className="flex flex-wrap gap-2 p-2 border rounded-md min-h-[40px]">
               <AnimatePresence mode="popLayout">
                 {selectedMembers.map((userId) => {
-                  const member = projectMembers?.members?.find(
+                  const member = workspaceMembers?.members?.find(
                     (m) => m.user.id === userId
                   );
                   if (!member) return null;
@@ -140,18 +150,18 @@ export const AddItemAssigneeDialog = ({
             </div>
 
             <ScrollArea className="h-[300px] rounded-md p-2 border">
-              {!projectMembers?.members ? (
+              {!workspaceMembers?.members ? (
                 <div className="flex items-center justify-center p-4 text-muted-foreground">
                   <Loader2 className="h-5 w-5 animate-spin mr-2" /> Loading
                   project members...
                 </div>
-              ) : projectMembers.members.length === 0 ? (
+              ) : workspaceMembers.members.length === 0 ? (
                 <div className="p-4 text-sm text-muted-foreground text-center">
                   No project members available to assign.
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {projectMembers.members.map((member) => (
+                  {workspaceMembers.members.map((member) => (
                     <motion.div
                       key={member.user.id}
                       initial={{ opacity: 0, y: 10 }}

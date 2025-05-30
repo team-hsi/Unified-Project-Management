@@ -44,8 +44,8 @@ export function SettingsSidebar({
           icon: <Settings className="h-4 w-4" />,
         },
         {
-          id: "invitations",
-          label: "Invitations",
+          id: "my-invitations",
+          label: "My Invitations",
           icon: <Mail className="h-4 w-4" />,
         },
       ],
@@ -62,6 +62,11 @@ export function SettingsSidebar({
           id: "people",
           label: "People",
           icon: <Users className="h-4 w-4" />,
+        },
+        {
+          id: "sent-invitations",
+          label: "Sent Invitations",
+          icon: <Mail className="h-4 w-4" />,
         },
         {
           id: "permissions",
