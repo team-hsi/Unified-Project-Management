@@ -6,7 +6,7 @@ import {
 } from "@/feature/shared/ui/dialog";
 import { Separator } from "@/feature/shared/ui/separator";
 import { Avatar, AvatarFallback } from "@/feature/shared/ui/avatar";
-import { Button } from "@/feature/shared/ui/button";
+// import { Button } from "@/feature/shared/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getSpaceInvitations } from "@/actions/api/workspace/queries";
 import { useParams } from "next/navigation";
@@ -100,13 +100,13 @@ export function SentInvitations() {
                       {new Date(inv.createdAt).toLocaleString()}
                     </span>
                   </TableCell>
-                  <TableCell className="text-right">
+                  {/* <TableCell className="text-right">
                     {inv.status === "pending" && (
                       <Button size="sm" variant="outline">
                         Cancel Invitation
                       </Button>
                     )}
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
