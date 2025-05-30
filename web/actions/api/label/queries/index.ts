@@ -28,7 +28,7 @@ export const getProjectLabels = async (payload: Pick<ProjectPayload, "id">) => {
   try {
     return await get<Label[]>(`/projects/${id}/labels`, {
       next: {
-        revalidate: CACHE_LIFE.LONG,
+        revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.PROJECT.LABELS(id)],
       },
       cache: "force-cache",

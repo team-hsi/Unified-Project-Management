@@ -27,7 +27,7 @@ export const getWorkspaceProjects = async (
     const { id } = payload;
     return await get<Project[]>(`/spaces/${id}/projects`, {
       next: {
-        revalidate: CACHE_LIFE.MEDIUM,
+        revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.WORKSPACE.PROJECTS(id)],
       },
       cache: "force-cache",
@@ -42,7 +42,7 @@ export const getProjectMatrix = async (payload: Pick<ProjectPayload, "id">) => {
   const { id } = payload;
   return await get<ProjectMatrix>(`/projects/${id}/metrics`, {
     next: {
-      revalidate: CACHE_LIFE.MEDIUM,
+      revalidate: CACHE_LIFE.MINUTE,
       tags: [CACHE_TAGS.PROJECT.MATRIX(id)],
     },
     cache: "force-cache",
@@ -54,7 +54,7 @@ export const getProjectById = cache(
     try {
       return await get<Project>(`/projects/${payload.id}`, {
         next: {
-          revalidate: CACHE_LIFE.MEDIUM,
+          revalidate: CACHE_LIFE.MINUTE,
           tags: [CACHE_TAGS.PROJECT.ONE(payload.id)],
         },
         cache: "force-cache",
@@ -71,7 +71,7 @@ export const getProjectMembers = async (
   try {
     return get<ProjectWithMembers>(`/projects/${payload.id}/members`, {
       next: {
-        revalidate: CACHE_LIFE.LONG,
+        revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.PROJECT.MEMBERS(payload.id)],
       },
       cache: "force-cache",

@@ -11,7 +11,7 @@ import { extractErrors } from "@/lib/utils";
 import { cache } from "react";
 import { CACHE_LIFE, CACHE_TAGS } from "../../../core/cache-config";
 import { Invitation } from "../../user/queries";
-import { MemberWithSpace } from "@/feature/shared/@types/user";
+// import { MemberWithSpace } from "@/feature/shared/@types/user";
 
 export const getAllWorkspaces = async () => {
   try {
@@ -27,7 +27,7 @@ export const getUserWorkspaces = async () => {
     const session = await getSession();
     return await get<Workspace[]>(`/users/${session.userId}/spaces`, {
       next: {
-        revalidate: CACHE_LIFE.MEDIUM,
+        revalidate: CACHE_LIFE.MINUTE,
         tags: [
           CACHE_TAGS.USER.WORKSPACES(session.userId as string),
           CACHE_TAGS.WORKSPACE.ALL,
@@ -46,7 +46,7 @@ export const getWorkspaceById = cache(
     try {
       return await get<Workspace>(`/spaces/${payload.id}`, {
         next: {
-          revalidate: CACHE_LIFE.MEDIUM,
+          revalidate: CACHE_LIFE.MINUTE,
           tags: [CACHE_TAGS.WORKSPACE.ONE(payload.id)],
         },
         cache: "force-cache",

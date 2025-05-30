@@ -21,7 +21,7 @@ export const getProjectBuckets = async (
   try {
     return await get<Bucket[]>(`/projects/${payload.id}/buckets`, {
       next: {
-        revalidate: CACHE_LIFE.SHORT,
+        revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.PROJECT.BUCKETS(payload.id)],
       },
       cache: "force-cache",
@@ -35,7 +35,7 @@ export const getBucketById = async (payload: Pick<BucketPayload, "id">) => {
   try {
     return await get<BucketPayload>(`/buckets/${payload.id}`, {
       next: {
-        revalidate: CACHE_LIFE.SHORT,
+        revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.BUCKET.ONE(payload.id)],
       },
       cache: "force-cache",

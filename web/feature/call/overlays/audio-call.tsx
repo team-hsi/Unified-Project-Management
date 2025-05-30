@@ -119,7 +119,7 @@ export function AudioCall({
   };
 
   useEffect(() => {
-    if (!socket || !isConnected) return;
+    if (!socket || !isConnected || !open) return;
 
     setupCall();
     socket.on("signal", handleSignal);

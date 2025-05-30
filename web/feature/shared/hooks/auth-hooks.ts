@@ -21,7 +21,7 @@ export function useLogin() {
       if (response.activeSpace) {
         router.replace(`/${response.activeSpace?.id}/projects`);
       } else {
-        router.replace(`/selected-workspace`);
+        router.replace(`/select-workspace`);
       }
       toast.success("Auth", {
         description: "Logged in successfully!",

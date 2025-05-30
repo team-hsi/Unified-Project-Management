@@ -31,7 +31,7 @@ export const getProjectMilestone = async (
   try {
     return await get<Milestone[]>(`/projects/${id}/milestones`, {
       next: {
-        revalidate: CACHE_LIFE.LONG,
+        revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.PROJECT.MILESTONES(id)],
       },
       cache: "force-cache",

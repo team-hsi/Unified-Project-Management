@@ -37,6 +37,8 @@ export function ChatHeader() {
     // You can update state or refs to attach this stream to an <audio> element
   }
 
+  console.log(activeChat);
+
   function startWebRTCWith(peerId: string) {
     const pc = new RTCPeerConnection({
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],

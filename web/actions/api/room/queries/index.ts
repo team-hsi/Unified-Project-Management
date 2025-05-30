@@ -20,7 +20,7 @@ export const getRoomById = async (payload: Pick<RoomPayload, "id">) => {
   try {
     return await get<Room>(`/rooms/${payload.id}`, {
       next: {
-        revalidate: CACHE_LIFE.MEDIUM,
+        revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.ROOM.ONE(payload.id)],
       },
       cache: "force-cache",
@@ -36,7 +36,7 @@ export const getUserRooms = async () => {
     const session = await getSession();
     return await get<UserWithRooms>(`/users/rooms`, {
       next: {
-        revalidate: CACHE_LIFE.MEDIUM,
+        revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.USER.ROOMS(session.userId as string)],
       },
       cache: "force-cache",
@@ -52,7 +52,7 @@ export const getWorkspaceRooms = async (
   try {
     return await get<Room[]>(`/spaces/${payload.id}/rooms`, {
       next: {
-        revalidate: CACHE_LIFE.MEDIUM,
+        revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.WORKSPACE.ROOMS(payload.id)],
       },
       cache: "force-cache",
@@ -67,7 +67,7 @@ export const getRoomMembers = async (payload: Pick<RoomPayload, "id">) => {
   try {
     return await get<Room>(`/rooms/${payload.id}/members`, {
       next: {
-        revalidate: CACHE_LIFE.LONG,
+        revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.ROOM.MEMBERS(payload.id)],
       },
       cache: "force-cache",
