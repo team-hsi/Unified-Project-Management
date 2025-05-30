@@ -21,7 +21,7 @@ export const getProjectDocuments = async (id: string) => {
         revalidate: CACHE_LIFE.MEDIUM,
         tags: [CACHE_TAGS.PROJECT.DOCUMENTS(id)],
       },
-      cache: "no-cache",
+      cache: "no-store",
     });
   } catch (error) {
     console.error("Error fetching documents:", error);
@@ -36,7 +36,7 @@ export const getDocumentById = async (payload: Pick<DocumentPayload, "id">) => {
         revalidate: CACHE_LIFE.MEDIUM,
         tags: [CACHE_TAGS.DOCUMENT.ONE(payload.id)],
       },
-      cache: "no-cache",
+      cache: "no-store",
     });
   } catch (error) {
     console.error(`Error fetching documents ${payload.id}:`, error);

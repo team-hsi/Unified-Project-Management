@@ -14,7 +14,7 @@ type FetchOptions = {
     tags?: string[];
     revalidate?: false | 0 | number;
   };
-  cache?: "no-store" | "no-cache";
+  cache?: "no-store" | "force-cache";
 };
 
 const getHeaders = async () => {

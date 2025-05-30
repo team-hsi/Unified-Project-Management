@@ -27,7 +27,7 @@ export const getUserWorkspaces = async () => {
           CACHE_TAGS.WORKSPACE.ALL,
         ],
       },
-      cache: "no-cache",
+      cache: "no-store",
     });
   } catch (error) {
     console.error("Error fetching workspaces:", error);
