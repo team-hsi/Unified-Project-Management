@@ -3,37 +3,32 @@ import { Avatar, AvatarFallback, AvatarImage } from "../shared/ui/avatar";
 const members = [
   {
     name: "Hunde Desalegn",
-    role: "Backend Dev",
-    avatar:
-      "/https://github.com/team-hsi/Unified-Project-Management/blob/main/web/public/user.png",
+    role: "Full-Stack Developer",
+    avatar: "/user.png",
     fallback: "HD",
   },
   {
     name: "Heyeman Abdisa",
-    role: "Backend Dev",
-    avatar:
-      "https://github.com/team-hsi/Unified-Project-Management/blob/main/web/public/user.png",
-    fallback: "HY-A",
+    role: "Backend Developer",
+    avatar: "/user.png",
+    fallback: "HA",
   },
   {
     name: "Hikma Anwar",
-    role: "Frontend Dev",
-    avatar:
-      "https://github.com/team-hsi/Unified-Project-Management/blob/main/web/public/user2.png4",
-    fallback: "HK-A",
+    role: "UI/UX Designer",
+    avatar: "/user2.png",
+    fallback: "HA",
   },
   {
     name: "Senit Mengesha",
-    role: "Frontend Dev",
-    avatar:
-      "https://github.com/team-hsi/Unified-Project-Management/blob/main/web/public/user2.png4",
+    role: "Frontend Developer",
+    avatar: "/user2.png",
     fallback: "SM",
   },
   {
     name: "Ifa Tolla",
-    role: "Frontend Dev",
-    avatar:
-      "https://github.com/team-hsi/Unified-Project-Management/blob/main/web/public/user.png",
+    role: "DevOps Engineer",
+    avatar: "/user.png",
     fallback: "IT",
   },
 ];
@@ -43,8 +38,11 @@ export default function TeamSection() {
     <section className="md:py-22 py-12">
       <div className="mx-auto max-w-3xl px-8 lg:px-0">
         <h2 className="mb-8 text-4xl font-bold md:mb-16 lg:text-5xl">
-          Our team
+          Team HSI
         </h2>
+        <p className="mb-8 text-muted-foreground">
+          Our talented team combines expertise in full-stack development, UI/UX design, and DevOps to deliver a comprehensive project management solution.
+        </p>
         <div className="mt-6">
           <div
             data-rounded="full"

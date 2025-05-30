@@ -12,12 +12,14 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import {
   Code,
-  Flag,
-  Highlighter,
+  Bot,
+  Layers,
   MessageCircle,
-  Origami,
-  Tags,
-  ThermometerSnowflake,
+  Database,
+  LayoutDashboard,
+  Braces,
+  Globe,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "../shared/ui/button";
 
@@ -37,13 +39,13 @@ export function IntegrationsSection() {
             ></div>
             <div className="from-muted-foreground/15 absolute inset-0 flex aspect-square items-center justify-center rounded-full border-t bg-linear-to-b to-transparent to-25%">
               <IntegrationCard className="absolute top-1/4 left-0 -translate-x-1/6 -translate-y-1/4">
-                <Origami />
+                <Layers />
               </IntegrationCard>
               <IntegrationCard className="absolute top-0 -translate-y-1/2">
-                <Flag />
+                <Database />
               </IntegrationCard>
               <IntegrationCard className="absolute top-1/4 right-0 translate-x-1/6 -translate-y-1/4">
-                <Tags />
+                <LayoutDashboard />
               </IntegrationCard>
             </div>
             <div className="from-muted-foreground/15 absolute inset-16 flex aspect-square scale-90 items-center justify-center rounded-full border-t bg-linear-to-b to-transparent to-25%">
@@ -51,7 +53,7 @@ export function IntegrationsSection() {
                 <Code />
               </IntegrationCard>
               <IntegrationCard className="absolute top-1/4 left-0 -translate-x-1/4 -translate-y-1/4">
-                <ThermometerSnowflake />
+                <Braces />
               </IntegrationCard>
               <IntegrationCard className="absolute top-1/4 right-0 translate-x-1/4 -translate-y-1/4">
                 <MessageCircle />
@@ -63,18 +65,17 @@ export function IntegrationsSection() {
                   className="shadow-black-950/10 dark:bg-background size-16 border-black/20 shadow-xl dark:border-white/25 dark:shadow-white/15"
                   isCenter={true}
                 >
-                  <Highlighter className="text-blue-500" />
+                  <Bot className="text-blue-500" />
                 </IntegrationCard>
               </div>
             </div>
           </div>
           <div className="from-background relative z-20 mx-auto mt-12 max-w-lg space-y-6 bg-linear-to-t from-55% text-center">
             <h2 className="text-3xl font-semibold text-balance md:text-4xl">
-              Integrate with your favorite tools
+              Modern Tech Stack
             </h2>
             <p className="text-muted-foreground">
-              Connect seamlessly with popular platforms and services to enhance
-              your workflow.
+              Built with Next.js 15, React 19, TypeScript, and a comprehensive suite of modern web technologies.
             </p>
 
             <Button variant="outline" size="sm" asChild>
@@ -125,11 +126,10 @@ export default function IntegrationsSection2() {
           <div className="order-last mt-6 flex flex-col gap-12 md:order-first">
             <div className="space-y-6">
               <h2 className="text-3xl font-semibold text-balance md:text-4xl lg:text-5xl">
-                Integrate with your favorite LLMs
+                Powerful Tech Stack
               </h2>
               <p className="text-muted-foreground">
-                Connect seamlessly with popular platforms and services to
-                enhance your workflow.
+                Our project management application is built with cutting-edge technologies for optimal performance and developer experience.
               </p>
               <Button variant="outline" size="sm" asChild>
                 <Link href="#">Get Started</Link>
@@ -138,16 +138,15 @@ export default function IntegrationsSection2() {
 
             <div className="mt-auto grid grid-cols-[auto_1fr] gap-3">
               <div className="bg-background flex aspect-square items-center justify-center border">
-                <Highlighter className="size-9" />
+                <Globe className="size-9" />
               </div>
               <blockquote>
                 <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Quisquam, quos.
+                  This project management tool combines modern technologies with user-friendly design to create a seamless collaboration experience.
                 </p>
                 <div className="mt-2 flex gap-2 text-sm">
-                  <cite>John Doe</cite>
-                  <p className="text-muted-foreground">Founder, MediaWiki</p>
+                  <cite>Team HSI</cite>
+                  <p className="text-muted-foreground">Developers</p>
                 </div>
               </blockquote>
             </div>
@@ -158,33 +157,33 @@ export default function IntegrationsSection2() {
               <div className="grid grid-cols-2 gap-2">
                 <Integration
                   icon={<Code />}
-                  name="Gemini"
-                  description="The AI model that powers Google's search engine."
+                  name="Next.js 15"
+                  description="Modern React framework with App Router for optimized rendering and routing"
                 />
                 <Integration
-                  icon={<Flag />}
-                  name="Replit"
-                  description="The AI model that powers Google's search engine."
+                  icon={<Layers />}
+                  name="React 19"
+                  description="Latest React version with improved performance and new features"
                 />
                 <Integration
-                  icon={<Origami />}
-                  name="GooglePaLM"
-                  description="The AI model that powers Google's search engine."
+                  icon={<Braces />}
+                  name="TypeScript"
+                  description="Strongly typed programming language that builds on JavaScript"
                 />
                 <Integration
-                  icon={<MessageCircle />}
-                  name="MagicUI"
-                  description="The AI model that powers Google's search engine."
+                  icon={<Globe />}
+                  name="Tailwind CSS"
+                  description="Utility-first CSS framework for rapid UI development"
                 />
                 <Integration
-                  icon={<Tags />}
-                  name="VSCodium"
-                  description="The AI model that powers Google's search engine."
+                  icon={<Database />}
+                  name="TanStack Query"
+                  description="Powerful data fetching and state management for server state"
                 />
                 <Integration
-                  icon={<ThermometerSnowflake />}
-                  name="MediaWiki"
-                  description="The AI model that powers Google's search engine."
+                  icon={<BookOpen />}
+                  name="Zustand"
+                  description="Simple and fast state management solution for React applications"
                 />
               </div>
             </div>
