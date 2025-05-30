@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { io, Socket } from "socket.io-client";
 import { useUser } from "@/lib/auth/auth-provider"; // Your auth hook
-import { toast } from "sonner";
+// import { toast } from "sonner";
 
 export const WebSocketContext = createContext<Socket | null>(null);
 
