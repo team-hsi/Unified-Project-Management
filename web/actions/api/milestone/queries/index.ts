@@ -34,7 +34,7 @@ export const getProjectMilestone = async (
         revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.PROJECT.MILESTONES(id)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error(`Error fetching project ${id} labels:`, error);

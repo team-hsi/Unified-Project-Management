@@ -23,7 +23,7 @@ export const getItemById = async (payload: Pick<ItemPayload, "id">) => {
         revalidate: CACHE_LIFE.SHORT,
         tags: [CACHE_TAGS.ITEM.ONE(payload.id)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error(`Error fetching item ${payload.id}:`, error);
@@ -38,7 +38,7 @@ export const getProjectItems = async (payload: Pick<ProjectPayload, "id">) => {
         revalidate: CACHE_LIFE.SHORT,
         tags: [CACHE_TAGS.PROJECT.ITEMS(payload.id)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error(`Error fetching project ${payload.id} items:`, error);
@@ -53,7 +53,7 @@ export const getBucketItems = async (payload: Pick<BucketPayload, "id">) => {
         revalidate: CACHE_LIFE.SHORT,
         tags: [CACHE_TAGS.BUCKET.ITEMS(payload.id)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error(`Error fetching bucket ${payload.id} items:`, error);

@@ -23,7 +23,7 @@ export const getRoomById = async (payload: Pick<RoomPayload, "id">) => {
         revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.ROOM.ONE(payload.id)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error("Error fetching room by id", error);
@@ -39,7 +39,7 @@ export const getUserRooms = async () => {
         revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.USER.ROOMS(session.userId as string)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error("Error fetching user rooms", error);
@@ -55,7 +55,7 @@ export const getWorkspaceRooms = async (
         revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.WORKSPACE.ROOMS(payload.id)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error("Error fetching workspace rooms", error);
@@ -70,7 +70,7 @@ export const getRoomMembers = async (payload: Pick<RoomPayload, "id">) => {
         revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.ROOM.MEMBERS(payload.id)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error("Error fetching room members", error);

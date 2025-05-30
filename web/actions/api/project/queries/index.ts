@@ -30,7 +30,7 @@ export const getWorkspaceProjects = async (
         revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.WORKSPACE.PROJECTS(id)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error("Error fetching workspace projects:", error);
@@ -45,7 +45,7 @@ export const getProjectMatrix = async (payload: Pick<ProjectPayload, "id">) => {
       revalidate: CACHE_LIFE.MINUTE,
       tags: [CACHE_TAGS.PROJECT.MATRIX(id)],
     },
-    cache: "force-cache",
+    cache: "no-cache",
   });
 };
 
@@ -57,7 +57,7 @@ export const getProjectById = cache(
           revalidate: CACHE_LIFE.MINUTE,
           tags: [CACHE_TAGS.PROJECT.ONE(payload.id)],
         },
-        cache: "force-cache",
+        cache: "no-cache",
       });
     } catch (error) {
       throw new Error(error as string);
@@ -74,7 +74,7 @@ export const getProjectMembers = async (
         revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.PROJECT.MEMBERS(payload.id)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error("Error fetching workspace members:", error);

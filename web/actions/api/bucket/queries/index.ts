@@ -24,7 +24,7 @@ export const getProjectBuckets = async (
         revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.PROJECT.BUCKETS(payload.id)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error(`Error fetching project ${payload.id} buckets:`, error);
@@ -38,7 +38,7 @@ export const getBucketById = async (payload: Pick<BucketPayload, "id">) => {
         revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.BUCKET.ONE(payload.id)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error(`Error fetching bucket ${payload.id}:`, error);

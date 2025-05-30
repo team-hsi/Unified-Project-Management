@@ -31,7 +31,7 @@ export const getProjectLabels = async (payload: Pick<ProjectPayload, "id">) => {
         revalidate: CACHE_LIFE.MINUTE,
         tags: [CACHE_TAGS.PROJECT.LABELS(id)],
       },
-      cache: "force-cache",
+      cache: "no-cache",
     });
   } catch (error) {
     console.error(`Error fetching project ${id} labels:`, error);
